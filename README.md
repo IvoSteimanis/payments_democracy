@@ -10,8 +10,8 @@ Affiliations: <sup>1</sup> Sustainable Use of Natural Resources, Universität Ma
 <sup>3</sup> The Ostrom Workshop, Indiana University, Bloomington, IN 47408, USA.
 
 *Correspondence to: Esther Blanco, University of Innsbruck, Department of Public Finance, Universitätsstrasse 15,
-Innsbruck 6020, Austria. Email: esther.blanco@uibk.ac.at
-JEL Codes: D7, Q2, Q5, C9.
+Innsbruck 6020, Austria. Email: esther.blanco@uibk.ac.at <br>
+JEL Codes: D7, Q2, Q5, C9. <br>
 Keywords: climate change, extreme weather events, natural disasters, adaptation, pro-social behavior, online experiment
 
 # License
