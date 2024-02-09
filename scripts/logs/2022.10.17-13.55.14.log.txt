@@ -1,0 +1,1463 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/scripts/logs/2022.10.17-13.55.14.log.txt
+  log type:  text
+ opened on:  17 Oct 2022, 13:55:14
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 17 Oct 2022 13:55:14
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss;lmatasem;lmata
+> sp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduces transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. 
+. }
+
+. * -------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Run processing and analysis scripts
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * (1) Analysis Long Format
+. *--------------------------------------------------
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+end of do-file
+
+. tab leader_type
+
+        leader_type |      Freq.     Percent        Cum.
+--------------------+-----------------------------------
+      True-democrat |        123       64.06       64.06
+    Pseudo-democrat |         27       14.06       78.13
+        Paternalist |         15        7.81       85.94
+           Dictator |         18        9.38       95.31
+Benevolent-dictator |          9        4.69      100.00
+--------------------+-----------------------------------
+              Total |        192      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. eststo reg_dem1: xtprobit dem bonus_2 bonus_3 i.leader_type bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -89.156717  
+Iteration 2:   log pseudolikelihood = -89.102999  
+Iteration 3:   log pseudolikelihood = -89.102996  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -89.102996
+rho =  0.1     log pseudolikelihood = -88.443749
+rho =  0.2     log pseudolikelihood =  -88.37665
+rho =  0.3     log pseudolikelihood = -88.830113
+
+Iteration 0:   log pseudolikelihood =  -88.37665  
+Iteration 1:   log pseudolikelihood = -87.952093  
+Iteration 2:   log pseudolikelihood = -87.940142  
+Iteration 3:   log pseudolikelihood = -87.939811  
+Iteration 4:   log pseudolikelihood = -87.939811  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(7)      =      34.55
+Log pseudolikelihood  = -87.939811              Prob > chi2       =     0.0000
+
+                                            (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------------
+                     |               Robust
+                 dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------------+----------------------------------------------------------------
+             bonus_2 |  -.0307302   .2906922    -0.11   0.916    -.6004765    .5390161
+             bonus_3 |  -.0284559   .2896363    -0.10   0.922    -.5961325    .5392208
+                     |
+         leader_type |
+    Pseudo-democrat  |  -2.317089     .52494    -4.41   0.000    -3.345952   -1.288225
+        Paternalist  |  -2.170418   .4269659    -5.08   0.000    -3.007256    -1.33358
+           Dictator  |  -1.694405   .4400369    -3.85   0.000    -2.556861   -.8319482
+Benevolent-dictator  |  -1.421101   .6355954    -2.24   0.025    -2.666845   -.1753571
+                     |
+         bonus_order |   .1596135   .2888195     0.55   0.581    -.4064624    .7256894
+               _cons |    1.16553   .2454227     4.75   0.000     .6845106     1.64655
+---------------------+----------------------------------------------------------------
+            /lnsig2u |   -1.13057   .6693461                     -2.442464    .1813241
+---------------------+----------------------------------------------------------------
+             sigma_u |   .5681982   .1901606                      .2948666    1.094899
+                 rho |   .2440559   .1234894                      .0799914    .5452072
+--------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. xtreg dem i.bonus##i.i.leader_type bonus_order, cluster(id)
+
+Random-effects GLS regression                   Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+R-sq:                                           Obs per group:
+     within  = 0.2381                                         min =          3
+     between = 0.5878                                         avg =        3.0
+     overall = 0.4560                                         max =          3
+
+                                                Wald chi2(10)     =   69250.29
+corr(u_i, X)   = 0 (assumed)                    Prob > chi2       =     0.0000
+
+                                                                 (Std. Err. adjusted for 64 clusters in id)
+-----------------------------------------------------------------------------------------------------------
+                                          |               Robust
+                                      dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+------------------------------------------+----------------------------------------------------------------
+                                    bonus |
+                    Pooled Bonus (n=128)  |  -.2195122    .056605    -3.88   0.000     -.330456   -.1085684
+                                          |
+                              leader_type |
+                         Pseudo-democrat  |  -1.009182   .0204448   -49.36   0.000    -1.049253   -.9691113
+                             Paternalist  |  -1.003553   .0105749   -94.90   0.000    -1.024279   -.9828264
+                                Dictator  |  -.9951085   .0117551   -84.65   0.000    -1.018148   -.9720689
+                     Benevolent-dictator  |  -1.005664    .015686   -64.11   0.000    -1.036408   -.9749199
+                                          |
+                        bonus#leader_type |
+    Pooled Bonus (n=128)#Pseudo-democrat  |     .49729    .154244     3.22   0.001     .1949773    .7996026
+        Pooled Bonus (n=128)#Paternalist  |   .5195122   .1267601     4.10   0.000     .2710671    .7679573
+           Pooled Bonus (n=128)#Dictator  |   .7195122   .1816091     3.96   0.000     .3635649    1.075459
+Pooled Bonus (n=128)#Benevolent-dictator  |   .8861789    .287422     3.08   0.002      .322842    1.449516
+                                          |
+                              bonus_order |   .0316663   .0657054     0.48   0.630    -.0971139    .1604465
+                                    _cons |    .984553   .0321589    30.62   0.000     .9215227    1.047583
+------------------------------------------+----------------------------------------------------------------
+                                  sigma_u |  .17555835
+                                  sigma_e |  .32129997
+                                      rho |  .22991214   (fraction of variance due to u_i)
+-----------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. tab leader_type
+
+        leader_type |      Freq.     Percent        Cum.
+--------------------+-----------------------------------
+      True-democrat |        123       64.06       64.06
+    Pseudo-democrat |         27       14.06       78.13
+        Paternalist |         15        7.81       85.94
+           Dictator |         18        9.38       95.31
+Benevolent-dictator |          9        4.69      100.00
+--------------------+-----------------------------------
+              Total |        192      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. xtreg dem i.leader_type bonus_order if decision>1, cluster(id)
+
+Random-effects GLS regression                   Number of obs     =        128
+Group variable: id                              Number of groups  =         64
+
+R-sq:                                           Obs per group:
+     within  =      .                                         min =          2
+     between = 0.2423                                         avg =        2.0
+     overall = 0.1847                                         max =          2
+
+                                                Wald chi2(5)      =      22.65
+corr(u_i, X)   = 0 (assumed)                    Prob > chi2       =     0.0004
+
+                                            (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------------
+                     |               Robust
+                 dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------------+----------------------------------------------------------------
+         leader_type |
+    Pseudo-democrat  |  -.5164836   .1606997    -3.21   0.001    -.8314492    -.201518
+        Paternalist  |   -.485817   .1247664    -3.89   0.000    -.7303546   -.2412794
+           Dictator  |  -.2731505   .1766606    -1.55   0.122    -.6193988    .0730979
+Benevolent-dictator  |   -.122317   .2909461    -0.42   0.674    -.6925609    .4479269
+                     |
+         bonus_order |   .0474995   .0978897     0.49   0.628    -.1443607    .2393596
+               _cons |   .7573173   .0765778     9.89   0.000     .6072276    .9074071
+---------------------+----------------------------------------------------------------
+             sigma_u |  .30345413
+             sigma_e |  .33071891
+                 rho |  .45708666   (fraction of variance due to u_i)
+--------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. xtreg dem i.leader_type if decision>1, cluster(id)
+
+Random-effects GLS regression                   Number of obs     =        128
+Group variable: id                              Number of groups  =         64
+
+R-sq:                                           Obs per group:
+     within  =      .                                         min =          2
+     between = 0.2392                                         avg =        2.0
+     overall = 0.1824                                         max =          2
+
+                                                Wald chi2(4)      =      22.63
+corr(u_i, X)   = 0 (assumed)                    Prob > chi2       =     0.0002
+
+                                            (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------------
+                     |               Robust
+                 dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------------+----------------------------------------------------------------
+         leader_type |
+    Pseudo-democrat  |    -.50271   .1525739    -3.29   0.001    -.8017493   -.2036707
+        Paternalist  |  -.4804878   .1253875    -3.83   0.000    -.7262428   -.2347328
+           Dictator  |  -.2804878   .1796427    -1.56   0.118     -.632581    .0716054
+Benevolent-dictator  |  -.1138211   .2843099    -0.40   0.689    -.6710583     .443416
+                     |
+               _cons |   .7804878   .0559921    13.94   0.000     .6707453    .8902303
+---------------------+----------------------------------------------------------------
+             sigma_u |  .30028376
+             sigma_e |  .33071891
+                 rho |  .45187895   (fraction of variance due to u_i)
+--------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. xtreg fake i.leader_type if decision>1, cluster(id)
+
+Random-effects GLS regression                   Number of obs     =        128
+Group variable: id                              Number of groups  =         64
+
+R-sq:                                           Obs per group:
+     within  =      .                                         min =          2
+     between = 0.2272                                         avg =        2.0
+     overall = 0.1661                                         max =          2
+
+                                                Wald chi2(4)      =      15.40
+corr(u_i, X)   = 0 (assumed)                    Prob > chi2       =     0.0039
+
+                                            (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------------
+                     |               Robust
+                fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------------+----------------------------------------------------------------
+         leader_type |
+    Pseudo-democrat  |   .5271003   .1513721     3.48   0.000     .2304163    .8237842
+        Paternalist  |    .304878    .154104     1.98   0.048     .0028397    .6069164
+           Dictator  |   .2215447   .1529971     1.45   0.148    -.0783242    .5214136
+Benevolent-dictator  |   .1382114   .2836668     0.49   0.626    -.4177654    .6941881
+                     |
+               _cons |    .195122   .0526295     3.71   0.000     .0919701    .2982738
+---------------------+----------------------------------------------------------------
+             sigma_u |   .2734757
+             sigma_e |   .3423266
+                 rho |   .3895736   (fraction of variance due to u_i)
+--------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. xtreg dic i.leader_type if decision>1, cluster(id)
+
+Random-effects GLS regression                   Number of obs     =        128
+Group variable: id                              Number of groups  =         64
+
+R-sq:                                           Obs per group:
+     within  =      .                                         min =          2
+     between = 0.1019                                         avg =        2.0
+     overall = 0.0701                                         max =          2
+
+                                                Wald chi2(3)      =          .
+corr(u_i, X)   = 0 (assumed)                    Prob > chi2       =          .
+
+                                            (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------------
+                     |               Robust
+                 dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------------+----------------------------------------------------------------
+         leader_type |
+    Pseudo-democrat  |  -.0243902    .017227    -1.42   0.157    -.0581546    .0093741
+        Paternalist  |   .1756098    .184016     0.95   0.340    -.1850549    .5362744
+           Dictator  |   .0589431   .0797925     0.74   0.460    -.0974474    .2153336
+Benevolent-dictator  |  -.0243902    .017227    -1.42   0.157    -.0581546    .0093741
+                     |
+               _cons |   .0243902    .017227     1.42   0.157    -.0093741    .0581546
+---------------------+----------------------------------------------------------------
+             sigma_u |  .11590008
+             sigma_e |  .15309311
+                 rho |  .36432624   (fraction of variance due to u_i)
+--------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. 
+. 
+. // STAGE 2 PAYOFF ANALYSIS
+. catplot payoff if decision==1, over(leader_type) percent(leader_type) asyvar recast(bar) yla(0(20)100) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) b1title("") le
+> gend(ring(0) pos(12) rows(1))
+
+. gr export "$output\figureS1_order-effects.tif", replace width(5800)
+(note: file \figureS1_order-effects.tif not found)
+(file \figureS1_order-effects.tif written in TIFF format)
+
+. 
+end of do-file
+
+. tab payoff
+
+     payoff |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          A |         69       35.94       35.94
+          B |        123       64.06      100.00
+------------+-----------------------------------
+      Total |        192      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. xtprobit payoff bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator, vce(robust)
+variable bonus_pseudo not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. gen bonus_democrat=bonus*baseline_1
+
+. gen bonus_pseudo=bonus*baseline_2
+
+. gen bonus_dictator=bonus*baseline_3
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. xtprobit payoff bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -112.47189  
+Iteration 2:   log pseudolikelihood = -112.44528  
+Iteration 3:   log pseudolikelihood = -112.44528  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -112.44528
+rho =  0.1     log pseudolikelihood = -108.16339
+rho =  0.2     log pseudolikelihood = -104.94467
+rho =  0.3     log pseudolikelihood = -102.52388
+rho =  0.4     log pseudolikelihood = -100.76519
+rho =  0.5     log pseudolikelihood = -99.620632
+rho =  0.6     log pseudolikelihood = -99.129166
+rho =  0.7     log pseudolikelihood = -99.473951
+
+Iteration 0:   log pseudolikelihood = -99.128678  
+Iteration 1:   log pseudolikelihood = -96.514424  
+Iteration 2:   log pseudolikelihood = -96.277056  
+Iteration 3:   log pseudolikelihood = -96.276281  
+Iteration 4:   log pseudolikelihood = -96.276281  (backed up)
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(5)      =      17.48
+Log pseudolikelihood  = -96.276281              Prob > chi2       =     0.0037
+
+                                      (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------
+               |               Robust
+        payoff |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+         bonus |  -.6630801   .3733322    -1.78   0.076    -1.394798    .0686375
+    baseline_2 |  -2.328642   .7733767    -3.01   0.003    -3.844433   -.8128517
+    baseline_3 |  -2.523964   .9291104    -2.72   0.007    -4.344987   -.7029406
+  bonus_pseudo |   .6599155   .7284527     0.91   0.365    -.7678256    2.087656
+bonus_dictator |   2.923806   .8886222     3.29   0.001     1.182138    4.665473
+         _cons |   1.711766   .4687351     3.65   0.000     .7930619     2.63047
+---------------+----------------------------------------------------------------
+      /lnsig2u |   .9083993   .4959556                     -.0636559    1.880454
+---------------+----------------------------------------------------------------
+       sigma_u |   1.574912   .3905433                      .9686732    2.560563
+           rho |   .7126725    .101557                      .4840914    .8676633
+--------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. est store payoff1
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. coefplot (payoff1, msymbol(d)), keep(bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator) coeflabels(bonus= "Pooled Bonus" baseline_2 = "Base: Pseudo-democrat" ba
+> seline_3 ="Base: Dictator" bonus_pseudo = "Interaction:Bonus*Pseudo" bonus_dictator = "Interaction: Bonus*Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Reg
+> ression estimated impact relative to baseline democrats", size(7pt)) msymbol(d) xla(-1(0.25)1, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)  
+> msize(6pt) recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) mlabsize(7pt) mlabposition(12) mlabgap(-0.1) note("* p < .1, *
+> * p < .05, *** p < .01", size(6pt))  xsize(3.465) ysize(2)  
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. xtprobit payoff bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -112.47189  
+Iteration 2:   log pseudolikelihood = -112.44528  
+Iteration 3:   log pseudolikelihood = -112.44528  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -112.44528
+rho =  0.1     log pseudolikelihood = -108.16339
+rho =  0.2     log pseudolikelihood = -104.94467
+rho =  0.3     log pseudolikelihood = -102.52388
+rho =  0.4     log pseudolikelihood = -100.76519
+rho =  0.5     log pseudolikelihood = -99.620632
+rho =  0.6     log pseudolikelihood = -99.129166
+rho =  0.7     log pseudolikelihood = -99.473951
+
+Iteration 0:   log pseudolikelihood = -99.128678  
+Iteration 1:   log pseudolikelihood = -96.514424  
+Iteration 2:   log pseudolikelihood = -96.277056  
+Iteration 3:   log pseudolikelihood = -96.276281  
+Iteration 4:   log pseudolikelihood = -96.276281  (backed up)
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(5)      =      17.48
+Log pseudolikelihood  = -96.276281              Prob > chi2       =     0.0037
+
+                                      (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------
+               |               Robust
+        payoff |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+         bonus |  -.6630801   .3733322    -1.78   0.076    -1.394798    .0686375
+    baseline_2 |  -2.328642   .7733767    -3.01   0.003    -3.844433   -.8128517
+    baseline_3 |  -2.523964   .9291104    -2.72   0.007    -4.344987   -.7029406
+  bonus_pseudo |   .6599155   .7284527     0.91   0.365    -.7678256    2.087656
+bonus_dictator |   2.923806   .8886222     3.29   0.001     1.182138    4.665473
+         _cons |   1.711766   .4687351     3.65   0.000     .7930619     2.63047
+---------------+----------------------------------------------------------------
+      /lnsig2u |   .9083993   .4959556                     -.0636559    1.880454
+---------------+----------------------------------------------------------------
+       sigma_u |   1.574912   .3905433                      .9686732    2.560563
+           rho |   .7126725    .101557                      .4840914    .8676633
+--------------------------------------------------------------------------------
+
+. margin, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(payoff=1), predict(pr)
+dy/dx w.r.t. : bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator
+
+--------------------------------------------------------------------------------
+               |            Delta-method
+               |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+         bonus |  -.1168856   .0640911    -1.82   0.068    -.2425019    .0087307
+    baseline_2 |  -.4104856   .1008716    -4.07   0.000    -.6081904   -.2127809
+    baseline_3 |  -.4449162   .1531795    -2.90   0.004    -.7451424     -.14469
+  bonus_pseudo |   .1163278   .1274468     0.91   0.361    -.1334633    .3661188
+bonus_dictator |   .5153991   .1432262     3.60   0.000      .234681    .7961172
+--------------------------------------------------------------------------------
+
+. est store payoff1
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. coefplot (payoff1, msymbol(d)), keep(bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator) coeflabels(bonus= "Pooled Bonus" baseline_2 = "Base: Pseudo-democrat" ba
+> seline_3 ="Base: Dictator" bonus_pseudo = "Interaction:Bonus*Pseudo" bonus_dictator = "Interaction: Bonus*Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Reg
+> ression estimated impact relative to baseline democrats", size(7pt)) msymbol(d) xla(-1(0.25)1, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)  
+> msize(6pt) recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) mlabsize(7pt) mlabposition(12) mlabgap(-0.1) note("* p < .1, *
+> * p < .05, *** p < .01", size(6pt))  xsize(3.465) ysize(2)  
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. 
+. xtprobit payoff bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -112.47189  
+Iteration 2:   log pseudolikelihood = -112.44528  
+Iteration 3:   log pseudolikelihood = -112.44528  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -112.44528
+rho =  0.1     log pseudolikelihood = -108.16339
+rho =  0.2     log pseudolikelihood = -104.94467
+rho =  0.3     log pseudolikelihood = -102.52388
+rho =  0.4     log pseudolikelihood = -100.76519
+rho =  0.5     log pseudolikelihood = -99.620632
+rho =  0.6     log pseudolikelihood = -99.129166
+rho =  0.7     log pseudolikelihood = -99.473951
+
+Iteration 0:   log pseudolikelihood = -99.128678  
+Iteration 1:   log pseudolikelihood = -96.514424  
+Iteration 2:   log pseudolikelihood = -96.277056  
+Iteration 3:   log pseudolikelihood = -96.276281  
+Iteration 4:   log pseudolikelihood = -96.276281  (backed up)
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(5)      =      17.48
+Log pseudolikelihood  = -96.276281              Prob > chi2       =     0.0037
+
+                                      (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------
+               |               Robust
+        payoff |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+         bonus |  -.6630801   .3733322    -1.78   0.076    -1.394798    .0686375
+    baseline_2 |  -2.328642   .7733767    -3.01   0.003    -3.844433   -.8128517
+    baseline_3 |  -2.523964   .9291104    -2.72   0.007    -4.344987   -.7029406
+  bonus_pseudo |   .6599155   .7284527     0.91   0.365    -.7678256    2.087656
+bonus_dictator |   2.923806   .8886222     3.29   0.001     1.182138    4.665473
+         _cons |   1.711766   .4687351     3.65   0.000     .7930619     2.63047
+---------------+----------------------------------------------------------------
+      /lnsig2u |   .9083993   .4959556                     -.0636559    1.880454
+---------------+----------------------------------------------------------------
+       sigma_u |   1.574912   .3905433                      .9686732    2.560563
+           rho |   .7126725    .101557                      .4840914    .8676633
+--------------------------------------------------------------------------------
+
+. margin, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(payoff=1), predict(pr)
+dy/dx w.r.t. : bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator
+
+--------------------------------------------------------------------------------
+               |            Delta-method
+               |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+         bonus |  -.1168856   .0640911    -1.82   0.068    -.2425019    .0087307
+    baseline_2 |  -.4104856   .1008716    -4.07   0.000    -.6081904   -.2127809
+    baseline_3 |  -.4449162   .1531795    -2.90   0.004    -.7451424     -.14469
+  bonus_pseudo |   .1163278   .1274468     0.91   0.361    -.1334633    .3661188
+bonus_dictator |   .5153991   .1432262     3.60   0.000      .234681    .7961172
+--------------------------------------------------------------------------------
+
+. est store payoff1
+
+. 
+. coefplot (payoff1, msymbol(d)), keep(bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator) coeflabels(bonus= "Pooled Bonus" baseline_2 = "Base: Pseudo-democrat" ba
+> seline_3 ="Base: Dictator" bonus_pseudo = "Interaction:Bonus*Pseudo" bonus_dictator = "Interaction: Bonus*Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Reg
+> ression estimated impact relative to baseline democrats in pp") msymbol(d) xla(-1(0.25)1, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)  recas
+> t(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) mlabsize(7pt) mlabposition(12) mlabgap(-0.1) 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. coefplot (payoff1, msymbol(d)), keep(bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator) coeflabels(bonus= "Pooled Bonus" baseline_2 = "Base: Pseudo-democrat" ba
+> seline_3 ="Base: Dictator" bonus_pseudo = "Interaction:Bonus*Pseudo" bonus_dictator = "Interaction: Bonus*Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Reg
+> ression estimated impact relative to baseline democrats in pp") msymbol(d) xla(-1(0.25)1, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)  recas
+> t(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) mlabsize(8pt) mlabposition(12) mlabgap(-0.1) 
+
+. gr save "$working_ANALYSIS/intermediate/figureS6.gph", replace
+(note: file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/intermediate/figureS6.gph not found)
+file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/intermediate/figureS6.gph could not be opened
+r(603);
+
+end of do-file
+
+r(603);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. 
+. coefplot (payoff1, msymbol(d)), keep(bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator) coeflabels(bonus= "Pooled Bonus" baseline_2 = "Base: Pseudo-democrat" ba
+> seline_3 ="Base: Dictator" bonus_pseudo = "Interaction:Bonus*Pseudo" bonus_dictator = "Interaction: Bonus*Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Reg
+> ression estimated impact relative to baseline democrats in pp") msymbol(d) xla(-1(0.25)1, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)  recas
+> t(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) mlabsize(8pt) mlabposition(12) mlabgap(-0.1) 
+
+. gr save "$working_ANALYSIS/results/intermediate/figureS6.gph", replace
+(note: file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/intermediate/figureS6.gph not found)
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/intermediate/figureS6.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figureS6.tif", replace width(3465)
+(note: file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/figures/figureS6.tif not found)
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/figures/figureS6.tif written in TIFF format)
+
+. 
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. coefplot (payoff1, msymbol(d)), keep(bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator) coeflabels(bonus= "Pooled Bonus" baseline_2 = "Base: Pseudo-democrat" ba
+> seline_3 ="Base: Dictator" bonus_pseudo = "Interaction:Bonus*Pseudo" bonus_dictator = "Interaction: Bonus*Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Reg
+> ression estimated impact relative to baseline democrats in pp") msymbol(d) xla(-1(0.25)1, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)  recas
+> t(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) mlabsize(8pt) mlabposition(12) mlabgap(-0.1) 
+
+. gr save "$working_ANALYSIS/results/intermediate/figureS6.gph", replace
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/intermediate/figureS6.gph saved)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. gr export "$working_ANALYSIS/results/figures/figureS6.tif", replace width(3465)
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/figures/figureS6.tif written in TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. eststo reg_stage2: xtprobit payoff bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -112.47189  
+Iteration 2:   log pseudolikelihood = -112.44528  
+Iteration 3:   log pseudolikelihood = -112.44528  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -112.44528
+rho =  0.1     log pseudolikelihood = -108.16339
+rho =  0.2     log pseudolikelihood = -104.94467
+rho =  0.3     log pseudolikelihood = -102.52388
+rho =  0.4     log pseudolikelihood = -100.76519
+rho =  0.5     log pseudolikelihood = -99.620632
+rho =  0.6     log pseudolikelihood = -99.129166
+rho =  0.7     log pseudolikelihood = -99.473951
+
+Iteration 0:   log pseudolikelihood = -99.128678  
+Iteration 1:   log pseudolikelihood = -96.514424  
+Iteration 2:   log pseudolikelihood = -96.277056  
+Iteration 3:   log pseudolikelihood = -96.276281  
+Iteration 4:   log pseudolikelihood = -96.276281  (backed up)
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(5)      =      17.48
+Log pseudolikelihood  = -96.276281              Prob > chi2       =     0.0037
+
+                                      (Std. Err. adjusted for 64 clusters in id)
+--------------------------------------------------------------------------------
+               |               Robust
+        payoff |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+         bonus |  -.6630801   .3733322    -1.78   0.076    -1.394798    .0686375
+    baseline_2 |  -2.328642   .7733767    -3.01   0.003    -3.844433   -.8128517
+    baseline_3 |  -2.523964   .9291104    -2.72   0.007    -4.344987   -.7029406
+  bonus_pseudo |   .6599155   .7284527     0.91   0.365    -.7678256    2.087656
+bonus_dictator |   2.923806   .8886222     3.29   0.001     1.182138    4.665473
+         _cons |   1.711766   .4687351     3.65   0.000     .7930619     2.63047
+---------------+----------------------------------------------------------------
+      /lnsig2u |   .9083993   .4959556                     -.0636559    1.880454
+---------------+----------------------------------------------------------------
+       sigma_u |   1.574912   .3905433                      .9686732    2.560563
+           rho |   .7126725    .101557                      .4840914    .8676633
+--------------------------------------------------------------------------------
+
+. margin, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(payoff=1), predict(pr)
+dy/dx w.r.t. : bonus baseline_2 baseline_3 bonus_pseudo bonus_dictator
+
+--------------------------------------------------------------------------------
+               |            Delta-method
+               |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+         bonus |  -.1168856   .0640911    -1.82   0.068    -.2425019    .0087307
+    baseline_2 |  -.4104856   .1008716    -4.07   0.000    -.6081904   -.2127809
+    baseline_3 |  -.4449162   .1531795    -2.90   0.004    -.7451424     -.14469
+  bonus_pseudo |   .1163278   .1274468     0.91   0.361    -.1334633    .3661188
+bonus_dictator |   .5153991   .1432262     3.60   0.000      .234681    .7961172
+--------------------------------------------------------------------------------
+
+. est store payoff1
+
+. 
+. *export xtmixed results to word
+. esttab reg_stage2 using "$working_ANALYSIS\results\Tables\tableS8.rtf",  ci transform(ln*: exp(@) exp(@))mtitles("Distribution B (=1)" b(%4.2f) eqlabels("" "lnsig2u",
+>  none) stats(N N_g sigma_u rho chi2 p, labels("N" "Individuals" "sigma_u" "rho" "Wald Chi2" "p" ) fmt(%4.0f %4.0f %4.2f)) star(* 0.10 ** 0.05 *** 0.01) varlabels(,eli
+> st(weight:_cons "{break}{hline @width}")) replace 
+) required
+r(100);
+
+end of do-file
+
+r(100);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. *export xtmixed results to word
+. esttab reg_stage2 using "$working_ANALYSIS\results\Tables\tableS8.rtf",  ci transform(ln*: exp(@) exp(@))mtitles("Distribution B (=1)") b(%4.2f) eqlabels("" "lnsig2u"
+> , none) stats(N N_g sigma_u rho chi2 p, labels("N" "Individuals" "sigma_u" "rho" "Wald Chi2" "p" ) fmt(%4.0f %4.0f %4.2f)) star(* 0.10 ** 0.05 *** 0.01) varlabels(,el
+> ist(weight:_cons "{break}{hline @width}")) replace 
+(note: file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis\results\Tables\tableS8.rtf not found)
+(output written to C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis\results\Tables\tableS8.rtf)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. * (2) Analysis WIDE format
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. catplot sum_motivation if TL==0, asyvar recast(bar) yla(0(5)20) bargap(20) blabel(bar, format(%9.0f) size(medsmall) pos(outside)  gap(0.1)) title("", size(large))  b1
+> title("") legend(ring(0) pos(12) rows(2) size(small)) xsize(3.45)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. pwcorr motivation dcompetitor term secretelec  if TL==0, sig
+
+             | motiva~n dcompe~r     term secret~c
+-------------+------------------------------------
+  motivation |   1.0000 
+             |
+             |
+ dcompetitor |  -0.1601   1.0000 
+             |   0.3815
+             |
+        term |   0.1078   0.1314   1.0000 
+             |   0.5572   0.4736
+             |
+  secretelec |   0.0843  -0.1778  -0.1321   1.0000 
+             |   0.6519   0.3386   0.4787
+             |
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. sum z_satisfaction
+variable z_satisfaction not found
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. egen z_satisfaction = std(satisfaction_leader)
+(64 missing values generated)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. tab group_leader_type, gen(leader_type)
+
+  group_leader_type |      Freq.     Percent        Cum.
+--------------------+-----------------------------------
+      True-democrat |        287       64.06       64.06
+    Pseudo-democrat |         63       14.06       78.13
+        Paternalist |         35        7.81       85.94
+           Dictator |         42        9.38       95.31
+Benevolent-dictator |         21        4.69      100.00
+--------------------+-----------------------------------
+              Total |        448      100.00
+
+. 
+end of do-file
+
+. sum z_satisfaction
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+z_satisfac~n |        384   -5.30e-09           1  -3.591013   1.817514
+
+. tab satisfaction_TL
+
+satisfactio |
+       n_TL |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       1.75 |          1        0.52        0.52
+          2 |          1        0.52        1.04
+       2.25 |          1        0.52        1.56
+        2.5 |          1        0.52        2.08
+      2.625 |          1        0.52        2.60
+       2.75 |          1        0.52        3.13
+      2.875 |          2        1.04        4.17
+          3 |          3        1.56        5.73
+      3.125 |          3        1.56        7.29
+       3.25 |          5        2.60        9.90
+      3.375 |          1        0.52       10.42
+        3.5 |          8        4.17       14.58
+      3.625 |          5        2.60       17.19
+       3.75 |          7        3.65       20.83
+      3.875 |          7        3.65       24.48
+          4 |         26       13.54       38.02
+      4.125 |          8        4.17       42.19
+       4.25 |         33       17.19       59.38
+      4.375 |          4        2.08       61.46
+        4.5 |         68       35.42       96.88
+      4.625 |          1        0.52       97.40
+       4.75 |          5        2.60      100.00
+------------+-----------------------------------
+      Total |        192      100.00
+
+. tab satisfaction_DEL
+
+satisfactio |
+      n_DEL |      Freq.     Percent        Cum.
+------------+-----------------------------------
+        1.4 |          1        0.52        0.52
+        1.8 |          2        1.04        1.56
+        2.2 |          7        3.65        5.21
+        2.6 |         19        9.90       15.10
+        2.8 |          7        3.65       18.75
+          3 |         21       10.94       29.69
+        3.2 |          7        3.65       33.33
+        3.4 |         31       16.15       49.48
+        3.6 |         12        6.25       55.73
+        3.8 |         32       16.67       72.40
+          4 |         10        5.21       77.60
+        4.2 |         36       18.75       96.35
+        4.4 |          1        0.52       96.88
+        4.6 |          2        1.04       97.92
+        4.8 |          3        1.56       99.48
+          5 |          1        0.52      100.00
+------------+-----------------------------------
+      Total |        192      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. bysort group_leader_type: sum satisfaction_leader
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = True-democrat
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |        246    3.827134    .6666073       1.75          5
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = Pseudo-democrat
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |         54    3.626852    .7306603        2.2        4.6
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = Paternalist
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |         30    3.844167    .5952282        2.6       4.75
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = Dictator
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |         36       3.725    .5777419        2.6        4.5
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = Benevolent-dictator
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |         18    3.816667    .7085611        1.4        4.5
+
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. reg z_satisfaction leader_type2 leader_type3 leader_type4 leader_type5 i.village, vce(robust)
+
+Linear regression                               Number of obs     =        384
+                                                F(35, 348)        =       1.58
+                                                Prob > F          =     0.0230
+                                                R-squared         =     0.1271
+                                                Root MSE          =     .98017
+
+------------------------------------------------------------------------------------
+                   |               Robust
+    z_satisfaction |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------+----------------------------------------------------------------
+      leader_type2 |  -.6611698    .208875    -3.17   0.002    -1.071986   -.2503536
+      leader_type3 |  -.2920114    .214623    -1.36   0.175    -.7141328    .1301101
+      leader_type4 |  -.4457453    .220525    -2.02   0.044    -.8794748   -.0120157
+      leader_type5 |   -.568856   .3146655    -1.81   0.071    -1.187741    .0500294
+                   |
+           village |
+            Ehafo  |   .2816941   .4406489     0.64   0.523     -.584976    1.148364
+           Endola  |   .1647852   .4608402     0.36   0.721    -.7415971    1.071168
+        Epatululo  |   .5070494   .4781111     1.06   0.290    -.4333015      1.4474
+            Epuku  |  -.2703627   .4603237    -0.59   0.557    -1.175729     .635004
+            Etale  |  -.2734926   .5295272    -0.52   0.606    -1.314969    .7679837
+         Etilashi  |   .0657285   .5410536     0.12   0.903    -.9984181    1.129875
+           Etomba  |  -.3036037   .4349979    -0.70   0.486     -1.15916     .551952
+        Ohangwena  |   .3807507   .4368951     0.87   0.384    -.4785364    1.240038
+       Oipapakane  |   .3098634   .4577618     0.68   0.499    -.5904644    1.210191
+          Okadiwa  |   .5539985   .4237442     1.31   0.192    -.2794234     1.38742
+          Okafitu  |   .2875579   .4625024     0.62   0.535    -.6220938     1.19721
+           Okakwa  |   .2336439   .4366642     0.54   0.593    -.6251892    1.092477
+         Okangudi  |   .5778497   .4702996     1.23   0.220    -.3471375    1.502837
+        Okapundja  |     .66628   .4807188     1.39   0.167    -.2791997     1.61176
+          Okatale  |    .200963   .4460237     0.45   0.653    -.6762783    1.078204
+         Okelemba  |   .2190954   .4276179     0.51   0.609    -.6219453    1.060136
+         Omahenge  |   .4006316   .4696826     0.85   0.394    -.5231421    1.324405
+         Omakango  |  -.0594688   .4918662    -0.12   0.904    -1.026873    .9079357
+         Omalyata  |   .3449401    .460573     0.75   0.454    -.5609169    1.250797
+          Omaputo  |  -.1502369   .4760151    -0.32   0.752    -1.086466    .7859916
+          Omukuve  |   .3574597   .4513268     0.79   0.429    -.5302117    1.245131
+Omutwe Oshimbungu  |   .1752763   .4832945     0.36   0.717    -.7752695    1.125822
+         Onangwhe  |   .7987806   .4775939     1.67   0.095    -.1405532    1.738114
+    Onekwaya East  |   .7645445   .4521417     1.69   0.092    -.1247297    1.653819
+    Onekwaya West  |  -.3536827   .5304743    -0.67   0.505    -1.397022    .6896564
+         Onengali  |   .8570611   .4781265     1.79   0.074    -.0833201    1.797442
+          Ongonga  |   .3030627   .5027781     0.60   0.547    -.6858034    1.291929
+        Onheleiwa  |   1.259779    .452481     2.78   0.006     .3698379    2.149721
+      Oshikwiyu 1  |   .9679903   .4408178     2.20   0.029     .1009881    1.834993
+      Oshikwiyu 2  |    .046949   .4978082     0.09   0.925    -.9321423     1.02604
+          Ouhongo  |   .7186967   .4882986     1.47   0.142     -.241691    1.679084
+                   |
+             _cons |  -.1293054     .36416    -0.36   0.723    -.8455369    .5869261
+------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. reg satisfaction_leader leader_type2 leader_type3 leader_type4 leader_type5 i.village, vce(robust)
+
+Linear regression                               Number of obs     =        384
+                                                F(35, 348)        =       1.58
+                                                Prob > F          =     0.0230
+                                                R-squared         =     0.1271
+                                                Root MSE          =     .65242
+
+------------------------------------------------------------------------------------
+                   |               Robust
+satisfaction_lea~r |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------+----------------------------------------------------------------
+      leader_type2 |  -.4400849   .1390304    -3.17   0.002    -.7135305   -.1666393
+      leader_type3 |  -.1943673   .1428564    -1.36   0.175    -.4753379    .0866033
+      leader_type4 |   -.296695   .1467849    -2.02   0.044    -.5853921   -.0079978
+      leader_type5 |  -.3786394   .2094462    -1.81   0.071    -.7905792    .0333003
+                   |
+           village |
+            Ehafo  |   .1874999   .2933028     0.64   0.523    -.3893691     .764369
+           Endola  |   .1096836   .3067424     0.36   0.721    -.4936186    .7129858
+        Epatululo  |      .3375   .3182382     1.06   0.290    -.2884122    .9634122
+            Epuku  |  -.1799576   .3063986    -0.59   0.557    -.7825837    .4226686
+            Etale  |  -.1820409   .3524615    -0.52   0.606    -.8752638    .5111819
+         Etilashi  |   .0437499   .3601337     0.12   0.903    -.6645626    .7520624
+           Etomba  |  -.2020834   .2895414    -0.70   0.486    -.7715546    .3673879
+        Ohangwena  |   .2534336   .2908042     0.87   0.384    -.3185213    .8253884
+       Oipapakane  |   .2062499   .3046934     0.68   0.499    -.3930223    .8055221
+          Okadiwa  |     .36875   .2820507     1.31   0.192    -.1859885    .9234885
+          Okafitu  |    .191403   .3078488     0.62   0.535    -.4140753    .7968813
+           Okakwa  |    .155517   .2906505     0.54   0.593    -.4161357    .7271696
+         Okangudi  |   .3846257   .3130387     1.23   0.220    -.2310601    1.000312
+        Okapundja  |   .4434863   .3199739     1.39   0.167    -.1858397    1.072812
+          Okatale  |   .1337641   .2968803     0.45   0.653    -.4501413    .7176695
+         Okelemba  |   .1458333   .2846291     0.51   0.609    -.4139764     .705643
+         Omahenge  |   .2666666    .312628     0.85   0.394    -.3482115    .8815447
+         Omakango  |  -.0395834   .3273938    -0.12   0.904    -.6835029    .6043361
+         Omalyata  |   .2295975   .3065646     0.75   0.454     -.373355      .83255
+          Omaputo  |        -.1   .3168431    -0.32   0.752    -.7231683    .5231682
+          Omukuve  |   .2379307   .3004101     0.79   0.429    -.3529172    .8287786
+Omutwe Oshimbungu  |   .1166666   .3216884     0.36   0.717    -.5160314    .7493646
+         Onangwhe  |   .5316808   .3178939     1.67   0.095    -.0935544    1.156916
+    Onekwaya East  |   .5088927   .3009526     1.69   0.092     -.083022    1.100807
+    Onekwaya West  |  -.2354167    .353092    -0.67   0.505    -.9298795     .459046
+         Onengali  |   .5704732   .3182484     1.79   0.074    -.0554591    1.196406
+          Ongonga  |   .2017232   .3346569     0.60   0.547    -.4564814    .8599278
+        Onheleiwa  |   .8385287   .3011784     2.78   0.006     .2461698    1.430888
+      Oshikwiyu 1  |   .6443094   .2934152     2.20   0.029     .0672192      1.2214
+      Oshikwiyu 2  |     .03125   .3313489     0.09   0.925    -.6204484    .6829483
+          Ouhongo  |   .4783757   .3250191     1.47   0.142    -.1608733    1.117625
+                   |
+             _cons |   3.704167   .2423906    15.28   0.000     3.227432    4.180902
+------------------------------------------------------------------------------------
+
+. est store satisfaction
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. 
+. coefplot (satisfaction), keep(leader_type2 leader_type3 leader_type4 leader_type5) coeflabels(leader_type2= "Pseudo Democrat" leader_type3 = "Paternalist" leader_type
+> 4 = "Dictator" leader_type5 = "Benevolent Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Regression estimated imppact relative to 'True Democrats'") xla(-1(
+> 0.25)1, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)   recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", 
+> "")))) mlabsize(8pt) mlabposition(12) mlabgap(-0.1) 
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. gr save "$working_ANALYSIS/results/intermediate/figure5.gph", replace
+(note: file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/intermediate/figure5.gph not found)
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/intermediate/figure5.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure5.tif", replace width(3465)
+(note: file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/figures/figure5.tif not found)
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/figures/figure5.tif written in TIFF format)
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. coefplot (satisfaction), keep(leader_type2 leader_type3 leader_type4 leader_type5) coeflabels(leader_type2= "Pseudo Democrat" leader_type3 = "Paternalist" leader_type
+> 4 = "Dictator" leader_type5 = "Benevolent Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Regression estimated imppact relative to 'True Democrats'") xla(-1(
+> 0.25)1, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)   recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", 
+> "")))) mlabsize(9pt) mlabposition(12) mlabgap(-0.1) 
+
+. gr save "$working_ANALYSIS/results/intermediate/figure5.gph", replace
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/intermediate/figure5.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure5.tif", replace width(3465)
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/figures/figure5.tif written in TIFF format)
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. reg satisfaction_leader leader_type2 leader_type3 leader_type4 leader_type5, vce(robust)
+
+Linear regression                               Number of obs     =        384
+                                                F(4, 379)         =       1.05
+                                                Prob > F          =     0.3811
+                                                R-squared         =     0.0120
+                                                Root MSE          =     .66511
+
+------------------------------------------------------------------------------
+             |               Robust
+satisfacti~r |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+leader_type2 |  -.2002823    .107954    -1.86   0.064     -.412546    .0119815
+leader_type3 |   .0170325   .1157134     0.15   0.883    -.2104881    .2445532
+leader_type4 |  -.1021342   .1046707    -0.98   0.330    -.3079421    .1036738
+leader_type5 |  -.0104675   .1688576    -0.06   0.951    -.3424825    .3215475
+       _cons |   3.827134   .0426937    89.64   0.000     3.743188     3.91108
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. coefplot (satisfaction), keep(leader_type2 leader_type3 leader_type4 leader_type5) coeflabels(leader_type2= "Pseudo Democrat" leader_type3 = "Paternalist" leader_type
+> 4 = "Dictator" leader_type5 = "Benevolent Dictator") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Regression estimated imppact relative to 'True Democrats'") xla(-1(
+> 0.25)0.25, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)   recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*
+> ", "")))) mlabsize(9pt) mlabposition(12) mlabgap(-0.1) 
+
+. gr save "$working_ANALYSIS/results/intermediate/figure5.gph", replace
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/intermediate/figure5.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure5.tif", replace width(3465)
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/figures/figure5.tif written in TIFF format)
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. eststo reg_satisfaction: z_satisfaction leader_type2 leader_type3 leader_type4 leader_type5 i.village, vce(robust)
+command z_satisfaction is unrecognized
+r(199);
+
+end of do-file
+
+r(199);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. eststo reg_satisfaction: reg satisfaction_leader leader_type2 leader_type3 leader_type4 leader_type5 i.village, vce(robust)
+
+Linear regression                               Number of obs     =        384
+                                                F(35, 348)        =       1.58
+                                                Prob > F          =     0.0230
+                                                R-squared         =     0.1271
+                                                Root MSE          =     .65242
+
+------------------------------------------------------------------------------------
+                   |               Robust
+satisfaction_lea~r |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------+----------------------------------------------------------------
+      leader_type2 |  -.4400849   .1390304    -3.17   0.002    -.7135305   -.1666393
+      leader_type3 |  -.1943673   .1428564    -1.36   0.175    -.4753379    .0866033
+      leader_type4 |   -.296695   .1467849    -2.02   0.044    -.5853921   -.0079978
+      leader_type5 |  -.3786394   .2094462    -1.81   0.071    -.7905792    .0333003
+                   |
+           village |
+            Ehafo  |   .1874999   .2933028     0.64   0.523    -.3893691     .764369
+           Endola  |   .1096836   .3067424     0.36   0.721    -.4936186    .7129858
+        Epatululo  |      .3375   .3182382     1.06   0.290    -.2884122    .9634122
+            Epuku  |  -.1799576   .3063986    -0.59   0.557    -.7825837    .4226686
+            Etale  |  -.1820409   .3524615    -0.52   0.606    -.8752638    .5111819
+         Etilashi  |   .0437499   .3601337     0.12   0.903    -.6645626    .7520624
+           Etomba  |  -.2020834   .2895414    -0.70   0.486    -.7715546    .3673879
+        Ohangwena  |   .2534336   .2908042     0.87   0.384    -.3185213    .8253884
+       Oipapakane  |   .2062499   .3046934     0.68   0.499    -.3930223    .8055221
+          Okadiwa  |     .36875   .2820507     1.31   0.192    -.1859885    .9234885
+          Okafitu  |    .191403   .3078488     0.62   0.535    -.4140753    .7968813
+           Okakwa  |    .155517   .2906505     0.54   0.593    -.4161357    .7271696
+         Okangudi  |   .3846257   .3130387     1.23   0.220    -.2310601    1.000312
+        Okapundja  |   .4434863   .3199739     1.39   0.167    -.1858397    1.072812
+          Okatale  |   .1337641   .2968803     0.45   0.653    -.4501413    .7176695
+         Okelemba  |   .1458333   .2846291     0.51   0.609    -.4139764     .705643
+         Omahenge  |   .2666666    .312628     0.85   0.394    -.3482115    .8815447
+         Omakango  |  -.0395834   .3273938    -0.12   0.904    -.6835029    .6043361
+         Omalyata  |   .2295975   .3065646     0.75   0.454     -.373355      .83255
+          Omaputo  |        -.1   .3168431    -0.32   0.752    -.7231683    .5231682
+          Omukuve  |   .2379307   .3004101     0.79   0.429    -.3529172    .8287786
+Omutwe Oshimbungu  |   .1166666   .3216884     0.36   0.717    -.5160314    .7493646
+         Onangwhe  |   .5316808   .3178939     1.67   0.095    -.0935544    1.156916
+    Onekwaya East  |   .5088927   .3009526     1.69   0.092     -.083022    1.100807
+    Onekwaya West  |  -.2354167    .353092    -0.67   0.505    -.9298795     .459046
+         Onengali  |   .5704732   .3182484     1.79   0.074    -.0554591    1.196406
+          Ongonga  |   .2017232   .3346569     0.60   0.547    -.4564814    .8599278
+        Onheleiwa  |   .8385287   .3011784     2.78   0.006     .2461698    1.430888
+      Oshikwiyu 1  |   .6443094   .2934152     2.20   0.029     .0672192      1.2214
+      Oshikwiyu 2  |     .03125   .3313489     0.09   0.925    -.6204484    .6829483
+          Ouhongo  |   .4783757   .3250191     1.47   0.142    -.1608733    1.117625
+                   |
+             _cons |   3.704167   .2423906    15.28   0.000     3.227432    4.180902
+------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. help reg
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. esttab reg_satisfaction using "$working_ANALYSIS\results\Tables\tableS8.rtf",  ci transform(ln*: exp(@) exp(@))mtitles("Satisfaction") b(%4.2f) eqlabels("" "lnsig2u",
+>  none) stats(N N_g r2 r2_a , labels("N" "Individuals" "R-squared" "Adjusted R-squared") fmt(%4.0f %4.0f %4.2f)) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:
+> _cons "{break}{hline @width}")) replace 
+(output written to C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis\results\Tables\tableS8.rtf)
+
+. 
+end of do-file
+
+. help esttab
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. esttab reg_satisfaction using "$working_ANALYSIS\results\Tables\tableS8.rtf", keep(leader_type2 leader_type3 leader_type4 leader_type5) ci transform(ln*: exp(@) exp(@
+> ))mtitles("Satisfaction") b(%4.2f) eqlabels("" "lnsig2u", none) stats(N N_g r2 r2_a , labels("N" "Individuals" "R-squared" "Adjusted R-squared") fmt(%4.0f %4.0f %4.2f
+> )) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:_cons "{break}{hline @width}")) replace 
+file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis\results\Tables\tableS8.rtf is read-only; cannot be modified or erased
+r(608);
+
+end of do-file
+
+r(608);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. 
+. esttab reg_satisfaction using "$working_ANALYSIS\results\Tables\tableS8.rtf", keep(leader_type2 leader_type3 leader_type4 leader_type5) ci transform(ln*: exp(@) exp(@
+> ))mtitles("Satisfaction") b(%4.2f) eqlabels("" "lnsig2u", none) stats(N N_g r2 r2_a , labels("N" "Individuals" "R-squared" "Adjusted R-squared") fmt(%4.0f %4.0f %4.2f
+> )) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:_cons "{break}{hline @width}")) replace 
+(output written to C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis\results\Tables\tableS8.rtf)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. vioplot satisfaction_leader, over(group_leader_type) obs
+command vioplot is unrecognized
+r(199);
+
+end of do-file
+
+r(199);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. catplot performance_leader, over(group_leader_type) recast(hbar) asyvar stack percent(group_leader_type) yla(`pctlabel', nogrid) blabel(bar, format(%9.0f) size(medium
+> ) pos(center)) title("{bf:a }Satisfied with peformance of the leader?")  l1title("")  b1title("") legend(rows(3) pos(6) ring(1)) xsize(3.465) ysize(2)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. catplot e_5 if game1_group==13, over(group_leader_type) asyvars stack percent(group_leader_type)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD15f4_000000.tmp"
+
+. eststo reg_satisfaction: reg satisfaction_leader leader_type2 leader_type3 leader_type4 leader_type5 i.village, vce(robust)
+
+Linear regression                               Number of obs     =        384
+                                                F(35, 348)        =       1.58
+                                                Prob > F          =     0.0230
+                                                R-squared         =     0.1271
+                                                Root MSE          =     .65242
+
+------------------------------------------------------------------------------------
+                   |               Robust
+satisfaction_lea~r |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------+----------------------------------------------------------------
+      leader_type2 |  -.4400849   .1390304    -3.17   0.002    -.7135305   -.1666393
+      leader_type3 |  -.1943673   .1428564    -1.36   0.175    -.4753379    .0866033
+      leader_type4 |   -.296695   .1467849    -2.02   0.044    -.5853921   -.0079978
+      leader_type5 |  -.3786394   .2094462    -1.81   0.071    -.7905792    .0333003
+                   |
+           village |
+            Ehafo  |   .1874999   .2933028     0.64   0.523    -.3893691     .764369
+           Endola  |   .1096836   .3067424     0.36   0.721    -.4936186    .7129858
+        Epatululo  |      .3375   .3182382     1.06   0.290    -.2884122    .9634122
+            Epuku  |  -.1799576   .3063986    -0.59   0.557    -.7825837    .4226686
+            Etale  |  -.1820409   .3524615    -0.52   0.606    -.8752638    .5111819
+         Etilashi  |   .0437499   .3601337     0.12   0.903    -.6645626    .7520624
+           Etomba  |  -.2020834   .2895414    -0.70   0.486    -.7715546    .3673879
+        Ohangwena  |   .2534336   .2908042     0.87   0.384    -.3185213    .8253884
+       Oipapakane  |   .2062499   .3046934     0.68   0.499    -.3930223    .8055221
+          Okadiwa  |     .36875   .2820507     1.31   0.192    -.1859885    .9234885
+          Okafitu  |    .191403   .3078488     0.62   0.535    -.4140753    .7968813
+           Okakwa  |    .155517   .2906505     0.54   0.593    -.4161357    .7271696
+         Okangudi  |   .3846257   .3130387     1.23   0.220    -.2310601    1.000312
+        Okapundja  |   .4434863   .3199739     1.39   0.167    -.1858397    1.072812
+          Okatale  |   .1337641   .2968803     0.45   0.653    -.4501413    .7176695
+         Okelemba  |   .1458333   .2846291     0.51   0.609    -.4139764     .705643
+         Omahenge  |   .2666666    .312628     0.85   0.394    -.3482115    .8815447
+         Omakango  |  -.0395834   .3273938    -0.12   0.904    -.6835029    .6043361
+         Omalyata  |   .2295975   .3065646     0.75   0.454     -.373355      .83255
+          Omaputo  |        -.1   .3168431    -0.32   0.752    -.7231683    .5231682
+          Omukuve  |   .2379307   .3004101     0.79   0.429    -.3529172    .8287786
+Omutwe Oshimbungu  |   .1166666   .3216884     0.36   0.717    -.5160314    .7493646
+         Onangwhe  |   .5316808   .3178939     1.67   0.095    -.0935544    1.156916
+    Onekwaya East  |   .5088927   .3009526     1.69   0.092     -.083022    1.100807
+    Onekwaya West  |  -.2354167    .353092    -0.67   0.505    -.9298795     .459046
+         Onengali  |   .5704732   .3182484     1.79   0.074    -.0554591    1.196406
+          Ongonga  |   .2017232   .3346569     0.60   0.547    -.4564814    .8599278
+        Onheleiwa  |   .8385287   .3011784     2.78   0.006     .2461698    1.430888
+      Oshikwiyu 1  |   .6443094   .2934152     2.20   0.029     .0672192      1.2214
+      Oshikwiyu 2  |     .03125   .3313489     0.09   0.925    -.6204484    .6829483
+          Ouhongo  |   .4783757   .3250191     1.47   0.142    -.1608733    1.117625
+                   |
+             _cons |   3.704167   .2423906    15.28   0.000     3.227432    4.180902
+------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. exit, clear

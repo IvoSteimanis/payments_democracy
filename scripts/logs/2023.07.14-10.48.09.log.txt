@@ -1,0 +1,1808 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.07.14-10.48.09.log.txt
+  log type:  text
+ opened on:  14 Jul 2023, 10:48:09
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 14 Jul 2023 10:48:09
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. 
+end of do-file
+
+. tab b8b
+
+        WPC takes |
+   decisions in a |
+way that they are |
+   understandable |
+   for the people |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Don’t know |        192      100.00      100.00
+------------------+-----------------------------------
+            Total |        192      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+. * Table 1.      Participants characteristics
+. 
+end of do-file
+
+. tab b8b
+
+        WPC takes |
+   decisions in a |
+way that they are |
+   understandable |
+   for the people |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+Strongly disagree |         22        4.91        4.91
+Disagree a little |         13        2.90        7.81
+   Agree a little |         30        6.70       14.51
+   Strongly agree |        252       56.25       70.76
+       Don’t know |        131       29.24      100.00
+------------------+-----------------------------------
+            Total |        448      100.00
+
+. tab b8b if villager==1
+
+        WPC takes |
+   decisions in a |
+way that they are |
+   understandable |
+   for the people |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+Strongly disagree |         22        5.73        5.73
+Disagree a little |         13        3.39        9.11
+   Agree a little |         30        7.81       16.93
+   Strongly agree |        252       65.63       82.55
+       Don’t know |         67       17.45      100.00
+------------------+-----------------------------------
+            Total |        384      100.00
+
+. di 3/32
+.09375
+
+. di 4/43
+.09302326
+
+. di 5/32
+.15625
+
+. di 4/32
+.125
+
+. di 9/32
+.28125
+
+. power pairedmeans, corr(0.38) altdiff(0(0.05)0.2) n(128)
+
+Estimated power for a two-sample paired-means test
+Paired t test assuming sd1 = sd2 = sd
+Ho: d = d0  versus  Ha: d != d0
+
+  +-------------------------------------------------------------------------+
+  |   alpha   power       N   delta      d0      da    sd_d      sd    corr |
+  |-------------------------------------------------------------------------|
+  |     .05       .     128       0       0       0   1.114       1     .38 |
+  |     .05  .07959     128   .0449       0     .05   1.114       1     .38 |
+  |     .05   .1721     128   .0898       0      .1   1.114       1     .38 |
+  |     .05   .3275     128   .1347       0     .15   1.114       1     .38 |
+  |     .05   .5226     128   .1796       0      .2   1.114       1     .38 |
+  +-------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. power pairedproportions 0.64, corr(0.4) diff(0(0.05)0.3) n(128)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64      .4       0 |
+  |     .05   .1922     128     .05     .64     .69      .4     .05 |
+  |     .05   .5968     128      .1     .64     .74      .4      .1 |
+  |     .05   .9215     128     .15     .64     .79      .4     .15 |
+  |     .05    .996     128      .2     .64     .84      .4      .2 |
+  |     .05       1     128     .25     .64     .89      .4     .25 |
+  |     .05       .     128       .     .64     .94      .4      .3 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.4) diff(0(0.05)0.3) n(128), graph
+invalid syntax
+r(198);
+
+end of do-file
+
+r(198);
+
+. help power pairedproportions
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. pwcorr rule1 rule5 rule6
+
+             |    rule1    rule5    rule6
+-------------+---------------------------
+       rule1 |   1.0000 
+       rule5 |   0.2963   1.0000 
+       rule6 |   0.2542   0.5340   1.0000 
+
+. di (0.39+0.25+0.53)/3
+.39
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05    .983      64     .25     .64     .89     .39     .25 |
+  |     .05       .      64       .     .64     .94     .39      .3 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) n(64) graph
+
+Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) n(64) graph
+
+Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) n(64) 
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05    .983      64     .25     .64     .89     .39     .25 |
+  |     .05       .      64       .     .64     .94     .39      .3 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) alpha(0.05 0.1) power(0.8) n(150 300)
+Options corr(), rrisk(), oratio(), ratio(), and diff() are not allowed with effect-size computation
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) alpha(0.05 0.1) power(0.8) n(64)
+Options corr(), rrisk(), oratio(), ratio(), and diff() are not allowed with effect-size computation
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64(0.05)0.9, corr(0.39) alpha(0.05 0.1) power(0.8) n(64)
+Options corr(), rrisk(), oratio(), ratio(), and diff() are not allowed with effect-size computation
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64(0.05)0.9, corr(0.39) power(0.8) n(64)
+Options corr(), rrisk(), oratio(), ratio(), and diff() are not allowed with effect-size computation
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64 (0.64(0.05)0.9), corr(0.39) power(0.8) n(64)
+Options corr(), rrisk(), oratio(), ratio(), and diff() are not allowed with effect-size computation
+r(198);
+
+end of do-file
+
+r(198);
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05    .983      64     .25     .64     .89     .39     .25 |
+  |     .05       .      64       .     .64     .94     .39      .3 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3)
+
+Performing iteration ...
+
+Estimated sample size for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05      .8       .       .     .64     .64     .39       0 |
+  |     .05      .8     857     .05     .64     .69     .39     .05 |
+  |     .05      .8     209      .1     .64     .74     .39      .1 |
+  |     .05      .8      91     .15     .64     .79     .39     .15 |
+  |     .05      .8      51      .2     .64     .84     .39      .2 |
+  |     .05      .8      32     .25     .64     .89     .39     .25 |
+  |     .05      .8       .       .     .64     .94     .39      .3 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) alpha(0.05 0.1)
+
+Performing iteration ...
+
+Estimated sample size for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05      .8       .       .     .64     .64     .39       0 |
+  |     .05      .8     857     .05     .64     .69     .39     .05 |
+  |     .05      .8     209      .1     .64     .74     .39      .1 |
+  |     .05      .8      91     .15     .64     .79     .39     .15 |
+  |     .05      .8      51      .2     .64     .84     .39      .2 |
+  |     .05      .8      32     .25     .64     .89     .39     .25 |
+  |     .05      .8       .       .     .64     .94     .39      .3 |
+  |     .05      .8       .       .     .64     .64     .39       0 |
+  |      .1      .8     675     .05     .64     .69     .39     .05 |
+  |      .1      .8     164      .1     .64     .74     .39      .1 |
+  |      .1      .8      72     .15     .64     .79     .39     .15 |
+  |      .1      .8      40      .2     .64     .84     .39      .2 |
+  |      .1      .8      25     .25     .64     .89     .39     .25 |
+  |      .1      .8       .       .     .64     .94     .39      .3 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.25) alpha(0.05 0.1)
+
+Performing iteration ...
+
+Estimated sample size for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05      .8       .       .     .64     .64     .39       0 |
+  |     .05      .8   21930     .01     .64     .65     .39     .01 |
+  |     .05      .8   5,450     .02     .64     .66     .39     .02 |
+  |     .05      .8   2,408     .03     .64     .67     .39     .03 |
+  |     .05      .8   1,347     .04     .64     .68     .39     .04 |
+  |     .05      .8     857     .05     .64     .69     .39     .05 |
+  |     .05      .8     592     .06     .64      .7     .39     .06 |
+  |     .05      .8     433     .07     .64     .71     .39     .07 |
+  |     .05      .8     330     .08     .64     .72     .39     .08 |
+  |     .05      .8     259     .09     .64     .73     .39     .09 |
+  |     .05      .8     209      .1     .64     .74     .39      .1 |
+  |     .05      .8     172     .11     .64     .75     .39     .11 |
+  |     .05      .8     144     .12     .64     .76     .39     .12 |
+  |     .05      .8     122     .13     .64     .77     .39     .13 |
+  |     .05      .8     105     .14     .64     .78     .39     .14 |
+  |     .05      .8      91     .15     .64     .79     .39     .15 |
+  |     .05      .8      80     .16     .64      .8     .39     .16 |
+  |     .05      .8      70     .17     .64     .81     .39     .17 |
+  |     .05      .8      63     .18     .64     .82     .39     .18 |
+  |     .05      .8      56     .19     .64     .83     .39     .19 |
+  |     .05      .8      51      .2     .64     .84     .39      .2 |
+  |     .05      .8      46     .21     .64     .85     .39     .21 |
+  |     .05      .8      42     .22     .64     .86     .39     .22 |
+  |     .05      .8      38     .23     .64     .87     .39     .23 |
+  |     .05      .8      35     .24     .64     .88     .39     .24 |
+  |     .05      .8      32     .25     .64     .89     .39     .25 |
+  |     .05      .8       .       .     .64     .64     .39       0 |
+  |      .1      .8   17273     .01     .64     .65     .39     .01 |
+  |      .1      .8   4,293     .02     .64     .66     .39     .02 |
+  |      .1      .8   1,897     .03     .64     .67     .39     .03 |
+  |      .1      .8   1,061     .04     .64     .68     .39     .04 |
+  |      .1      .8     675     .05     .64     .69     .39     .05 |
+  |      .1      .8     466     .06     .64      .7     .39     .06 |
+  |      .1      .8     341     .07     .64     .71     .39     .07 |
+  |      .1      .8     259     .08     .64     .72     .39     .08 |
+  |      .1      .8     204     .09     .64     .73     .39     .09 |
+  |      .1      .8     164      .1     .64     .74     .39      .1 |
+  |      .1      .8     135     .11     .64     .75     .39     .11 |
+  |      .1      .8     113     .12     .64     .76     .39     .12 |
+  |      .1      .8      96     .13     .64     .77     .39     .13 |
+  |      .1      .8      82     .14     .64     .78     .39     .14 |
+  |      .1      .8      72     .15     .64     .79     .39     .15 |
+  |      .1      .8      63     .16     .64      .8     .39     .16 |
+  |      .1      .8      55     .17     .64     .81     .39     .17 |
+  |      .1      .8      49     .18     .64     .82     .39     .18 |
+  |      .1      .8      44     .19     .64     .83     .39     .19 |
+  |      .1      .8      40      .2     .64     .84     .39      .2 |
+  |      .1      .8      36     .21     .64     .85     .39     .21 |
+  |      .1      .8      33     .22     .64     .86     .39     .22 |
+  |      .1      .8      30     .23     .64     .87     .39     .23 |
+  |      .1      .8      28     .24     .64     .88     .39     .24 |
+  |      .1      .8      25     .25     .64     .89     .39     .25 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) alpha(0.05 0.1)
+
+Performing iteration ...
+
+Estimated sample size for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05      .8       .       .     .64     .64     .39       0 |
+  |     .05      .8   21930     .01     .64     .65     .39     .01 |
+  |     .05      .8   5,450     .02     .64     .66     .39     .02 |
+  |     .05      .8   2,408     .03     .64     .67     .39     .03 |
+  |     .05      .8   1,347     .04     .64     .68     .39     .04 |
+  |     .05      .8     857     .05     .64     .69     .39     .05 |
+  |     .05      .8     592     .06     .64      .7     .39     .06 |
+  |     .05      .8     433     .07     .64     .71     .39     .07 |
+  |     .05      .8     330     .08     .64     .72     .39     .08 |
+  |     .05      .8     259     .09     .64     .73     .39     .09 |
+  |     .05      .8     209      .1     .64     .74     .39      .1 |
+  |     .05      .8     172     .11     .64     .75     .39     .11 |
+  |     .05      .8     144     .12     .64     .76     .39     .12 |
+  |     .05      .8     122     .13     .64     .77     .39     .13 |
+  |     .05      .8     105     .14     .64     .78     .39     .14 |
+  |     .05      .8      91     .15     .64     .79     .39     .15 |
+  |     .05      .8      80     .16     .64      .8     .39     .16 |
+  |     .05      .8      70     .17     .64     .81     .39     .17 |
+  |     .05      .8      63     .18     .64     .82     .39     .18 |
+  |     .05      .8      56     .19     .64     .83     .39     .19 |
+  |     .05      .8      51      .2     .64     .84     .39      .2 |
+  |     .05      .8       .       .     .64     .64     .39       0 |
+  |      .1      .8   17273     .01     .64     .65     .39     .01 |
+  |      .1      .8   4,293     .02     .64     .66     .39     .02 |
+  |      .1      .8   1,897     .03     .64     .67     .39     .03 |
+  |      .1      .8   1,061     .04     .64     .68     .39     .04 |
+  |      .1      .8     675     .05     .64     .69     .39     .05 |
+  |      .1      .8     466     .06     .64      .7     .39     .06 |
+  |      .1      .8     341     .07     .64     .71     .39     .07 |
+  |      .1      .8     259     .08     .64     .72     .39     .08 |
+  |      .1      .8     204     .09     .64     .73     .39     .09 |
+  |      .1      .8     164      .1     .64     .74     .39      .1 |
+  |      .1      .8     135     .11     .64     .75     .39     .11 |
+  |      .1      .8     113     .12     .64     .76     .39     .12 |
+  |      .1      .8      96     .13     .64     .77     .39     .13 |
+  |      .1      .8      82     .14     .64     .78     .39     .14 |
+  |      .1      .8      72     .15     .64     .79     .39     .15 |
+  |      .1      .8      63     .16     .64      .8     .39     .16 |
+  |      .1      .8      55     .17     .64     .81     .39     .17 |
+  |      .1      .8      49     .18     .64     .82     .39     .18 |
+  |      .1      .8      44     .19     .64     .83     .39     .19 |
+  |      .1      .8      40      .2     .64     .84     .39      .2 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05  .05259      64     .01     .64     .65     .39     .01 |
+  |     .05  .06045      64     .02     .64     .66     .39     .02 |
+  |     .05   .0738      64     .03     .64     .67     .39     .03 |
+  |     .05   .0929      64     .04     .64     .68     .39     .04 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .1494      64     .06     .64      .7     .39     .06 |
+  |     .05    .187      64     .07     .64     .71     .39     .07 |
+  |     .05    .231      64     .08     .64     .72     .39     .08 |
+  |     .05   .2808      64     .09     .64     .73     .39     .09 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .3953      64     .11     .64     .75     .39     .11 |
+  |     .05   .4578      64     .12     .64     .76     .39     .12 |
+  |     .05    .522      64     .13     .64     .77     .39     .13 |
+  |     .05   .5862      64     .14     .64     .78     .39     .14 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .7081      64     .16     .64      .8     .39     .16 |
+  |     .05   .7628      64     .17     .64     .81     .39     .17 |
+  |     .05   .8118      64     .18     .64     .82     .39     .18 |
+  |     .05   .8545      64     .19     .64     .83     .39     .19 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05       .      64       .     .64     .64     .39       0 |
+  |      .1   .1038      64     .01     .64     .65     .39     .01 |
+  |      .1   .1154      64     .02     .64     .66     .39     .02 |
+  |      .1   .1346      64     .03     .64     .67     .39     .03 |
+  |      .1   .1616      64     .04     .64     .68     .39     .04 |
+  |      .1    .196      64     .05     .64     .69     .39     .05 |
+  |      .1   .2376      64     .06     .64      .7     .39     .06 |
+  |      .1   .2857      64     .07     .64     .71     .39     .07 |
+  |      .1   .3395      64     .08     .64     .72     .39     .08 |
+  |      .1   .3979      64     .09     .64     .73     .39     .09 |
+  |      .1   .4595      64      .1     .64     .74     .39      .1 |
+  |      .1   .5229      64     .11     .64     .75     .39     .11 |
+  |      .1   .5864      64     .12     .64     .76     .39     .12 |
+  |      .1   .6484      64     .13     .64     .77     .39     .13 |
+  |      .1   .7072      64     .14     .64     .78     .39     .14 |
+  |      .1   .7615      64     .15     .64     .79     .39     .15 |
+  |      .1   .8104      64     .16     .64      .8     .39     .16 |
+  |      .1   .8529      64     .17     .64     .81     .39     .17 |
+  |      .1   .8889      64     .18     .64     .82     .39     .18 |
+  |      .1   .9184      64     .19     .64     .83     .39     .19 |
+  |      .1   .9419      64      .2     .64     .84     .39      .2 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.5)0.2) alpha(0.05 0.1) n(64)
+invalid diff(0);
+    the resulting marginal proportion p+1 is equal to marginal proportion p1+; this is not allowed
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0.01(0.5)0.2) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05  .05259      64     .01     .64     .65     .39     .01 |
+  |      .1   .1038      64     .01     .64     .65     .39     .01 |
+  +-----------------------------------------------------------------+
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0.01(0.05)0.2) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05  .05259      64     .01     .64     .65     .39     .01 |
+  |     .05   .1494      64     .06     .64      .7     .39     .06 |
+  |     .05   .3953      64     .11     .64     .75     .39     .11 |
+  |     .05   .7081      64     .16     .64      .8     .39     .16 |
+  |      .1   .1038      64     .01     .64     .65     .39     .01 |
+  |      .1   .2376      64     .06     .64      .7     .39     .06 |
+  |      .1   .5229      64     .11     .64     .75     .39     .11 |
+  |      .1   .8104      64     .16     .64      .8     .39     .16 |
+  +-----------------------------------------------------------------+
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05    .983      64     .25     .64     .89     .39     .25 |
+  |     .05       .      64       .     .64     .94     .39      .3 |
+  |     .05       .      64       .     .64     .64     .39       0 |
+  |      .1    .196      64     .05     .64     .69     .39     .05 |
+  |      .1   .4595      64      .1     .64     .74     .39      .1 |
+  |      .1   .7615      64     .15     .64     .79     .39     .15 |
+  |      .1   .9419      64      .2     .64     .84     .39      .2 |
+  |      .1   .9934      64     .25     .64     .89     .39     .25 |
+  |      .1       .      64       .     .64     .94     .39      .3 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) alpha(0.05 0.1) n(64) power(0.8)
+Options corr(), rrisk(), oratio(), ratio(), and diff() are not allowed with effect-size computation
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.05)0.3) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05    .983      64     .25     .64     .89     .39     .25 |
+  |     .05       .      64       .     .64     .94     .39      .3 |
+  |     .05       .      64       .     .64     .64     .39       0 |
+  |      .1    .196      64     .05     .64     .69     .39     .05 |
+  |      .1   .4595      64      .1     .64     .74     .39      .1 |
+  |      .1   .7615      64     .15     .64     .79     .39     .15 |
+  |      .1   .9419      64      .2     .64     .84     .39      .2 |
+  |      .1   .9934      64     .25     .64     .89     .39     .25 |
+  |      .1       .      64       .     .64     .94     .39      .3 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05  .05259      64     .01     .64     .65     .39     .01 |
+  |     .05  .06045      64     .02     .64     .66     .39     .02 |
+  |     .05   .0738      64     .03     .64     .67     .39     .03 |
+  |     .05   .0929      64     .04     .64     .68     .39     .04 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .1494      64     .06     .64      .7     .39     .06 |
+  |     .05    .187      64     .07     .64     .71     .39     .07 |
+  |     .05    .231      64     .08     .64     .72     .39     .08 |
+  |     .05   .2808      64     .09     .64     .73     .39     .09 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .3953      64     .11     .64     .75     .39     .11 |
+  |     .05   .4578      64     .12     .64     .76     .39     .12 |
+  |     .05    .522      64     .13     .64     .77     .39     .13 |
+  |     .05   .5862      64     .14     .64     .78     .39     .14 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .7081      64     .16     .64      .8     .39     .16 |
+  |     .05   .7628      64     .17     .64     .81     .39     .17 |
+  |     .05   .8118      64     .18     .64     .82     .39     .18 |
+  |     .05   .8545      64     .19     .64     .83     .39     .19 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05       .      64       .     .64     .64     .39       0 |
+  |      .1   .1038      64     .01     .64     .65     .39     .01 |
+  |      .1   .1154      64     .02     .64     .66     .39     .02 |
+  |      .1   .1346      64     .03     .64     .67     .39     .03 |
+  |      .1   .1616      64     .04     .64     .68     .39     .04 |
+  |      .1    .196      64     .05     .64     .69     .39     .05 |
+  |      .1   .2376      64     .06     .64      .7     .39     .06 |
+  |      .1   .2857      64     .07     .64     .71     .39     .07 |
+  |      .1   .3395      64     .08     .64     .72     .39     .08 |
+  |      .1   .3979      64     .09     .64     .73     .39     .09 |
+  |      .1   .4595      64      .1     .64     .74     .39      .1 |
+  |      .1   .5229      64     .11     .64     .75     .39     .11 |
+  |      .1   .5864      64     .12     .64     .76     .39     .12 |
+  |      .1   .6484      64     .13     .64     .77     .39     .13 |
+  |      .1   .7072      64     .14     .64     .78     .39     .14 |
+  |      .1   .7615      64     .15     .64     .79     .39     .15 |
+  |      .1   .8104      64     .16     .64      .8     .39     .16 |
+  |      .1   .8529      64     .17     .64     .81     .39     .17 |
+  |      .1   .8889      64     .18     .64     .82     .39     .18 |
+  |      .1   .9184      64     .19     .64     .83     .39     .19 |
+  |      .1   .9419      64      .2     .64     .84     .39      .2 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size)xline(0.8, lcolor(538b) lpattern(dash)) yline(0.18, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6)) title("Two-sided
+>  MDES diffference in democratic rule proportioNn" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(1)5, nogrid) ydim
+> ension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style medthin not found in class linestyle, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size)xline(0.8, lcolor(538b) lpattern(dash)) yline(, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6)) title("Two-sided MDE
+> S diffference in democratic rule proportioNn" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(0.05)0.2, nogrid) ydi
+> mension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+something required
+r(100);
+
+end of do-file
+
+r(100);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. *MDES alpha 0.05 --> d=0.18, alpha 0.1 --> d=0.16
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size)xline(0.8, lcolor(538b) lpattern(dash)) yline(, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6)) title("Two-sided MDE
+> S diffference in democratic rule proportion" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(0.05)0.2, nogrid) ydim
+> ension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+something required
+r(100);
+
+end of do-file
+
+r(100);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size)xline(0.8, lcolor(538b) lpattern(dash)) yline(0.18, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6)) title("Two-sided
+>  MDES diffference in democratic rule proportioNn" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(0.05)0.2, nogrid)
+>  ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size)xline(0.8, lcolor(538b) lpattern(dash)) yline(0.17, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6)) title("Two-sided
+>  MDES diffference in democratic rule proportioNn" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(0.05)0.2, nogrid)
+>  ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size)xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6)) title("Two-side
+> d MDES diffference in democratic rule proportioNn" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(0.05)0.2, nogrid
+> ) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.178, lcolor(538b) lpattern(dash)) yline(0.1, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6))
+>  title("Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(
+> 0.05)0.2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1038   .8962      64                                                .01 |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1346   .8654      64                                                .03 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1    .196    .804      64                                                .05 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .2857   .7143      64                                                .07 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .3979   .6021      64                                                .09 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5229   .4771      64                                                .11 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .6484   .3516      64                                                .13 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .7615   .2385      64                                                .15 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8529   .1471      64                                                .17 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9184  .08155      64                                                .19 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.165, lcolor(538b) lpattern(dash)) yline(0.1, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6))
+>  title("Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(
+> 0.05)0.2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1038   .8962      64                                                .01 |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1346   .8654      64                                                .03 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1    .196    .804      64                                                .05 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .2857   .7143      64                                                .07 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .3979   .6021      64                                                .09 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5229   .4771      64                                                .11 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .6484   .3516      64                                                .13 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .7615   .2385      64                                                .15 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8529   .1471      64                                                .17 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9184  .08155      64                                                .19 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.165, lcolor(538b) lpattern(dash)) yline(0.8, lcolor(538b) lpattern(dash)) legend(ring(1) rows(1) pos(6))
+>  title("Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(
+> 0.05)0.2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1038   .8962      64                                                .01 |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1346   .8654      64                                                .03 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1    .196    .804      64                                                .05 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .2857   .7143      64                                                .07 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .3979   .6021      64                                                .09 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5229   .4771      64                                                .11 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .6484   .3516      64                                                .13 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .7615   .2385      64                                                .15 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8529   .1471      64                                                .17 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9184  .08155      64                                                .19 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lcolor(538b) lpattern(dash)) yline(0.1568, lcolor(538y) lpa
+> ttern(dash)) legend(ring(1) rows(1) pos(6)) title("Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xd
+> imension(power) xla(0(0.1)1, nogrid) yla(0(0.05)0.2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1038   .8962      64                                                .01 |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1346   .8654      64                                                .03 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1    .196    .804      64                                                .05 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .2857   .7143      64                                                .07 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .3979   .6021      64                                                .09 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5229   .4771      64                                                .11 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .6484   .3516      64                                                .13 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .7615   .2385      64                                                .15 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8529   .1471      64                                                .17 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9184  .08155      64                                                .19 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+(note:  named style 538y not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lpattern(dash)) yline(0.156, lpattern(dash)) legend(ring(1)
+>  rows(1) pos(6)) title("Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1
+> , nogrid) yla(0(0.05)0.2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1038   .8962      64                                                .01 |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1346   .8654      64                                                .03 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1    .196    .804      64                                                .05 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .2857   .7143      64                                                .07 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .3979   .6021      64                                                .09 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5229   .4771      64                                                .11 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .6484   .3516      64                                                .13 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .7615   .2385      64                                                .15 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8529   .1471      64                                                .17 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9184  .08155      64                                                .19 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lpattern(dash)) yline(0.158, lpattern(dash)) legend(ring(1)
+>  rows(1) pos(6)) title("Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1
+> , nogrid) yla(0(0.05)0.2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1038   .8962      64                                                .01 |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1346   .8654      64                                                .03 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1    .196    .804      64                                                .05 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .2857   .7143      64                                                .07 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .3979   .6021      64                                                .09 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5229   .4771      64                                                .11 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .6484   .3516      64                                                .13 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .7615   .2385      64                                                .15 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8529   .1471      64                                                .17 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9184  .08155      64                                                .19 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178 0.158, lpattern(dash)) legend(ring(1) rows(1) pos(6)) title(
+> "Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(0.05)0.
+> 2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1038   .8962      64                                                .01 |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1346   .8654      64                                                .03 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1    .196    .804      64                                                .05 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .2857   .7143      64                                                .07 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .3979   .6021      64                                                .09 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5229   .4771      64                                                .11 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .6484   .3516      64                                                .13 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .7615   .2385      64                                                .15 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8529   .1471      64                                                .17 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9184  .08155      64                                                .19 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.02)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178 0.158, lpattern(dash)) legend(ring(1) rows(1) pos(6)) title(
+> "Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(0.05)0.
+> 2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64,alpha(0.05 0.1) corr(0.39) diff(0(0.02)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democ
+> ratic rule") graph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178 0.158, lpattern(dash)) legend(ring(1) rows(1) pos(6)) title(
+> "Two-sided MDES diffference in democratic rule proportion:" "Paired proportions test (McNemar)""") xdimension(power) xla(0(0.1)1, nogrid) yla(0(0.02)0.
+> 2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  |     .05       .       .      64                                                  . |
+  |      .1   .1154   .8846      64                                                .02 |
+  |      .1   .1616   .8384      64                                                .04 |
+  |      .1   .2376   .7624      64                                                .06 |
+  |      .1   .3395   .6605      64                                                .08 |
+  |      .1   .4595   .5405      64                                                 .1 |
+  |      .1   .5864   .4136      64                                                .12 |
+  |      .1   .7072   .2928      64                                                .14 |
+  |      .1   .8104   .1896      64                                                .16 |
+  |      .1   .8889   .1111      64                                                .18 |
+  |      .1   .9419  .05814      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. gr save  "$working_ANALYSIS/results/intermediate/mdes.gph", replace
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/mdes.gph not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/mdes.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/mdes.tif", replace width(4000)
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/mdes.tif not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/mdes.tif written in TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.29) diff(0(0.01)0.2) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .29       0 |
+  |     .05  .05222      64     .01     .64     .65     .29     .01 |
+  |     .05  .05897      64     .02     .64     .66     .29     .02 |
+  |     .05  .07042      64     .03     .64     .67     .29     .03 |
+  |     .05  .08679      64     .04     .64     .68     .29     .04 |
+  |     .05   .1083      64     .05     .64     .69     .29     .05 |
+  |     .05   .1352      64     .06     .64      .7     .29     .06 |
+  |     .05   .1676      64     .07     .64     .71     .29     .07 |
+  |     .05   .2055      64     .08     .64     .72     .29     .08 |
+  |     .05   .2488      64     .09     .64     .73     .29     .09 |
+  |     .05   .2972      64      .1     .64     .74     .29      .1 |
+  |     .05     .35      64     .11     .64     .75     .29     .11 |
+  |     .05   .4066      64     .12     .64     .76     .29     .12 |
+  |     .05   .4657      64     .13     .64     .77     .29     .13 |
+  |     .05   .5263      64     .14     .64     .78     .29     .14 |
+  |     .05    .587      64     .15     .64     .79     .29     .15 |
+  |     .05   .6463      64     .16     .64      .8     .29     .16 |
+  |     .05   .7029      64     .17     .64     .81     .29     .17 |
+  |     .05   .7556      64     .18     .64     .82     .29     .18 |
+  |     .05   .8034      64     .19     .64     .83     .29     .19 |
+  |     .05   .8456      64      .2     .64     .84     .29      .2 |
+  |     .05       .      64       .     .64     .64     .29       0 |
+  |      .1   .1033      64     .01     .64     .65     .29     .01 |
+  |      .1   .1132      64     .02     .64     .66     .29     .02 |
+  |      .1   .1298      64     .03     .64     .67     .29     .03 |
+  |      .1    .153      64     .04     .64     .68     .29     .04 |
+  |      .1   .1828      64     .05     .64     .69     .29     .05 |
+  |      .1    .219      64     .06     .64      .7     .29     .06 |
+  |      .1   .2611      64     .07     .64     .71     .29     .07 |
+  |      .1   .3086      64     .08     .64     .72     .29     .08 |
+  |      .1   .3607      64     .09     .64     .73     .29     .09 |
+  |      .1   .4165      64      .1     .64     .74     .29      .1 |
+  |      .1   .4749      64     .11     .64     .75     .29     .11 |
+  |      .1   .5346      64     .12     .64     .76     .29     .12 |
+  |      .1   .5942      64     .13     .64     .77     .29     .13 |
+  |      .1   .6524      64     .14     .64     .78     .29     .14 |
+  |      .1   .7079      64     .15     .64     .79     .29     .15 |
+  |      .1   .7595      64     .16     .64      .8     .29     .16 |
+  |      .1   .8062      64     .17     .64     .81     .29     .17 |
+  |      .1   .8475      64     .18     .64     .82     .29     .18 |
+  |      .1   .8829      64     .19     .64     .83     .29     .19 |
+  |      .1   .9124      64      .2     .64     .84     .29      .2 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.02)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lpattern(dash)) legend(ring(1) rows(1) pos(6)) xdimension(power) xla(0(0.1
+> )1, nogrid) yla(0(0.02)0.2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+
+. gr save  "$working_ANALYSIS/results/intermediate/mdes.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/mdes.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/mdes.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/mdes.tif written in TIFF format)
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lpattern(dash)) legend(ring(1) rows(1) pos(6)) xdimension(power) xla(0(0.1
+> )1, nogrid) yla(0(0.02)0.2, nogrid) ydimension(diff))
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lpattern(dash)) legend(ring(1) rows(1) pos(6)) xdimension(power) xla(0(0.1
+> )1, nogrid) yla(0(0.02)0.2, nogrid) ydimension(diff)) title("")
+option title() not allowed
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD69e0_000000.tmp"
+
+. *MDES alpha 0.05 --> d=0.18, alpha 0.1 --> d=0.16
+. 
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lpattern(dash)) title("") legend(ring(1) rows(1) pos(6)) xdimension(power)
+>  xla(0(0.1)1, nogrid) yla(0(0.02)0.2, nogrid) ydimension(diff)) 
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style 538b not found in class color, default attributes used)
+
+. gr save  "$working_ANALYSIS/results/intermediate/mdes.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/mdes.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/mdes.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/mdes.tif written in TIFF format)
+
+. 
+. 
+end of do-file
+
+. exit, clear

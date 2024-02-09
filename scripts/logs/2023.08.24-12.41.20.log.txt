@@ -1,0 +1,2293 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.08.24-12.41.20.log.txt
+  log type:  text
+ opened on:  24 Aug 2023, 12:41:20
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 24 Aug 2023 12:41:20
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss;lmatasem;
+> lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduces transpar
+> ency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. * (1) Analysis Long Format
+. *--------------------------------------------------
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+. *revision: time trend
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. gen round= 1 if bonus_first==.
+(128 missing values generated)
+
+. replace round = 2 if bonus_first==1
+(64 real changes made)
+
+. replace round = 3 if bonus_first==0
+(64 real changes made)
+
+. 
+. lab def order1 0 "Base-Large-Small" 1 "Base-Small-Large", replace
+
+. lab val bonus_order order1
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. * Small and Large bonus seperately
+. eststo reg_dem1: xtprobit dem bonus_2 bonus_3 , vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.38709  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -125.38709
+rho =  0.1     log pseudolikelihood = -120.97002
+rho =  0.2     log pseudolikelihood = -117.59758
+rho =  0.3     log pseudolikelihood = -115.02704
+rho =  0.4     log pseudolikelihood = -113.13299
+rho =  0.5     log pseudolikelihood = -111.87369
+rho =  0.6     log pseudolikelihood = -111.29283
+rho =  0.7     log pseudolikelihood = -111.58207
+
+Iteration 0:   log pseudolikelihood = -111.29429  
+Iteration 1:   log pseudolikelihood = -110.64933  
+Iteration 2:   log pseudolikelihood = -110.63147  
+Iteration 3:   log pseudolikelihood = -110.63147  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.00
+Log pseudolikelihood  = -110.63147              Prob > chi2       =     0.9999
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+     bonus_3 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+       _cons |   .5973239   .2794914     2.14   0.033     .0495309    1.145117
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5734665   .4495206                     -.3075777    1.454511
+-------------+----------------------------------------------------------------
+     sigma_u |   1.332069   .2993962                      .8574531    2.069393
+         rho |   .6395627   .1036245                      .4237061    .8106917
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0008635   .0665515     0.01   0.990     -.129575    .1313021
+     bonus_3 |   .0008635   .0665515     0.01   0.990     -.129575    .1313021
+------------------------------------------------------------------------------
+
+. est store pr1
+
+. eststo reg_fake1: xtprobit fake bonus_2 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.09846  
+Iteration 2:   log pseudolikelihood = -113.09531  
+Iteration 3:   log pseudolikelihood = -113.09531  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.09531
+rho =  0.1     log pseudolikelihood = -109.50028
+rho =  0.2     log pseudolikelihood = -106.85965
+rho =  0.3     log pseudolikelihood = -104.95446
+rho =  0.4     log pseudolikelihood = -103.67659
+rho =  0.5     log pseudolikelihood = -102.99775
+rho =  0.6     log pseudolikelihood = -102.97063
+rho =  0.7     log pseudolikelihood = -103.77414
+
+Iteration 0:   log pseudolikelihood = -102.97557  
+Iteration 1:   log pseudolikelihood = -101.54769  
+Iteration 2:   log pseudolikelihood = -101.40994  
+Iteration 3:   log pseudolikelihood = -101.40943  
+Iteration 4:   log pseudolikelihood = -101.40943  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       3.97
+Log pseudolikelihood  = -101.40943              Prob > chi2       =     0.2652
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .4614349   .3139349     1.47   0.142    -.1538663    1.076736
+     bonus_3 |   .5327473   .3187649     1.67   0.095    -.0920204    1.157515
+ bonus_order |   .3387109   .4152962     0.82   0.415    -.4752546    1.152676
+       _cons |  -1.431821   .3832913    -3.74   0.000    -2.183058   -.6805835
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4616659   .4812244                     -.4815165    1.404848
+-------------+----------------------------------------------------------------
+     sigma_u |   1.259649   .3030868                      .7860316     2.01864
+         rho |   .6134093   .1141167                      .3818941    .8029521
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0961699    .063935     1.50   0.133    -.0291404    .2214802
+     bonus_3 |   .1110324   .0645646     1.72   0.085    -.0155119    .2375767
+ bonus_order |   .0705924   .0860772     0.82   0.412    -.0981159    .2393007
+------------------------------------------------------------------------------
+
+. est store pr2
+
+. eststo reg_dic1: xtprobit dic bonus_2 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.751419  
+Iteration 2:   log pseudolikelihood = -46.668355  
+Iteration 3:   log pseudolikelihood = -46.668238  
+Iteration 4:   log pseudolikelihood = -46.668238  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -46.668238
+rho =  0.1     log pseudolikelihood =  -46.34144
+rho =  0.2     log pseudolikelihood = -46.487345
+
+Iteration 0:   log pseudolikelihood =  -46.34144  
+Iteration 1:   log pseudolikelihood = -46.224904  
+Iteration 2:   log pseudolikelihood = -45.725694  
+Iteration 3:   log pseudolikelihood = -45.716321  
+Iteration 4:   log pseudolikelihood = -45.716168  
+Iteration 5:   log pseudolikelihood = -45.716168  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       5.89
+Log pseudolikelihood  = -45.716168              Prob > chi2       =     0.1171
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |  -.7685142   .3654187    -2.10   0.035    -1.484722   -.0523066
+     bonus_3 |  -.9802238   .4762269    -2.06   0.040    -1.913611   -.0468363
+ bonus_order |  -.3149328   .3841314    -0.82   0.412    -1.067817    .4379509
+       _cons |  -1.164717   .3813613    -3.05   0.002    -1.912172   -.4172627
+-------------+----------------------------------------------------------------
+    /lnsig2u |   -.664432   .8165016                     -2.264746    .9358817
+-------------+----------------------------------------------------------------
+     sigma_u |   .7173324   .2928515                      .3222677    1.596703
+         rho |   .3397447   .1831562                      .0940851     .718267
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dic=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |  -.0804475   .0394257    -2.04   0.041    -.1577204   -.0031745
+     bonus_3 |  -.1026091   .0485981    -2.11   0.035    -.1978595   -.0073586
+ bonus_order |  -.0329669   .0402543    -0.82   0.413    -.1118639    .0459301
+------------------------------------------------------------------------------
+
+. est store pr3
+
+. 
+. *test small versus large bonus 
+. xtprobit dem bonus_1 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.13711  
+Iteration 2:   log pseudolikelihood =  -125.1371  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -125.1371
+rho =  0.1     log pseudolikelihood = -120.75301
+rho =  0.2     log pseudolikelihood = -117.40806
+rho =  0.3     log pseudolikelihood = -114.86156
+rho =  0.4     log pseudolikelihood = -112.98925
+rho =  0.5     log pseudolikelihood = -111.75008
+rho =  0.6     log pseudolikelihood = -111.18782
+rho =  0.7     log pseudolikelihood = -111.49319
+
+Iteration 0:   log pseudolikelihood = -111.19027  
+Iteration 1:   log pseudolikelihood =  -110.5521  
+Iteration 2:   log pseudolikelihood = -110.53321  
+Iteration 3:   log pseudolikelihood = -110.53321  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       0.20
+Log pseudolikelihood  = -110.53321              Prob > chi2       =     0.9783
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_1 |  -.0040703   .2964191    -0.01   0.989    -.5850411    .5769005
+     bonus_3 |  -.0004308   .2642776    -0.00   0.999    -.5184054    .5175438
+ bonus_order |  -.1862215   .4213684    -0.44   0.659    -1.012088    .6396453
+       _cons |   .6984892   .3495222     2.00   0.046     .0134383     1.38354
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5654265   .4499982                     -.3165538    1.447407
+-------------+----------------------------------------------------------------
+     sigma_u |   1.326725   .2985119                      .8536134    2.062056
+         rho |   .6377072   .1039661                      .4215158     .809599
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus_1 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_1 |  -.0009149   .0666289    -0.01   0.989    -.1315052    .1296754
+     bonus_3 |  -.0000968   .0594032    -0.00   0.999     -.116525    .1163313
+ bonus_order |  -.0418581   .0944824    -0.44   0.658    -.2270401     .143324
+------------------------------------------------------------------------------
+
+. xtprobit fake bonus_1 bonus_3 bonus_order,flabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtit
+> le("Regression estimated impact relative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) 
+> recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(8pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Dem
+> ocratic" 6 "Pseudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))
+flabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact relative to 
+> baseline in pp") msymbol(d) xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) mlabel(cond(@pval<.01, "***", c
+> ond(@pval<.05, "**", cond(@pval<.1, "*", "") ))) mlabsize(8pt) mlabposition(12) mlabgap(-0.1) legend(order(3 "Democratic" 6 "Pseudo-democratic" 9 "Autocratic") p
+> os(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny)) invalid
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap))
+>  mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(8pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "P
+> seudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))
+estimation result pr4 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. *pooled bonus
+. eststo reg_dem2: xtprobit dem bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.13711  
+Iteration 2:   log pseudolikelihood =  -125.1371  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -125.1371
+rho =  0.1     log pseudolikelihood = -120.75302
+rho =  0.2     log pseudolikelihood = -117.40806
+rho =  0.3     log pseudolikelihood = -114.86156
+rho =  0.4     log pseudolikelihood = -112.98925
+rho =  0.5     log pseudolikelihood = -111.75008
+rho =  0.6     log pseudolikelihood = -111.18782
+rho =  0.7     log pseudolikelihood =  -111.4932
+
+Iteration 0:   log pseudolikelihood = -111.19027  
+Iteration 1:   log pseudolikelihood =  -110.5521  
+Iteration 2:   log pseudolikelihood = -110.53321  
+Iteration 3:   log pseudolikelihood = -110.53321  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.20
+Log pseudolikelihood  = -110.53321              Prob > chi2       =     0.9069
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0038548   .2653135     0.01   0.988      -.51615    .5238597
+ bonus_order |  -.1862194   .4213702    -0.44   0.659     -1.01209    .6396511
+       _cons |   .6944178   .3408885     2.04   0.042     .0262886    1.362547
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5654267   .4499981                     -.3165533    1.447407
+-------------+----------------------------------------------------------------
+     sigma_u |   1.326725   .2985118                      .8536136    2.062056
+         rho |   .6377072   .1039661                       .421516     .809599
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0008665   .0596371     0.01   0.988    -.1160202    .1177531
+ bonus_order |  -.0418576   .0944827    -0.44   0.658    -.2270403    .1433252
+------------------------------------------------------------------------------
+
+. est store pr4
+
+. eststo reg_fake2: xtprobit fake bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.11824  
+Iteration 2:   log pseudolikelihood = -113.11513  
+Iteration 3:   log pseudolikelihood = -113.11513  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.11513
+rho =  0.1     log pseudolikelihood = -109.52127
+rho =  0.2     log pseudolikelihood = -106.88185
+rho =  0.3     log pseudolikelihood = -104.97786
+rho =  0.4     log pseudolikelihood =  -103.7012
+rho =  0.5     log pseudolikelihood = -103.02356
+rho =  0.6     log pseudolikelihood = -102.99767
+rho =  0.7     log pseudolikelihood = -103.80249
+
+Iteration 0:   log pseudolikelihood = -103.00256  
+Iteration 1:   log pseudolikelihood = -101.57872  
+Iteration 2:   log pseudolikelihood = -101.44091  
+Iteration 3:   log pseudolikelihood = -101.44039  
+Iteration 4:   log pseudolikelihood = -101.44039  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       3.88
+Log pseudolikelihood  = -101.44039              Prob > chi2       =     0.1435
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .4971642   .2842203     1.75   0.080    -.0598972    1.054226
+ bonus_order |   .3385349   .4151405     0.82   0.415    -.4751255    1.152195
+       _cons |  -1.431149   .3832357    -3.73   0.000    -2.182278   -.6800211
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4601208    .481087                     -.4827923    1.403034
+-------------+----------------------------------------------------------------
+     sigma_u |   1.258676   .3027663                      .7855304     2.01681
+         rho |   .6130428   .1141241                       .381593    .8026649
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .1036855   .0574167     1.81   0.071    -.0088492    .2162201
+ bonus_order |   .0706027   .0860697     0.82   0.412    -.0980907    .2392962
+------------------------------------------------------------------------------
+
+. est store pr5
+
+. eststo reg_dic2: xtprobit dic bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.837592  
+Iteration 2:   log pseudolikelihood = -46.766968  
+Iteration 3:   log pseudolikelihood =  -46.76692  
+Iteration 4:   log pseudolikelihood =  -46.76692  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -46.76692
+rho =  0.1     log pseudolikelihood = -46.438292
+rho =  0.2     log pseudolikelihood = -46.586174
+
+Iteration 0:   log pseudolikelihood = -46.438292  
+Iteration 1:   log pseudolikelihood = -46.303056  
+Iteration 2:   log pseudolikelihood = -45.823896  
+Iteration 3:   log pseudolikelihood = -45.814007  
+Iteration 4:   log pseudolikelihood = -45.813838  
+Iteration 5:   log pseudolikelihood = -45.813838  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       6.02
+Log pseudolikelihood  = -45.813838              Prob > chi2       =     0.0493
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.8653539   .3619556    -2.39   0.017    -1.574774   -.1559341
+ bonus_order |  -.3153426   .3830241    -0.82   0.410    -1.066056    .4353707
+       _cons |  -1.162901   .3801173    -3.06   0.002    -1.907917   -.4178845
+-------------+----------------------------------------------------------------
+    /lnsig2u |  -.6719679   .8021689                      -2.24419    .9002543
+-------------+----------------------------------------------------------------
+     sigma_u |   .7146346   .2866288                      .3255969    1.568512
+         rho |   .3380563   .1795048                      .0958518    .7110018
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dic=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.0908287   .0383611    -2.37   0.018     -.166015   -.0156423
+ bonus_order |  -.0330988   .0403304    -0.82   0.412    -.1121449    .0459473
+------------------------------------------------------------------------------
+
+. est store pr6
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap))
+>  mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(8pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "P
+> seudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap))
+>  mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(10pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "
+> Pseudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))  xsize(3.465) ysize(2)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msize(4pt) xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) 
+> mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(8pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Ps
+> eudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))  xsize(3.465) ysize(2)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msize(3pt) xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) 
+> mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(7pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Ps
+> eudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))  xsize(3.465) ysize(2)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. foreach x of varlist dem fake dic {
+  2.         replace `x' = `x'*100
+  3. }
+(123 real changes made)
+(55 real changes made)
+(14 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. eststo reg_dem1: xtprobit dem bonus_2 bonus_3 , vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.38709  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -125.38709
+rho =  0.1     log pseudolikelihood = -120.97002
+rho =  0.2     log pseudolikelihood = -117.59758
+rho =  0.3     log pseudolikelihood = -115.02704
+rho =  0.4     log pseudolikelihood = -113.13299
+rho =  0.5     log pseudolikelihood = -111.87369
+rho =  0.6     log pseudolikelihood = -111.29283
+rho =  0.7     log pseudolikelihood = -111.58207
+
+Iteration 0:   log pseudolikelihood = -111.29429  
+Iteration 1:   log pseudolikelihood = -110.64933  
+Iteration 2:   log pseudolikelihood = -110.63147  
+Iteration 3:   log pseudolikelihood = -110.63147  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.00
+Log pseudolikelihood  = -110.63147              Prob > chi2       =     0.9999
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+     bonus_3 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+       _cons |   .5973239   .2794914     2.14   0.033     .0495309    1.145117
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5734665   .4495206                     -.3075777    1.454511
+-------------+----------------------------------------------------------------
+     sigma_u |   1.332069   .2993962                      .8574531    2.069393
+         rho |   .6395627   .1036245                      .4237061    .8106917
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0008635   .0665515     0.01   0.990     -.129575    .1313021
+     bonus_3 |   .0008635   .0665515     0.01   0.990     -.129575    .1313021
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. tab dem
+
+        dem |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         69       35.94       35.94
+        100 |        123       64.06      100.00
+------------+-----------------------------------
+      Total |        192      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. eststo reg_fake1: xtprobit fake bonus_2 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.09846  
+Iteration 2:   log pseudolikelihood = -113.09531  
+Iteration 3:   log pseudolikelihood = -113.09531  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.09531
+rho =  0.1     log pseudolikelihood = -109.50028
+rho =  0.2     log pseudolikelihood = -106.85965
+rho =  0.3     log pseudolikelihood = -104.95446
+rho =  0.4     log pseudolikelihood = -103.67659
+rho =  0.5     log pseudolikelihood = -102.99775
+rho =  0.6     log pseudolikelihood = -102.97063
+rho =  0.7     log pseudolikelihood = -103.77414
+
+Iteration 0:   log pseudolikelihood = -102.97557  
+Iteration 1:   log pseudolikelihood = -101.54769  
+Iteration 2:   log pseudolikelihood = -101.40994  
+Iteration 3:   log pseudolikelihood = -101.40943  
+Iteration 4:   log pseudolikelihood = -101.40943  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       3.97
+Log pseudolikelihood  = -101.40943              Prob > chi2       =     0.2652
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .4614349   .3139349     1.47   0.142    -.1538663    1.076736
+     bonus_3 |   .5327473   .3187649     1.67   0.095    -.0920204    1.157515
+ bonus_order |   .3387109   .4152962     0.82   0.415    -.4752546    1.152676
+       _cons |  -1.431821   .3832913    -3.74   0.000    -2.183058   -.6805835
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4616659   .4812244                     -.4815165    1.404848
+-------------+----------------------------------------------------------------
+     sigma_u |   1.259649   .3030868                      .7860316     2.01864
+         rho |   .6134093   .1141167                      .3818941    .8029521
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0961699    .063935     1.50   0.133    -.0291404    .2214802
+     bonus_3 |   .1110324   .0645646     1.72   0.085    -.0155119    .2375767
+ bonus_order |   .0705924   .0860772     0.82   0.412    -.0981159    .2393007
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. eststo reg_dem2: xtprobit dem bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.13711  
+Iteration 2:   log pseudolikelihood =  -125.1371  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -125.1371
+rho =  0.1     log pseudolikelihood = -120.75302
+rho =  0.2     log pseudolikelihood = -117.40806
+rho =  0.3     log pseudolikelihood = -114.86156
+rho =  0.4     log pseudolikelihood = -112.98925
+rho =  0.5     log pseudolikelihood = -111.75008
+rho =  0.6     log pseudolikelihood = -111.18782
+rho =  0.7     log pseudolikelihood =  -111.4932
+
+Iteration 0:   log pseudolikelihood = -111.19027  
+Iteration 1:   log pseudolikelihood =  -110.5521  
+Iteration 2:   log pseudolikelihood = -110.53321  
+Iteration 3:   log pseudolikelihood = -110.53321  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.20
+Log pseudolikelihood  = -110.53321              Prob > chi2       =     0.9069
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0038548   .2653135     0.01   0.988      -.51615    .5238597
+ bonus_order |  -.1862194   .4213702    -0.44   0.659     -1.01209    .6396511
+       _cons |   .6944178   .3408885     2.04   0.042     .0262886    1.362547
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5654267   .4499981                     -.3165533    1.447407
+-------------+----------------------------------------------------------------
+     sigma_u |   1.326725   .2985118                      .8536136    2.062056
+         rho |   .6377072   .1039661                       .421516     .809599
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. eststo reg_fake2: xtprobit fake bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.11824  
+Iteration 2:   log pseudolikelihood = -113.11513  
+Iteration 3:   log pseudolikelihood = -113.11513  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.11513
+rho =  0.1     log pseudolikelihood = -109.52127
+rho =  0.2     log pseudolikelihood = -106.88185
+rho =  0.3     log pseudolikelihood = -104.97786
+rho =  0.4     log pseudolikelihood =  -103.7012
+rho =  0.5     log pseudolikelihood = -103.02356
+rho =  0.6     log pseudolikelihood = -102.99767
+rho =  0.7     log pseudolikelihood = -103.80249
+
+Iteration 0:   log pseudolikelihood = -103.00256  
+Iteration 1:   log pseudolikelihood = -101.57872  
+Iteration 2:   log pseudolikelihood = -101.44091  
+Iteration 3:   log pseudolikelihood = -101.44039  
+Iteration 4:   log pseudolikelihood = -101.44039  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       3.88
+Log pseudolikelihood  = -101.44039              Prob > chi2       =     0.1435
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .4971642   .2842203     1.75   0.080    -.0598972    1.054226
+ bonus_order |   .3385349   .4151405     0.82   0.415    -.4751255    1.152195
+       _cons |  -1.431149   .3832357    -3.73   0.000    -2.182278   -.6800211
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4601208    .481087                     -.4827923    1.403034
+-------------+----------------------------------------------------------------
+     sigma_u |   1.258676   .3027663                      .7855304     2.01681
+         rho |   .6130428   .1141241                       .381593    .8026649
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .1036855   .0574167     1.81   0.071    -.0088492    .2162201
+ bonus_order |   .0706027   .0860697     0.82   0.412    -.0980907    .2392962
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. eststo reg_dic2: xtprobit dic bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.837592  
+Iteration 2:   log pseudolikelihood = -46.766968  
+Iteration 3:   log pseudolikelihood =  -46.76692  
+Iteration 4:   log pseudolikelihood =  -46.76692  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -46.76692
+rho =  0.1     log pseudolikelihood = -46.438292
+rho =  0.2     log pseudolikelihood = -46.586174
+
+Iteration 0:   log pseudolikelihood = -46.438292  
+Iteration 1:   log pseudolikelihood = -46.303056  
+Iteration 2:   log pseudolikelihood = -45.823896  
+Iteration 3:   log pseudolikelihood = -45.814007  
+Iteration 4:   log pseudolikelihood = -45.813838  
+Iteration 5:   log pseudolikelihood = -45.813838  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       6.02
+Log pseudolikelihood  = -45.813838              Prob > chi2       =     0.0493
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.8653539   .3619556    -2.39   0.017    -1.574774   -.1559341
+ bonus_order |  -.3153426   .3830241    -0.82   0.410    -1.066056    .4353707
+       _cons |  -1.162901   .3801173    -3.06   0.002    -1.907917   -.4178845
+-------------+----------------------------------------------------------------
+    /lnsig2u |  -.6719679   .8021689                      -2.24419    .9002543
+-------------+----------------------------------------------------------------
+     sigma_u |   .7146346   .2866288                      .3255969    1.568512
+         rho |   .3380563   .1795048                      .0958518    .7110018
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msize(3pt) xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) 
+> mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(7pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Ps
+> eudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))  xsize(3.465) ysize(2)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. eststo reg_dic2: xtprobit dic bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.837592  
+Iteration 2:   log pseudolikelihood = -46.766968  
+Iteration 3:   log pseudolikelihood =  -46.76692  
+Iteration 4:   log pseudolikelihood =  -46.76692  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -46.76692
+rho =  0.1     log pseudolikelihood = -46.438292
+rho =  0.2     log pseudolikelihood = -46.586174
+
+Iteration 0:   log pseudolikelihood = -46.438292  
+Iteration 1:   log pseudolikelihood = -46.303056  
+Iteration 2:   log pseudolikelihood = -45.823896  
+Iteration 3:   log pseudolikelihood = -45.814007  
+Iteration 4:   log pseudolikelihood = -45.813838  
+Iteration 5:   log pseudolikelihood = -45.813838  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       6.02
+Log pseudolikelihood  = -45.813838              Prob > chi2       =     0.0493
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.8653539   .3619556    -2.39   0.017    -1.574774   -.1559341
+ bonus_order |  -.3153426   .3830241    -0.82   0.410    -1.066056    .4353707
+       _cons |  -1.162901   .3801173    -3.06   0.002    -1.907917   -.4178845
+-------------+----------------------------------------------------------------
+    /lnsig2u |  -.6719679   .8021689                      -2.24419    .9002543
+-------------+----------------------------------------------------------------
+     sigma_u |   .7146346   .2866288                      .3255969    1.568512
+         rho |   .3380563   .1795048                      .0958518    .7110018
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dic=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.0908287   .0383611    -2.37   0.018     -.166015   -.0156423
+ bonus_order |  -.0330988   .0403304    -0.82   0.412    -.1121449    .0459473
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msize(3pt) xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) 
+> mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(7pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Ps
+> eudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))  xsize(3.465) ysize(2)
+
+. gr display,
+
+. gr save "$working_ANALYSIS/results/intermediate/figure2.gph", replace 
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure2.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure2.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure2.tif written in TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msize(3pt) xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) 
+> mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(7pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Ps
+> eudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))  xsize(3.465) ysize(2) scale(1.1)
+
+. gr save "$working_ANALYSIS/results/intermediate/figure2.gph", replace 
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure2.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure2.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure2.tif written in TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidt
+> h(0.3 1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "12
+> 0 94 240*.2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), ke
+> ep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regressio
+> n estimated impact relative to baseline in pp") msize(3pt) xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) 
+> mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(7pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Ps
+> eudo-democratic" 9 "Autocratic") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))  xsize(3.465) ysize(2) scale(1.2)
+
+. gr save "$working_ANALYSIS/results/intermediate/figure2.gph", replace 
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure2.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure2.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure2.tif written in TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. 
+. 
+. *Figure 4.      Crowding-effects by baseline choice
+. gen type=0
+
+. replace type=1 if rule_base!=1 & extrinsic==0
+(36 real changes made)
+
+. replace type=2 if rule_base!=1 & extrinsic==1
+(33 real changes made)
+
+. replace type=3 if rule_base==1 & extrinsic==0
+(69 real changes made)
+
+. replace type=4 if rule_base==1 & extrinsic==1
+(54 real changes made)
+
+. lab def typo 1 "Box I" 2 "Box III" 3 "Box II" 4 "Box IV", replace
+
+. lab val type typo
+
+. prtest extrinsic_leader, by(TL)
+
+Two-sample test of proportions                     0: Number of obs =       96
+                                                   1: Number of obs =       96
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |     .34375   .0484753                      .2487402    .4387598
+           1 |      .5625   .0506308                      .4632655    .6617345
+-------------+----------------------------------------------------------------
+        diff |    -.21875   .0700952                      -.356134    -.081366
+             |  under Ho:   .0718509    -3.04   0.002
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =  -3.0445
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0012         Pr(|Z| > |z|) = 0.0023          Pr(Z > z) = 0.9988
+
+. bys extrinsic_leader: sum helpauthentic
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Intrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |        105    11.28571    3.858177          5   15.33333
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Extrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |         87           9    4.123106          4         15
+
+
+. ttest helpauthentic if decision <2, by(extrinsic_leader)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+Intrinsi |      35    11.28571    .6585136    3.895819    9.947454    12.62397
+Extrinsi |      29           9    .7747027    4.171902    7.413094    10.58691
+---------+--------------------------------------------------------------------
+combined |      64       10.25    .5190379    4.152303    9.212786    11.28721
+---------+--------------------------------------------------------------------
+    diff |            2.285714    1.010161                .2664311    4.304997
+------------------------------------------------------------------------------
+    diff = mean(Intrinsi) - mean(Extrinsi)                        t =   2.2627
+Ho: diff = 0                                     degrees of freedom =       62
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9864         Pr(|T| > |t|) = 0.0272          Pr(T > t) = 0.0136
+
+. 
+. 
+. eststo sub1: xtmixed dem i.bonus bonus_order  || id: if type==1,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -170.53525  
+Iteration 1:   log restricted-likelihood = -170.53486  
+Iteration 2:   log restricted-likelihood = -170.53486  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         36
+Group variable: id                              Number of groups  =         12
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       5.90
+Log restricted-likelihood = -170.53486          Prob > chi2       =     0.0522
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   29.16667   12.00719     2.43   0.015     5.632999    52.70033
+          bonus_order |   -.952381   16.22964    -0.06   0.953     -32.7619    30.85714
+                _cons |   .5555556   14.75559     0.04   0.970    -28.36488    29.47599
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.59065   9.233882      7.777541    49.34637
+-----------------------------+------------------------------------------------
+                sd(Residual) |   33.96147   5.007346      25.43804    45.34082
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.80          Prob >= chibar2 = 0.0899
+
+. eststo sub2: xtmixed dem i.bonus bonus_order  || id: if type==2,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -157.75184  
+Iteration 1:   log restricted-likelihood =  -157.7516  
+Iteration 2:   log restricted-likelihood =  -157.7516  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      14.05
+Log restricted-likelihood =  -157.7516          Prob > chi2       =     0.0009
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |         50   13.56402     3.69   0.000     23.41501    76.58499
+          bonus_order |  -13.09524   19.20815    -0.68   0.495    -50.74253    24.55205
+                _cons |   8.333333   17.79209     0.47   0.640    -26.53852    43.20519
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    22.1228   10.48617       8.73719     56.0155
+-----------------------------+------------------------------------------------
+                sd(Residual) |   36.73154     5.6678      27.14538    49.70298
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.85          Prob >= chibar2 = 0.0870
+
+. eststo sub3: xtmixed dem i.bonus bonus_order  || id: if type==3,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -333.40791  
+Iteration 1:   log restricted-likelihood = -333.40781  
+Iteration 2:   log restricted-likelihood = -333.40781  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         69
+Group variable: id                              Number of groups  =         23
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      11.38
+Log restricted-likelihood = -333.40781          Prob > chi2       =     0.0034
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -26.08696    7.88491    -3.31   0.001     -41.5411   -10.63282
+          bonus_order |   7.323232   11.14045     0.66   0.511    -14.51165    29.15812
+                _cons |   96.17918   9.611701    10.01   0.000      77.3406    115.0178
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.86239   5.784713      11.22349    35.15079
+-----------------------------+------------------------------------------------
+                sd(Residual) |   30.87557   3.254571      25.11253    37.96117
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.02          Prob >= chibar2 = 0.0125
+
+. eststo sub4: xtmixed dem i.bonus bonus_order  || id: if type==4,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -252.01258  
+Iteration 1:   log restricted-likelihood = -251.99877  
+Iteration 2:   log restricted-likelihood = -251.99876  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         54
+Group variable: id                              Number of groups  =         18
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       4.16
+Log restricted-likelihood = -251.99876          Prob > chi2       =     0.1249
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -16.66667   8.451537    -1.97   0.049    -33.23138   -.1019579
+          bonus_order |          5   9.601445     0.52   0.603    -13.81849    23.81849
+                _cons |   97.77778   8.527504    11.47   0.000     81.06418    114.4914
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   11.13595   7.190758      3.141127    39.47927
+-----------------------------+------------------------------------------------
+                sd(Residual) |   29.27698    3.49926      23.16267    37.00532
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.74          Prob >= chibar2 = 0.1944
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. xtprobit dem i.bonus bonus_orderbonus bonus_order if type==1, vce(robust)
+variable bonus_orderbonus not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. xtprobit dem i.bonus bonus_order if type==1, vce(robust)
+note: 0.bonus != 0 predicts failure perfectly
+      0.bonus dropped and 12 obs not used
+
+note: 1.bonus omitted because of collinearity
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -14.487294  
+Iteration 1:   log pseudolikelihood = -14.484417  
+Iteration 2:   log pseudolikelihood = -14.484417  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -14.484417
+rho =  0.1     log pseudolikelihood = -14.242435
+rho =  0.2     log pseudolikelihood = -14.051568
+rho =  0.3     log pseudolikelihood = -13.908428
+rho =  0.4     log pseudolikelihood = -13.813519
+rho =  0.5     log pseudolikelihood = -13.772104
+rho =  0.6     log pseudolikelihood =  -13.79693
+
+Iteration 0:   log pseudolikelihood = -13.772081  
+Iteration 1:   log pseudolikelihood = -13.602498  
+Iteration 2:   log pseudolikelihood =  -13.59405  
+Iteration 3:   log pseudolikelihood =  -13.59401  
+Iteration 4:   log pseudolikelihood =  -13.59401  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =         24
+Group variable: id                              Number of groups  =         12
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          2
+                                                              avg =        2.0
+                                                              max =          2
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(1)      =       0.00
+Log pseudolikelihood  =  -13.59401              Prob > chi2       =     0.9697
+
+                                             (Std. Err. adjusted for 12 clusters in id)
+---------------------------------------------------------------------------------------
+                      |               Robust
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+     Baseline (n=64)  |          0  (empty)
+Pooled Bonus (n=128)  |          0  (omitted)
+                      |
+          bonus_order |  -.0413248   1.089317    -0.04   0.970    -2.176347    2.093698
+                _cons |  -.8459757   .9193792    -0.92   0.357    -2.647926    .9559745
+----------------------+----------------------------------------------------------------
+             /lnsig2u |   .4168481   1.564866                     -2.650233    3.483929
+----------------------+----------------------------------------------------------------
+              sigma_u |   1.231735   .9637505                       .265772    5.708548
+                  rho |   .6027288   .3747022                      .0659746     .970227
+---------------------------------------------------------------------------------------
+
+. eststo sub1: margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =         24
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : 1.bonus bonus_order
+
+---------------------------------------------------------------------------------------
+                      |            Delta-method
+                      |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+     Baseline (n=64)  |          0  (empty)
+Pooled Bonus (n=128)  |          .  (not estimable)
+                      |
+          bonus_order |  -.0089404   .2354623    -0.04   0.970    -.4704381    .4525572
+---------------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. 
+. eststo sub1: xtmixed dem i.bonus bonus_order  || id: if type==1,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -170.53525  
+Iteration 1:   log restricted-likelihood = -170.53486  
+Iteration 2:   log restricted-likelihood = -170.53486  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         36
+Group variable: id                              Number of groups  =         12
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       5.90
+Log restricted-likelihood = -170.53486          Prob > chi2       =     0.0522
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   29.16667   12.00719     2.43   0.015     5.632999    52.70033
+          bonus_order |   -.952381   16.22964    -0.06   0.953     -32.7619    30.85714
+                _cons |   .5555556   14.75559     0.04   0.970    -28.36488    29.47599
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.59065   9.233882      7.777541    49.34637
+-----------------------------+------------------------------------------------
+                sd(Residual) |   33.96147   5.007346      25.43804    45.34082
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.80          Prob >= chibar2 = 0.0899
+
+. eststo sub2: xtmixed dem i.bonus bonus_order  || id: if type==2,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -157.75184  
+Iteration 1:   log restricted-likelihood =  -157.7516  
+Iteration 2:   log restricted-likelihood =  -157.7516  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      14.05
+Log restricted-likelihood =  -157.7516          Prob > chi2       =     0.0009
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |         50   13.56402     3.69   0.000     23.41501    76.58499
+          bonus_order |  -13.09524   19.20815    -0.68   0.495    -50.74253    24.55205
+                _cons |   8.333333   17.79209     0.47   0.640    -26.53852    43.20519
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    22.1228   10.48617       8.73719     56.0155
+-----------------------------+------------------------------------------------
+                sd(Residual) |   36.73154     5.6678      27.14538    49.70298
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.85          Prob >= chibar2 = 0.0870
+
+. eststo sub3: xtmixed dem i.bonus bonus_order  || id: if type==3,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -333.40791  
+Iteration 1:   log restricted-likelihood = -333.40781  
+Iteration 2:   log restricted-likelihood = -333.40781  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         69
+Group variable: id                              Number of groups  =         23
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      11.38
+Log restricted-likelihood = -333.40781          Prob > chi2       =     0.0034
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -26.08696    7.88491    -3.31   0.001     -41.5411   -10.63282
+          bonus_order |   7.323232   11.14045     0.66   0.511    -14.51165    29.15812
+                _cons |   96.17918   9.611701    10.01   0.000      77.3406    115.0178
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.86239   5.784713      11.22349    35.15079
+-----------------------------+------------------------------------------------
+                sd(Residual) |   30.87557   3.254571      25.11253    37.96117
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.02          Prob >= chibar2 = 0.0125
+
+. eststo sub4: xtmixed dem i.bonus bonus_order  || id: if type==4,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -252.01258  
+Iteration 1:   log restricted-likelihood = -251.99877  
+Iteration 2:   log restricted-likelihood = -251.99876  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         54
+Group variable: id                              Number of groups  =         18
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       4.16
+Log restricted-likelihood = -251.99876          Prob > chi2       =     0.1249
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -16.66667   8.451537    -1.97   0.049    -33.23138   -.1019579
+          bonus_order |          5   9.601445     0.52   0.603    -13.81849    23.81849
+                _cons |   97.77778   8.527504    11.47   0.000     81.06418    114.4914
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   11.13595   7.190758      3.141127    39.47927
+-----------------------------+------------------------------------------------
+                sd(Residual) |   29.27698    3.49926      23.16267    37.00532
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.74          Prob >= chibar2 = 0.1944
+
+. 
+. coefplot (sub1, label (Box I)) (sub2, label (Box III))  (sub3, label (Box II))  (sub4, label (Box IV)) , keep(1.bonus) coeflabels(1.bonus = "Pooled Bonus")  byop
+> ts(xrescale) xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact relative to baseline in pp") grid(none) levels(95 90) ciopts(lwidth(0.8 2) 
+>  lcolor(*1 *.3) recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) msize(3pt) msymbol(D) mlabsize(8pt) mlabposition(1) 
+> mlabgap(-0.4) subtitle(, size(6pt) lstyle(none) margin(medium) nobox justification(left)  bmargin(top))  xla(-.5(0.25).75, nogrid)  xsize(3.465) ysize(2) scale(1
+> .2)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. preserve
+
+. replace dem=dem*100
+(123 real changes made)
+
+. eststo sub1: xtmixed dem i.bonus bonus_order  || id: if type==1,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -322.50587  
+Iteration 1:   log restricted-likelihood = -322.50547  
+Iteration 2:   log restricted-likelihood = -322.50547  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         36
+Group variable: id                              Number of groups  =         12
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       5.90
+Log restricted-likelihood = -322.50547          Prob > chi2       =     0.0522
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   2916.667   1200.719     2.43   0.015        563.3    5270.033
+          bonus_order |   -95.2381   1622.965    -0.06   0.953     -3276.19    3085.714
+                _cons |   55.55556   1475.559     0.04   0.970    -2836.488    2947.599
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   1959.065   923.3882      777.7542    4934.637
+-----------------------------+------------------------------------------------
+                sd(Residual) |   3396.147   500.7346      2543.804    4534.082
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.80          Prob >= chibar2 = 0.0899
+
+. eststo sub2: xtmixed dem i.bonus bonus_order  || id: if type==2,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -295.90695  
+Iteration 1:   log restricted-likelihood = -295.90671  
+Iteration 2:   log restricted-likelihood = -295.90671  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      14.05
+Log restricted-likelihood = -295.90671          Prob > chi2       =     0.0009
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |       5000   1356.402     3.69   0.000     2341.501    7658.499
+          bonus_order |  -1309.524   1920.815    -0.68   0.495    -5074.253    2455.205
+                _cons |   833.3333   1779.209     0.47   0.640    -2653.852    4320.519
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    2212.28   1048.617      873.7193     5601.55
+-----------------------------+------------------------------------------------
+                sd(Residual) |   3673.154     566.78      2714.538    4970.298
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.85          Prob >= chibar2 = 0.0870
+
+. eststo sub3: xtmixed dem i.bonus bonus_order  || id: if type==3,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -637.34914  
+Iteration 1:   log restricted-likelihood = -637.34905  
+Iteration 2:   log restricted-likelihood = -637.34905  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         69
+Group variable: id                              Number of groups  =         23
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      11.38
+Log restricted-likelihood = -637.34905          Prob > chi2       =     0.0034
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -2608.696    788.491    -3.31   0.001     -4154.11   -1063.282
+          bonus_order |   732.3232   1114.045     0.66   0.511    -1451.166    2915.812
+                _cons |   9617.918   961.1702    10.01   0.000     7734.059    11501.78
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    1986.24   578.4712       1122.35    3515.079
+-----------------------------+------------------------------------------------
+                sd(Residual) |   3087.557   325.4571      2511.253    3796.116
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.02          Prob >= chibar2 = 0.0125
+
+. eststo sub4: xtmixed dem i.bonus bonus_order  || id: if type==4,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -486.87626  
+Iteration 1:   log restricted-likelihood = -486.86245  
+Iteration 2:   log restricted-likelihood = -486.86244  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         54
+Group variable: id                              Number of groups  =         18
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       4.16
+Log restricted-likelihood = -486.86244          Prob > chi2       =     0.1249
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -1666.667   845.1538    -1.97   0.049    -3323.138   -10.19557
+          bonus_order |        500   960.1442     0.52   0.603    -1381.848    2381.848
+                _cons |   9777.778   852.7503    11.47   0.000     8106.418    11449.14
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   1113.594   719.0765      314.1114    3947.933
+-----------------------------+------------------------------------------------
+                sd(Residual) |   2927.699   349.9261      2316.267    3700.532
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.74          Prob >= chibar2 = 0.1944
+
+. restore
+
+. 
+. coefplot (sub1, label (Box I)) (sub2, label (Box III))  (sub3, label (Box II))  (sub4, label (Box IV)) , keep(1.bonus) coeflabels(1.bonus = "Pooled Bonus")  byop
+> ts(xrescale) xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact relative to baseline in pp") grid(none) levels(95 90) ciopts(lwidth(0.8 2) 
+>  lcolor(*1 *.3) recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) msize(3pt) msymbol(D) mlabsize(8pt) mlabposition(1) 
+> mlabgap(-0.4) subtitle(, size(6pt) lstyle(none) margin(medium) nobox justification(left)  bmargin(top))  xla(-50(25)75, nogrid)  xsize(3.465) ysize(2) scale(1.2)
+
+. gr_edit style.editstyle margin(vsmall) editcopy
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+. *revision: time trend
+. gen round= 1 if bonus_first==.
+(128 missing values generated)
+
+. replace round = 2 if bonus_first==1
+(64 real changes made)
+
+. replace round = 3 if bonus_first==0
+(64 real changes made)
+
+. 
+. lab def order1 0 "Base-Large-Small" 1 "Base-Small-Large", replace
+
+. lab val bonus_order order1
+
+. 
+. *Order 1: Base-Large-Small
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. *Figure 4.      Crowding-effects by baseline choice
+. gen type=0
+
+. replace type=1 if rule_base!=1 & extrinsic==0
+(36 real changes made)
+
+. replace type=2 if rule_base!=1 & extrinsic==1
+(33 real changes made)
+
+. replace type=3 if rule_base==1 & extrinsic==0
+(69 real changes made)
+
+. replace type=4 if rule_base==1 & extrinsic==1
+(54 real changes made)
+
+. lab def typo 1 "Box I" 2 "Box III" 3 "Box II" 4 "Box IV", replace
+
+. lab val type typo
+
+. prtest extrinsic_leader, by(TL)
+
+Two-sample test of proportions                     0: Number of obs =       96
+                                                   1: Number of obs =       96
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |     .34375   .0484753                      .2487402    .4387598
+           1 |      .5625   .0506308                      .4632655    .6617345
+-------------+----------------------------------------------------------------
+        diff |    -.21875   .0700952                      -.356134    -.081366
+             |  under Ho:   .0718509    -3.04   0.002
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =  -3.0445
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0012         Pr(|Z| > |z|) = 0.0023          Pr(Z > z) = 0.9988
+
+. bys extrinsic_leader: sum helpauthentic
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Intrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |        105    11.28571    3.858177          5   15.33333
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Extrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |         87           9    4.123106          4         15
+
+
+. ttest helpauthentic if decision <2, by(extrinsic_leader)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+Intrinsi |      35    11.28571    .6585136    3.895819    9.947454    12.62397
+Extrinsi |      29           9    .7747027    4.171902    7.413094    10.58691
+---------+--------------------------------------------------------------------
+combined |      64       10.25    .5190379    4.152303    9.212786    11.28721
+---------+--------------------------------------------------------------------
+    diff |            2.285714    1.010161                .2664311    4.304997
+------------------------------------------------------------------------------
+    diff = mean(Intrinsi) - mean(Extrinsi)                        t =   2.2627
+Ho: diff = 0                                     degrees of freedom =       62
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9864         Pr(|T| > |t|) = 0.0272          Pr(T > t) = 0.0136
+
+. 
+. preserve
+
+. replace dem=dem*100
+(123 real changes made)
+
+. eststo sub1: xtmixed dem i.bonus bonus_order  || id: if type==1,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -170.53525  
+Iteration 1:   log restricted-likelihood = -170.53486  
+Iteration 2:   log restricted-likelihood = -170.53486  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         36
+Group variable: id                              Number of groups  =         12
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       5.90
+Log restricted-likelihood = -170.53486          Prob > chi2       =     0.0522
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   29.16667   12.00719     2.43   0.015     5.632999    52.70033
+          bonus_order |   -.952381   16.22964    -0.06   0.953     -32.7619    30.85714
+                _cons |   .5555556   14.75559     0.04   0.970    -28.36488    29.47599
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.59065   9.233882      7.777541    49.34637
+-----------------------------+------------------------------------------------
+                sd(Residual) |   33.96147   5.007346      25.43804    45.34082
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.80          Prob >= chibar2 = 0.0899
+
+. eststo sub2: xtmixed dem i.bonus bonus_order  || id: if type==2,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -157.75184  
+Iteration 1:   log restricted-likelihood =  -157.7516  
+Iteration 2:   log restricted-likelihood =  -157.7516  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      14.05
+Log restricted-likelihood =  -157.7516          Prob > chi2       =     0.0009
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |         50   13.56402     3.69   0.000     23.41501    76.58499
+          bonus_order |  -13.09524   19.20815    -0.68   0.495    -50.74253    24.55205
+                _cons |   8.333333   17.79209     0.47   0.640    -26.53852    43.20519
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    22.1228   10.48617       8.73719     56.0155
+-----------------------------+------------------------------------------------
+                sd(Residual) |   36.73154     5.6678      27.14538    49.70298
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.85          Prob >= chibar2 = 0.0870
+
+. eststo sub3: xtmixed dem i.bonus bonus_order  || id: if type==3,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -333.40791  
+Iteration 1:   log restricted-likelihood = -333.40781  
+Iteration 2:   log restricted-likelihood = -333.40781  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         69
+Group variable: id                              Number of groups  =         23
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      11.38
+Log restricted-likelihood = -333.40781          Prob > chi2       =     0.0034
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -26.08696    7.88491    -3.31   0.001     -41.5411   -10.63282
+          bonus_order |   7.323232   11.14045     0.66   0.511    -14.51165    29.15812
+                _cons |   96.17918   9.611701    10.01   0.000      77.3406    115.0178
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.86239   5.784713      11.22349    35.15079
+-----------------------------+------------------------------------------------
+                sd(Residual) |   30.87557   3.254571      25.11253    37.96117
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.02          Prob >= chibar2 = 0.0125
+
+. eststo sub4: xtmixed dem i.bonus bonus_order  || id: if type==4,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -252.01258  
+Iteration 1:   log restricted-likelihood = -251.99877  
+Iteration 2:   log restricted-likelihood = -251.99876  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         54
+Group variable: id                              Number of groups  =         18
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       4.16
+Log restricted-likelihood = -251.99876          Prob > chi2       =     0.1249
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -16.66667   8.451537    -1.97   0.049    -33.23138   -.1019579
+          bonus_order |          5   9.601445     0.52   0.603    -13.81849    23.81849
+                _cons |   97.77778   8.527504    11.47   0.000     81.06418    114.4914
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   11.13595   7.190758      3.141127    39.47927
+-----------------------------+------------------------------------------------
+                sd(Residual) |   29.27698    3.49926      23.16267    37.00532
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.74          Prob >= chibar2 = 0.1944
+
+. restore
+
+. 
+. coefplot (sub1, label (Box I)) (sub2, label (Box III))  (sub3, label (Box II))  (sub4, label (Box IV)) , keep(1.bonus) coeflabels(1.bonus = "Pooled Bonus")  byop
+> ts(xrescale) xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact relative to baseline in pp") grid(none) levels(95 90) ciopts(lwidth(0.8 2) 
+>  lcolor(*1 *.3) recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) msize(3pt) msymbol(D) mlabsize(8pt) mlabposition(1) 
+> mlabgap(-0.4) subtitle(, size(6pt) lstyle(none) margin(medium) nobox justification(left)  bmargin(top))  xla(-50(25)75, nogrid)  xsize(3.465) ysize(2) scale(1.2)
+
+. gr_edit style.editstyle margin(vsmall) editcopy
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6558_000000.tmp"
+
+. gr_edit style.editstyle margin(vsmall) editcopy
+
+. gr save  "$working_ANALYSIS\results\intermediate\figureX_crowding_effects.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\intermediate\figureX_crowding_effects.gph saved)
+
+. gr export "$working_ANALYSIS\results\figures\figureX_crowding_effects.tif", replace width(4000) 
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\figures\figureX_crowding_effects.tif written in TIFF f
+> ormat)
+
+. 
+end of do-file
+
+. exit, clear

@@ -1,0 +1,2027 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/scripts/logs/2022.10.19-10.51.03.log.txt
+  log type:  text
+ opened on:  19 Oct 2022, 10:51:03
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 19 Oct 2022 10:51:03
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss;lmatasem;lmata
+> sp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduces transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. 
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * (1) Analysis Long Format
+. *--------------------------------------------------
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. *Panel A: Main treatment effects
+. tab rule if decision<2
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       64.06       64.06
+Pseudo-democratic |         14       21.88       85.94
+         Dictator |          9       14.06      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. bys TL: tab rule if decision<2
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> TL = 0
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         18       56.25       56.25
+Pseudo-democratic |          8       25.00       81.25
+         Dictator |          6       18.75      100.00
+------------------+-----------------------------------
+            Total |         32      100.00
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> TL = 1
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         23       71.88       71.88
+Pseudo-democratic |          6       18.75       90.63
+         Dictator |          3        9.38      100.00
+------------------+-----------------------------------
+            Total |         32      100.00
+
+
+. prtest dem1 if decision<2, by(TL)
+
+Two-sample test of proportions                     0: Number of obs =       32
+                                                   1: Number of obs =       32
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |      .5625   .0876951                      .3906208    .7343792
+           1 |     .71875   .0794804                      .5629712    .8745288
+-------------+----------------------------------------------------------------
+        diff |    -.15625   .1183536                     -.3882187    .0757187
+             |  under Ho:   .1199543    -1.30   0.193
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =  -1.3026
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0964         Pr(|Z| > |z|) = 0.1927          Pr(Z > z) = 0.9036
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_dem1: xtprobit dem bonus_2 bonus_3 , vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.38709  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -125.38709
+rho =  0.1     log pseudolikelihood = -120.97002
+rho =  0.2     log pseudolikelihood = -117.59758
+rho =  0.3     log pseudolikelihood = -115.02704
+rho =  0.4     log pseudolikelihood = -113.13299
+rho =  0.5     log pseudolikelihood = -111.87369
+rho =  0.6     log pseudolikelihood = -111.29283
+rho =  0.7     log pseudolikelihood = -111.58207
+
+Iteration 0:   log pseudolikelihood = -111.29429  
+Iteration 1:   log pseudolikelihood = -110.64933  
+Iteration 2:   log pseudolikelihood = -110.63147  
+Iteration 3:   log pseudolikelihood = -110.63147  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.00
+Log pseudolikelihood  = -110.63147              Prob > chi2       =     0.9999
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+     bonus_3 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+       _cons |   .5973239   .2794914     2.14   0.033     .0495309    1.145117
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5734665   .4495206                     -.3075777    1.454511
+-------------+----------------------------------------------------------------
+     sigma_u |   1.332069   .2993962                      .8574531    2.069393
+         rho |   .6395627   .1036245                      .4237061    .8106917
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0008635   .0665514     0.01   0.990    -.1295749     .131302
+     bonus_3 |   .0008635   .0665515     0.01   0.990     -.129575    .1313021
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_fake1: xtprobit fake bonus_2 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.09846  
+Iteration 2:   log pseudolikelihood = -113.09531  
+Iteration 3:   log pseudolikelihood = -113.09531  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.09531
+rho =  0.1     log pseudolikelihood = -109.50028
+rho =  0.2     log pseudolikelihood = -106.85965
+rho =  0.3     log pseudolikelihood = -104.95446
+rho =  0.4     log pseudolikelihood = -103.67659
+rho =  0.5     log pseudolikelihood = -102.99775
+rho =  0.6     log pseudolikelihood = -102.97063
+rho =  0.7     log pseudolikelihood = -103.77414
+
+Iteration 0:   log pseudolikelihood = -102.97557  
+Iteration 1:   log pseudolikelihood = -101.54769  
+Iteration 2:   log pseudolikelihood = -101.40994  
+Iteration 3:   log pseudolikelihood = -101.40943  
+Iteration 4:   log pseudolikelihood = -101.40943  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       3.97
+Log pseudolikelihood  = -101.40943              Prob > chi2       =     0.2652
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .4614349   .3139349     1.47   0.142    -.1538663    1.076736
+     bonus_3 |   .5327473   .3187649     1.67   0.095    -.0920204    1.157515
+ bonus_order |   .3387109   .4152962     0.82   0.415    -.4752546    1.152676
+       _cons |  -1.431821   .3832913    -3.74   0.000    -2.183058   -.6805835
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4616659   .4812244                     -.4815165    1.404848
+-------------+----------------------------------------------------------------
+     sigma_u |   1.259649   .3030868                      .7860316     2.01864
+         rho |   .6134093   .1141167                      .3818941    .8029521
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0961699    .063935     1.50   0.133    -.0291404    .2214802
+     bonus_3 |   .1110324   .0645646     1.72   0.085    -.0155119    .2375767
+ bonus_order |   .0705924   .0860772     0.82   0.412    -.0981159    .2393007
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_dem2: xtprobit dem bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.13711  
+Iteration 2:   log pseudolikelihood =  -125.1371  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -125.1371
+rho =  0.1     log pseudolikelihood = -120.75302
+rho =  0.2     log pseudolikelihood = -117.40806
+rho =  0.3     log pseudolikelihood = -114.86156
+rho =  0.4     log pseudolikelihood = -112.98925
+rho =  0.5     log pseudolikelihood = -111.75008
+rho =  0.6     log pseudolikelihood = -111.18782
+rho =  0.7     log pseudolikelihood =  -111.4932
+
+Iteration 0:   log pseudolikelihood = -111.19027  
+Iteration 1:   log pseudolikelihood =  -110.5521  
+Iteration 2:   log pseudolikelihood = -110.53321  
+Iteration 3:   log pseudolikelihood = -110.53321  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.20
+Log pseudolikelihood  = -110.53321              Prob > chi2       =     0.9069
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0038548   .2653135     0.01   0.988      -.51615    .5238597
+ bonus_order |  -.1862194   .4213702    -0.44   0.659     -1.01209    .6396511
+       _cons |   .6944178   .3408885     2.04   0.042     .0262886    1.362547
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5654267   .4499981                     -.3165533    1.447407
+-------------+----------------------------------------------------------------
+     sigma_u |   1.326725   .2985118                      .8536136    2.062056
+         rho |   .6377072   .1039661                       .421516     .809599
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0008665   .0596371     0.01   0.988    -.1160202    .1177531
+ bonus_order |  -.0418576   .0944827    -0.44   0.658    -.2270403    .1433252
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_fake2: xtprobit fake bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.11824  
+Iteration 2:   log pseudolikelihood = -113.11513  
+Iteration 3:   log pseudolikelihood = -113.11513  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.11513
+rho =  0.1     log pseudolikelihood = -109.52127
+rho =  0.2     log pseudolikelihood = -106.88185
+rho =  0.3     log pseudolikelihood = -104.97786
+rho =  0.4     log pseudolikelihood =  -103.7012
+rho =  0.5     log pseudolikelihood = -103.02356
+rho =  0.6     log pseudolikelihood = -102.99767
+rho =  0.7     log pseudolikelihood = -103.80249
+
+Iteration 0:   log pseudolikelihood = -103.00256  
+Iteration 1:   log pseudolikelihood = -101.57872  
+Iteration 2:   log pseudolikelihood = -101.44091  
+Iteration 3:   log pseudolikelihood = -101.44039  
+Iteration 4:   log pseudolikelihood = -101.44039  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       3.88
+Log pseudolikelihood  = -101.44039              Prob > chi2       =     0.1435
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .4971642   .2842203     1.75   0.080    -.0598972    1.054226
+ bonus_order |   .3385349   .4151405     0.82   0.415    -.4751255    1.152195
+       _cons |  -1.431149   .3832357    -3.73   0.000    -2.182278   -.6800211
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4601208    .481087                     -.4827923    1.403034
+-------------+----------------------------------------------------------------
+     sigma_u |   1.258676   .3027663                      .7855304     2.01681
+         rho |   .6130428   .1141241                       .381593    .8026649
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .1036855   .0574167     1.81   0.071    -.0088492    .2162201
+ bonus_order |   .0706027   .0860697     0.82   0.412    -.0980907    .2392962
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_dic2: xtprobit dic bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.837592  
+Iteration 2:   log pseudolikelihood = -46.766968  
+Iteration 3:   log pseudolikelihood =  -46.76692  
+Iteration 4:   log pseudolikelihood =  -46.76692  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -46.76692
+rho =  0.1     log pseudolikelihood = -46.438292
+rho =  0.2     log pseudolikelihood = -46.586174
+
+Iteration 0:   log pseudolikelihood = -46.438292  
+Iteration 1:   log pseudolikelihood = -46.303056  
+Iteration 2:   log pseudolikelihood = -45.823896  
+Iteration 3:   log pseudolikelihood = -45.814007  
+Iteration 4:   log pseudolikelihood = -45.813838  
+Iteration 5:   log pseudolikelihood = -45.813838  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       6.02
+Log pseudolikelihood  = -45.813838              Prob > chi2       =     0.0493
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.8653539   .3619556    -2.39   0.017    -1.574774   -.1559341
+ bonus_order |  -.3153426   .3830241    -0.82   0.410    -1.066056    .4353707
+       _cons |  -1.162901   .3801173    -3.06   0.002    -1.907917   -.4178845
+-------------+----------------------------------------------------------------
+    /lnsig2u |  -.6719679   .8021689                      -2.24419    .9002543
+-------------+----------------------------------------------------------------
+     sigma_u |   .7146346   .2866288                      .3255969    1.568512
+         rho |   .3380563   .1795048                      .0958518    .7110018
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dic=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.0908287   .0383611    -2.37   0.018     -.166015   -.0156423
+ bonus_order |  -.0330988   .0403304    -0.82   0.412    -.1121449    .0459473
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_dem1: xtprobit dem bonus_2 bonus_3 , vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.38709  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -125.38709
+rho =  0.1     log pseudolikelihood = -120.97002
+rho =  0.2     log pseudolikelihood = -117.59758
+rho =  0.3     log pseudolikelihood = -115.02704
+rho =  0.4     log pseudolikelihood = -113.13299
+rho =  0.5     log pseudolikelihood = -111.87369
+rho =  0.6     log pseudolikelihood = -111.29283
+rho =  0.7     log pseudolikelihood = -111.58207
+
+Iteration 0:   log pseudolikelihood = -111.29429  
+Iteration 1:   log pseudolikelihood = -110.64933  
+Iteration 2:   log pseudolikelihood = -110.63147  
+Iteration 3:   log pseudolikelihood = -110.63147  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.00
+Log pseudolikelihood  = -110.63147              Prob > chi2       =     0.9999
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+     bonus_3 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+       _cons |   .5973239   .2794914     2.14   0.033     .0495309    1.145117
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5734665   .4495206                     -.3075777    1.454511
+-------------+----------------------------------------------------------------
+     sigma_u |   1.332069   .2993962                      .8574531    2.069393
+         rho |   .6395627   .1036245                      .4237061    .8106917
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. * Small and Large bonus seperately
+. eststo reg_dem1: xtprobit dem bonus_2 bonus_3 , vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.38709  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -125.38709
+rho =  0.1     log pseudolikelihood = -120.97002
+rho =  0.2     log pseudolikelihood = -117.59758
+rho =  0.3     log pseudolikelihood = -115.02704
+rho =  0.4     log pseudolikelihood = -113.13299
+rho =  0.5     log pseudolikelihood = -111.87369
+rho =  0.6     log pseudolikelihood = -111.29283
+rho =  0.7     log pseudolikelihood = -111.58207
+
+Iteration 0:   log pseudolikelihood = -111.29429  
+Iteration 1:   log pseudolikelihood = -110.64933  
+Iteration 2:   log pseudolikelihood = -110.63147  
+Iteration 3:   log pseudolikelihood = -110.63147  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.00
+Log pseudolikelihood  = -110.63147              Prob > chi2       =     0.9999
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+     bonus_3 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+       _cons |   .5973239   .2794914     2.14   0.033     .0495309    1.145117
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5734665   .4495206                     -.3075777    1.454511
+-------------+----------------------------------------------------------------
+     sigma_u |   1.332069   .2993962                      .8574531    2.069393
+         rho |   .6395627   .1036245                      .4237061    .8106917
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0008635   .0665514     0.01   0.990    -.1295749     .131302
+     bonus_3 |   .0008635   .0665515     0.01   0.990     -.129575    .1313021
+------------------------------------------------------------------------------
+
+. est store pr1
+
+. eststo reg_fake1: xtprobit fake bonus_2 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.09846  
+Iteration 2:   log pseudolikelihood = -113.09531  
+Iteration 3:   log pseudolikelihood = -113.09531  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.09531
+rho =  0.1     log pseudolikelihood = -109.50028
+rho =  0.2     log pseudolikelihood = -106.85965
+rho =  0.3     log pseudolikelihood = -104.95446
+rho =  0.4     log pseudolikelihood = -103.67659
+rho =  0.5     log pseudolikelihood = -102.99775
+rho =  0.6     log pseudolikelihood = -102.97063
+rho =  0.7     log pseudolikelihood = -103.77414
+
+Iteration 0:   log pseudolikelihood = -102.97557  
+Iteration 1:   log pseudolikelihood = -101.54769  
+Iteration 2:   log pseudolikelihood = -101.40994  
+Iteration 3:   log pseudolikelihood = -101.40943  
+Iteration 4:   log pseudolikelihood = -101.40943  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       3.97
+Log pseudolikelihood  = -101.40943              Prob > chi2       =     0.2652
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .4614349   .3139349     1.47   0.142    -.1538663    1.076736
+     bonus_3 |   .5327473   .3187649     1.67   0.095    -.0920204    1.157515
+ bonus_order |   .3387109   .4152962     0.82   0.415    -.4752546    1.152676
+       _cons |  -1.431821   .3832913    -3.74   0.000    -2.183058   -.6805835
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4616659   .4812244                     -.4815165    1.404848
+-------------+----------------------------------------------------------------
+     sigma_u |   1.259649   .3030868                      .7860316     2.01864
+         rho |   .6134093   .1141167                      .3818941    .8029521
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0961699    .063935     1.50   0.133    -.0291404    .2214802
+     bonus_3 |   .1110324   .0645646     1.72   0.085    -.0155119    .2375767
+ bonus_order |   .0705924   .0860772     0.82   0.412    -.0981159    .2393007
+------------------------------------------------------------------------------
+
+. est store pr2
+
+. eststo reg_dic1: xtprobit dic bonus_2 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.751419  
+Iteration 2:   log pseudolikelihood = -46.668355  
+Iteration 3:   log pseudolikelihood = -46.668238  
+Iteration 4:   log pseudolikelihood = -46.668238  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -46.668238
+rho =  0.1     log pseudolikelihood =  -46.34144
+rho =  0.2     log pseudolikelihood = -46.487345
+
+Iteration 0:   log pseudolikelihood =  -46.34144  
+Iteration 1:   log pseudolikelihood = -46.224904  
+Iteration 2:   log pseudolikelihood = -45.725694  
+Iteration 3:   log pseudolikelihood = -45.716321  
+Iteration 4:   log pseudolikelihood = -45.716168  
+Iteration 5:   log pseudolikelihood = -45.716168  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       5.89
+Log pseudolikelihood  = -45.716168              Prob > chi2       =     0.1171
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |  -.7685142   .3654187    -2.10   0.035    -1.484722   -.0523066
+     bonus_3 |  -.9802238   .4762269    -2.06   0.040    -1.913611   -.0468363
+ bonus_order |  -.3149328   .3841314    -0.82   0.412    -1.067817    .4379509
+       _cons |  -1.164717   .3813613    -3.05   0.002    -1.912172   -.4172627
+-------------+----------------------------------------------------------------
+    /lnsig2u |   -.664432   .8165016                     -2.264746    .9358817
+-------------+----------------------------------------------------------------
+     sigma_u |   .7173324   .2928515                      .3222677    1.596703
+         rho |   .3397447   .1831562                      .0940851     .718267
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dic=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |  -.0804475   .0394257    -2.04   0.041    -.1577204   -.0031745
+     bonus_3 |  -.1026091   .0485981    -2.11   0.035    -.1978595   -.0073586
+ bonus_order |  -.0329669   .0402543    -0.82   0.413    -.1118639    .0459301
+------------------------------------------------------------------------------
+
+. est store pr3
+
+. 
+. *pooled bonus
+. eststo reg_dem2: xtprobit dem bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.13711  
+Iteration 2:   log pseudolikelihood =  -125.1371  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -125.1371
+rho =  0.1     log pseudolikelihood = -120.75302
+rho =  0.2     log pseudolikelihood = -117.40806
+rho =  0.3     log pseudolikelihood = -114.86156
+rho =  0.4     log pseudolikelihood = -112.98925
+rho =  0.5     log pseudolikelihood = -111.75008
+rho =  0.6     log pseudolikelihood = -111.18782
+rho =  0.7     log pseudolikelihood =  -111.4932
+
+Iteration 0:   log pseudolikelihood = -111.19027  
+Iteration 1:   log pseudolikelihood =  -110.5521  
+Iteration 2:   log pseudolikelihood = -110.53321  
+Iteration 3:   log pseudolikelihood = -110.53321  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.20
+Log pseudolikelihood  = -110.53321              Prob > chi2       =     0.9069
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0038548   .2653135     0.01   0.988      -.51615    .5238597
+ bonus_order |  -.1862194   .4213702    -0.44   0.659     -1.01209    .6396511
+       _cons |   .6944178   .3408885     2.04   0.042     .0262886    1.362547
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5654267   .4499981                     -.3165533    1.447407
+-------------+----------------------------------------------------------------
+     sigma_u |   1.326725   .2985118                      .8536136    2.062056
+         rho |   .6377072   .1039661                       .421516     .809599
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0008665   .0596371     0.01   0.988    -.1160202    .1177531
+ bonus_order |  -.0418576   .0944827    -0.44   0.658    -.2270403    .1433252
+------------------------------------------------------------------------------
+
+. est store pr4
+
+. eststo reg_fake2: xtprobit fake bonus ast(rcap))), keep(bonus_2 bonus_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(
+> 0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact relative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(
+> lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(7pt)  mlabposition(12) mlabgap(-
+> 0.1)  legend(order(3 "Democratic" 6 "Pseudo-democratic" 9 "Dictator") pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))
+variable ast not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. *plot marginal effects for bonus treatment
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidth(0.3
+>  1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "120 94 240*.
+> 2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), keep(bonus_2 bonu
+> s_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact r
+> elative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) mlabel(cond(@pval<.01, "
+> ***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(7pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Pseudo-democratic" 9 "Dictator"
+> ) pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))
+estimation result pr5 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_dem2: xtprobit dem bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.13711  
+Iteration 2:   log pseudolikelihood =  -125.1371  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -125.1371
+rho =  0.1     log pseudolikelihood = -120.75302
+rho =  0.2     log pseudolikelihood = -117.40806
+rho =  0.3     log pseudolikelihood = -114.86156
+rho =  0.4     log pseudolikelihood = -112.98925
+rho =  0.5     log pseudolikelihood = -111.75008
+rho =  0.6     log pseudolikelihood = -111.18782
+rho =  0.7     log pseudolikelihood =  -111.4932
+
+Iteration 0:   log pseudolikelihood = -111.19027  
+Iteration 1:   log pseudolikelihood =  -110.5521  
+Iteration 2:   log pseudolikelihood = -110.53321  
+Iteration 3:   log pseudolikelihood = -110.53321  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.20
+Log pseudolikelihood  = -110.53321              Prob > chi2       =     0.9069
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0038548   .2653135     0.01   0.988      -.51615    .5238597
+ bonus_order |  -.1862194   .4213702    -0.44   0.659     -1.01209    .6396511
+       _cons |   .6944178   .3408885     2.04   0.042     .0262886    1.362547
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5654267   .4499981                     -.3165533    1.447407
+-------------+----------------------------------------------------------------
+     sigma_u |   1.326725   .2985118                      .8536136    2.062056
+         rho |   .6377072   .1039661                       .421516     .809599
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0008665   .0596371     0.01   0.988    -.1160202    .1177531
+ bonus_order |  -.0418576   .0944827    -0.44   0.658    -.2270403    .1433252
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. est store pr4
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_fake2: xtprobit fake bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.11824  
+Iteration 2:   log pseudolikelihood = -113.11513  
+Iteration 3:   log pseudolikelihood = -113.11513  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.11513
+rho =  0.1     log pseudolikelihood = -109.52127
+rho =  0.2     log pseudolikelihood = -106.88185
+rho =  0.3     log pseudolikelihood = -104.97786
+rho =  0.4     log pseudolikelihood =  -103.7012
+rho =  0.5     log pseudolikelihood = -103.02356
+rho =  0.6     log pseudolikelihood = -102.99767
+rho =  0.7     log pseudolikelihood = -103.80249
+
+Iteration 0:   log pseudolikelihood = -103.00256  
+Iteration 1:   log pseudolikelihood = -101.57872  
+Iteration 2:   log pseudolikelihood = -101.44091  
+Iteration 3:   log pseudolikelihood = -101.44039  
+Iteration 4:   log pseudolikelihood = -101.44039  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       3.88
+Log pseudolikelihood  = -101.44039              Prob > chi2       =     0.1435
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .4971642   .2842203     1.75   0.080    -.0598972    1.054226
+ bonus_order |   .3385349   .4151405     0.82   0.415    -.4751255    1.152195
+       _cons |  -1.431149   .3832357    -3.73   0.000    -2.182278   -.6800211
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4601208    .481087                     -.4827923    1.403034
+-------------+----------------------------------------------------------------
+     sigma_u |   1.258676   .3027663                      .7855304     2.01681
+         rho |   .6130428   .1141241                       .381593    .8026649
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .1036855   .0574167     1.81   0.071    -.0088492    .2162201
+ bonus_order |   .0706027   .0860697     0.82   0.412    -.0980907    .2392962
+------------------------------------------------------------------------------
+
+. est store pr5
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. eststo reg_dic2: xtprobit dic bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.837592  
+Iteration 2:   log pseudolikelihood = -46.766968  
+Iteration 3:   log pseudolikelihood =  -46.76692  
+Iteration 4:   log pseudolikelihood =  -46.76692  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -46.76692
+rho =  0.1     log pseudolikelihood = -46.438292
+rho =  0.2     log pseudolikelihood = -46.586174
+
+Iteration 0:   log pseudolikelihood = -46.438292  
+Iteration 1:   log pseudolikelihood = -46.303056  
+Iteration 2:   log pseudolikelihood = -45.823896  
+Iteration 3:   log pseudolikelihood = -45.814007  
+Iteration 4:   log pseudolikelihood = -45.813838  
+Iteration 5:   log pseudolikelihood = -45.813838  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       6.02
+Log pseudolikelihood  = -45.813838              Prob > chi2       =     0.0493
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.8653539   .3619556    -2.39   0.017    -1.574774   -.1559341
+ bonus_order |  -.3153426   .3830241    -0.82   0.410    -1.066056    .4353707
+       _cons |  -1.162901   .3801173    -3.06   0.002    -1.907917   -.4178845
+-------------+----------------------------------------------------------------
+    /lnsig2u |  -.6719679   .8021689                      -2.24419    .9002543
+-------------+----------------------------------------------------------------
+     sigma_u |   .7146346   .2866288                      .3255969    1.568512
+         rho |   .3380563   .1795048                      .0958518    .7110018
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dic=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.0908287   .0383611    -2.37   0.018     -.166015   -.0156423
+ bonus_order |  -.0330988   .0403304    -0.82   0.412    -.1121449    .0459473
+------------------------------------------------------------------------------
+
+. est store pr6
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidth(0.3
+>  1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "120 94 240*.
+> 2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), keep(bonus_2 bonu
+> s_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact r
+> elative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) mlabel(cond(@pval<.01, "
+> ***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(7pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Pseudo-democratic" 9 "Dictator"
+> ) pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidth(0.3
+>  1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "120 94 240*.
+> 2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), keep(bonus_2 bonu
+> s_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact r
+> elative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) mlabel(cond(@pval<.01, "
+> ***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(8pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Pseudo-democratic" 9 "Dictator"
+> ) pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))
+
+. gr display, xsize(4) ysize(3)
+
+. gr save "$working_ANALYSIS/results/intermediate/figure2.gph", replace 
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/intermediate/figure2.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure2.tif", replace width(4000)
+(file C:\Users\istei\OneDrive\Promotion\2_Paper Drafts\Paying for democracy\analysis/results/figures/figure2.tif written in TIFF format)
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. xtprobit fake bonus_1 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.09846  
+Iteration 2:   log pseudolikelihood = -113.09531  
+Iteration 3:   log pseudolikelihood = -113.09531  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.09531
+rho =  0.1     log pseudolikelihood = -109.50028
+rho =  0.2     log pseudolikelihood = -106.85965
+rho =  0.3     log pseudolikelihood = -104.95446
+rho =  0.4     log pseudolikelihood = -103.67659
+rho =  0.5     log pseudolikelihood = -102.99775
+rho =  0.6     log pseudolikelihood = -102.97063
+rho =  0.7     log pseudolikelihood = -103.77414
+
+Iteration 0:   log pseudolikelihood = -102.97557  
+Iteration 1:   log pseudolikelihood = -101.54769  
+Iteration 2:   log pseudolikelihood = -101.40994  
+Iteration 3:   log pseudolikelihood = -101.40943  
+Iteration 4:   log pseudolikelihood = -101.40943  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       3.97
+Log pseudolikelihood  = -101.40943              Prob > chi2       =     0.2652
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_1 |  -.4614349   .3139349    -1.47   0.142    -1.076736    .1538663
+     bonus_3 |   .0713124   .2771217     0.26   0.797    -.4718362     .614461
+ bonus_order |   .3387109   .4152962     0.82   0.415    -.4752546    1.152676
+       _cons |  -.9703856   .3528396    -2.75   0.006    -1.661939   -.2788326
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4616659   .4812244                     -.4815165    1.404848
+-------------+----------------------------------------------------------------
+     sigma_u |   1.259649   .3030868                      .7860316     2.01864
+         rho |   .6134093   .1141167                      .3818941    .8029521
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus_1 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_1 |  -.0961699    .063935    -1.50   0.133    -.2214802    .0291404
+     bonus_3 |   .0148626   .0577308     0.26   0.797    -.0982878    .1280129
+ bonus_order |   .0705924   .0860772     0.82   0.412    -.0981159    .2393007
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. xtprobit fake i.decision bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.09846  
+Iteration 2:   log pseudolikelihood = -113.09531  
+Iteration 3:   log pseudolikelihood = -113.09531  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.09531
+rho =  0.1     log pseudolikelihood = -109.50028
+rho =  0.2     log pseudolikelihood = -106.85965
+rho =  0.3     log pseudolikelihood = -104.95446
+rho =  0.4     log pseudolikelihood = -103.67659
+rho =  0.5     log pseudolikelihood = -102.99775
+rho =  0.6     log pseudolikelihood = -102.97063
+rho =  0.7     log pseudolikelihood = -103.77414
+
+Iteration 0:   log pseudolikelihood = -102.97557  
+Iteration 1:   log pseudolikelihood = -101.54769  
+Iteration 2:   log pseudolikelihood = -101.40994  
+Iteration 3:   log pseudolikelihood = -101.40943  
+Iteration 4:   log pseudolikelihood = -101.40943  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       3.97
+Log pseudolikelihood  = -101.40943              Prob > chi2       =     0.2652
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    decision |
+          5  |   .4614349   .3139349     1.47   0.142    -.1538663    1.076736
+          6  |   .5327473   .3187649     1.67   0.095    -.0920204    1.157515
+             |
+ bonus_order |   .3387109   .4152962     0.82   0.415    -.4752546    1.152676
+       _cons |  -1.431821   .3832913    -3.74   0.000    -2.183058   -.6805835
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4616659   .4812244                     -.4815165    1.404848
+-------------+----------------------------------------------------------------
+     sigma_u |   1.259649   .3030868                      .7860316     2.01864
+         rho |   .6134093   .1141167                      .3818941    .8029521
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : 5.decision 6.decision bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    decision |
+          5  |   .0930743   .0619314     1.50   0.133    -.0283089    .2144575
+          6  |   .1088511   .0634391     1.72   0.086    -.0154873    .2331895
+             |
+ bonus_order |   .0705924   .0860772     0.82   0.412    -.0981159    .2393007
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD3a00_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * (1) Analysis Long Format
+. *--------------------------------------------------
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+. *Figure 2.      Average treatment effects of payments & Table S2.       Main effects of bonus payment - Probit
+. *Panel A: Main treatment effects
+. tab rule if decision<2
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       64.06       64.06
+Pseudo-democratic |         14       21.88       85.94
+         Dictator |          9       14.06      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. bys TL: tab rule if decision<2
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> TL = 0
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         18       56.25       56.25
+Pseudo-democratic |          8       25.00       81.25
+         Dictator |          6       18.75      100.00
+------------------+-----------------------------------
+            Total |         32      100.00
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> TL = 1
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         23       71.88       71.88
+Pseudo-democratic |          6       18.75       90.63
+         Dictator |          3        9.38      100.00
+------------------+-----------------------------------
+            Total |         32      100.00
+
+
+. prtest dem1 if decision<2, by(TL)
+
+Two-sample test of proportions                     0: Number of obs =       32
+                                                   1: Number of obs =       32
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |      .5625   .0876951                      .3906208    .7343792
+           1 |     .71875   .0794804                      .5629712    .8745288
+-------------+----------------------------------------------------------------
+        diff |    -.15625   .1183536                     -.3882187    .0757187
+             |  under Ho:   .1199543    -1.30   0.193
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =  -1.3026
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0964         Pr(|Z| > |z|) = 0.1927          Pr(Z > z) = 0.9036
+
+. 
+. * Small and Large bonus seperately
+. eststo reg_dem1: xtprobit dem bonus_2 bonus_3 , vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.38709  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -125.38709
+rho =  0.1     log pseudolikelihood = -120.97002
+rho =  0.2     log pseudolikelihood = -117.59758
+rho =  0.3     log pseudolikelihood = -115.02704
+rho =  0.4     log pseudolikelihood = -113.13299
+rho =  0.5     log pseudolikelihood = -111.87369
+rho =  0.6     log pseudolikelihood = -111.29283
+rho =  0.7     log pseudolikelihood = -111.58207
+
+Iteration 0:   log pseudolikelihood = -111.29429  
+Iteration 1:   log pseudolikelihood = -110.64933  
+Iteration 2:   log pseudolikelihood = -110.63147  
+Iteration 3:   log pseudolikelihood = -110.63147  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.00
+Log pseudolikelihood  = -110.63147              Prob > chi2       =     0.9999
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+     bonus_3 |   .0038466   .2964481     0.01   0.990     -.577181    .5848743
+       _cons |   .5973239   .2794914     2.14   0.033     .0495309    1.145117
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5734665   .4495206                     -.3075777    1.454511
+-------------+----------------------------------------------------------------
+     sigma_u |   1.332069   .2993962                      .8574531    2.069393
+         rho |   .6395627   .1036245                      .4237061    .8106917
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0008635   .0665514     0.01   0.990    -.1295749     .131302
+     bonus_3 |   .0008635   .0665514     0.01   0.990    -.1295748    .1313019
+------------------------------------------------------------------------------
+
+. est store pr1
+
+. eststo reg_fake1: xtprobit fake bonus_2 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.09846  
+Iteration 2:   log pseudolikelihood = -113.09531  
+Iteration 3:   log pseudolikelihood = -113.09531  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.09531
+rho =  0.1     log pseudolikelihood = -109.50028
+rho =  0.2     log pseudolikelihood = -106.85965
+rho =  0.3     log pseudolikelihood = -104.95446
+rho =  0.4     log pseudolikelihood = -103.67659
+rho =  0.5     log pseudolikelihood = -102.99775
+rho =  0.6     log pseudolikelihood = -102.97063
+rho =  0.7     log pseudolikelihood = -103.77414
+
+Iteration 0:   log pseudolikelihood = -102.97557  
+Iteration 1:   log pseudolikelihood = -101.54769  
+Iteration 2:   log pseudolikelihood = -101.40994  
+Iteration 3:   log pseudolikelihood = -101.40943  
+Iteration 4:   log pseudolikelihood = -101.40943  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       3.97
+Log pseudolikelihood  = -101.40943              Prob > chi2       =     0.2652
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .4614349   .3139349     1.47   0.142    -.1538663    1.076736
+     bonus_3 |   .5327473   .3187649     1.67   0.095    -.0920204    1.157515
+ bonus_order |   .3387109   .4152962     0.82   0.415    -.4752546    1.152676
+       _cons |  -1.431821   .3832913    -3.74   0.000    -2.183058   -.6805835
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4616659   .4812244                     -.4815165    1.404848
+-------------+----------------------------------------------------------------
+     sigma_u |   1.259649   .3030868                      .7860316     2.01864
+         rho |   .6134093   .1141167                      .3818941    .8029521
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .0961699    .063935     1.50   0.133    -.0291404    .2214802
+     bonus_3 |   .1110324   .0645646     1.72   0.085    -.0155119    .2375767
+ bonus_order |   .0705924   .0860772     0.82   0.412    -.0981159    .2393007
+------------------------------------------------------------------------------
+
+. est store pr2
+
+. eststo reg_dic1: xtprobit dic bonus_2 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.751419  
+Iteration 2:   log pseudolikelihood = -46.668355  
+Iteration 3:   log pseudolikelihood = -46.668238  
+Iteration 4:   log pseudolikelihood = -46.668238  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -46.668238
+rho =  0.1     log pseudolikelihood =  -46.34144
+rho =  0.2     log pseudolikelihood = -46.487345
+
+Iteration 0:   log pseudolikelihood =  -46.34144  
+Iteration 1:   log pseudolikelihood = -46.224904  
+Iteration 2:   log pseudolikelihood = -45.725694  
+Iteration 3:   log pseudolikelihood = -45.716321  
+Iteration 4:   log pseudolikelihood = -45.716168  
+Iteration 5:   log pseudolikelihood = -45.716168  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       5.89
+Log pseudolikelihood  = -45.716168              Prob > chi2       =     0.1171
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |  -.7685142   .3654187    -2.10   0.035    -1.484722   -.0523066
+     bonus_3 |  -.9802238   .4762269    -2.06   0.040    -1.913611   -.0468363
+ bonus_order |  -.3149328   .3841314    -0.82   0.412    -1.067817    .4379509
+       _cons |  -1.164717   .3813613    -3.05   0.002    -1.912172   -.4172627
+-------------+----------------------------------------------------------------
+    /lnsig2u |   -.664432   .8165016                     -2.264746    .9358817
+-------------+----------------------------------------------------------------
+     sigma_u |   .7173324   .2928515                      .3222677    1.596703
+         rho |   .3397447   .1831562                      .0940851     .718267
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dic=1), predict(pr)
+dy/dx w.r.t. : bonus_2 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |  -.0804475   .0394257    -2.04   0.041    -.1577204   -.0031745
+     bonus_3 |  -.1026091   .0485981    -2.11   0.035    -.1978595   -.0073586
+ bonus_order |  -.0329669   .0402543    -0.82   0.413    -.1118639    .0459301
+------------------------------------------------------------------------------
+
+. est store pr3
+
+. 
+. *test small versus large bonus 
+. xtprobit fake bonus_1 bonus_3 bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.09846  
+Iteration 2:   log pseudolikelihood = -113.09531  
+Iteration 3:   log pseudolikelihood = -113.09531  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.09531
+rho =  0.1     log pseudolikelihood = -109.50028
+rho =  0.2     log pseudolikelihood = -106.85965
+rho =  0.3     log pseudolikelihood = -104.95446
+rho =  0.4     log pseudolikelihood = -103.67659
+rho =  0.5     log pseudolikelihood = -102.99775
+rho =  0.6     log pseudolikelihood = -102.97063
+rho =  0.7     log pseudolikelihood = -103.77414
+
+Iteration 0:   log pseudolikelihood = -102.97557  
+Iteration 1:   log pseudolikelihood = -101.54769  
+Iteration 2:   log pseudolikelihood = -101.40994  
+Iteration 3:   log pseudolikelihood = -101.40943  
+Iteration 4:   log pseudolikelihood = -101.40943  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(3)      =       3.97
+Log pseudolikelihood  = -101.40943              Prob > chi2       =     0.2652
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_1 |  -.4614349   .3139349    -1.47   0.142    -1.076736    .1538663
+     bonus_3 |   .0713124   .2771217     0.26   0.797    -.4718362     .614461
+ bonus_order |   .3387109   .4152962     0.82   0.415    -.4752546    1.152676
+       _cons |  -.9703856   .3528396    -2.75   0.006    -1.661939   -.2788326
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4616659   .4812244                     -.4815165    1.404848
+-------------+----------------------------------------------------------------
+     sigma_u |   1.259649   .3030868                      .7860316     2.01864
+         rho |   .6134093   .1141167                      .3818941    .8029521
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus_1 bonus_3 bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_1 |  -.0961699    .063935    -1.50   0.133    -.2214802    .0291404
+     bonus_3 |   .0148626   .0577308     0.26   0.797    -.0982878    .1280129
+ bonus_order |   .0705924   .0860772     0.82   0.412    -.0981159    .2393007
+------------------------------------------------------------------------------
+
+. 
+. *pooled bonus
+. eststo reg_dem2: xtprobit dem bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -125.38709  
+Iteration 1:   log pseudolikelihood = -125.13711  
+Iteration 2:   log pseudolikelihood =  -125.1371  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -125.1371
+rho =  0.1     log pseudolikelihood = -120.75302
+rho =  0.2     log pseudolikelihood = -117.40806
+rho =  0.3     log pseudolikelihood = -114.86156
+rho =  0.4     log pseudolikelihood = -112.98925
+rho =  0.5     log pseudolikelihood = -111.75008
+rho =  0.6     log pseudolikelihood = -111.18782
+rho =  0.7     log pseudolikelihood =  -111.4932
+
+Iteration 0:   log pseudolikelihood = -111.19027  
+Iteration 1:   log pseudolikelihood =  -110.5521  
+Iteration 2:   log pseudolikelihood = -110.53321  
+Iteration 3:   log pseudolikelihood = -110.53321  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       0.20
+Log pseudolikelihood  = -110.53321              Prob > chi2       =     0.9069
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0038548   .2653135     0.01   0.988      -.51615    .5238597
+ bonus_order |  -.1862194   .4213702    -0.44   0.659     -1.01209    .6396511
+       _cons |   .6944178   .3408885     2.04   0.042     .0262886    1.362547
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .5654267   .4499981                     -.3165533    1.447407
+-------------+----------------------------------------------------------------
+     sigma_u |   1.326725   .2985118                      .8536136    2.062056
+         rho |   .6377072   .1039661                       .421516     .809599
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dem=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .0008665   .0596371     0.01   0.988    -.1160201    .1177531
+ bonus_order |  -.0418576   .0944827    -0.44   0.658    -.2270403    .1433252
+------------------------------------------------------------------------------
+
+. est store pr4
+
+. eststo reg_fake2: xtprobit fake bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood =  -114.9984  
+Iteration 1:   log pseudolikelihood = -113.11824  
+Iteration 2:   log pseudolikelihood = -113.11513  
+Iteration 3:   log pseudolikelihood = -113.11513  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood = -113.11513
+rho =  0.1     log pseudolikelihood = -109.52127
+rho =  0.2     log pseudolikelihood = -106.88185
+rho =  0.3     log pseudolikelihood = -104.97786
+rho =  0.4     log pseudolikelihood =  -103.7012
+rho =  0.5     log pseudolikelihood = -103.02356
+rho =  0.6     log pseudolikelihood = -102.99767
+rho =  0.7     log pseudolikelihood = -103.80249
+
+Iteration 0:   log pseudolikelihood = -103.00256  
+Iteration 1:   log pseudolikelihood = -101.57872  
+Iteration 2:   log pseudolikelihood = -101.44091  
+Iteration 3:   log pseudolikelihood = -101.44039  
+Iteration 4:   log pseudolikelihood = -101.44039  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       3.88
+Log pseudolikelihood  = -101.44039              Prob > chi2       =     0.1435
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+        fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .4971642   .2842203     1.75   0.080    -.0598972    1.054226
+ bonus_order |   .3385349   .4151405     0.82   0.415    -.4751255    1.152195
+       _cons |  -1.431149   .3832357    -3.73   0.000    -2.182278   -.6800211
+-------------+----------------------------------------------------------------
+    /lnsig2u |   .4601208    .481087                     -.4827923    1.403034
+-------------+----------------------------------------------------------------
+     sigma_u |   1.258676   .3027663                      .7855304     2.01681
+         rho |   .6130428   .1141241                       .381593    .8026649
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(fake=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |   .1036855   .0574167     1.81   0.071    -.0088492    .2162201
+ bonus_order |   .0706027   .0860697     0.82   0.412    -.0980907    .2392962
+------------------------------------------------------------------------------
+
+. est store pr5
+
+. eststo reg_dic2: xtprobit dic bonus bonus_order, vce(robust)
+
+Fitting comparison model:
+
+Iteration 0:   log pseudolikelihood = -50.134837  
+Iteration 1:   log pseudolikelihood = -46.837592  
+Iteration 2:   log pseudolikelihood = -46.766968  
+Iteration 3:   log pseudolikelihood =  -46.76692  
+Iteration 4:   log pseudolikelihood =  -46.76692  
+
+Fitting full model:
+
+rho =  0.0     log pseudolikelihood =  -46.76692
+rho =  0.1     log pseudolikelihood = -46.438292
+rho =  0.2     log pseudolikelihood = -46.586174
+
+Iteration 0:   log pseudolikelihood = -46.438292  
+Iteration 1:   log pseudolikelihood = -46.303056  
+Iteration 2:   log pseudolikelihood = -45.823896  
+Iteration 3:   log pseudolikelihood = -45.814007  
+Iteration 4:   log pseudolikelihood = -45.813838  
+Iteration 5:   log pseudolikelihood = -45.813838  
+
+Calculating robust standard errors:
+
+Random-effects probit regression                Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+Random effects u_i ~ Gaussian                   Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+Integration method: mvaghermite                 Integration pts.  =         12
+
+                                                Wald chi2(2)      =       6.02
+Log pseudolikelihood  = -45.813838              Prob > chi2       =     0.0493
+
+                                    (Std. Err. adjusted for 64 clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+         dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.8653539   .3619556    -2.39   0.017    -1.574774   -.1559341
+ bonus_order |  -.3153426   .3830241    -0.82   0.410    -1.066056    .4353707
+       _cons |  -1.162901   .3801173    -3.06   0.002    -1.907917   -.4178845
+-------------+----------------------------------------------------------------
+    /lnsig2u |  -.6719679   .8021689                      -2.24419    .9002543
+-------------+----------------------------------------------------------------
+     sigma_u |   .7146346   .2866288                      .3255969    1.568512
+         rho |   .3380563   .1795048                      .0958518    .7110018
+------------------------------------------------------------------------------
+
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =        192
+Model VCE    : Robust
+
+Expression   : Pr(dic=1), predict(pr)
+dy/dx w.r.t. : bonus bonus_order
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       bonus |  -.0908287   .0383611    -2.37   0.018     -.166015   -.0156423
+ bonus_order |  -.0330988   .0403304    -0.82   0.412    -.1121449    .0459473
+------------------------------------------------------------------------------
+
+. est store pr6
+
+. 
+. 
+. 
+. *plot marginal effects for bonus treatment
+. coefplot (pr1, offset(0.2) msymbol(D)) (pr2, offset(0) msymbol(S)) (pr3, offset(-0.2) msymbol(O)) (pr4, offset(0.2) msymbol(D) mcolor("100 143 255") ciopts(lwidth(0.3
+>  1) lcolor("100 143 255*.8" "100 143 255*.2")  recast(rcap))) (pr5, offset(0) msymbol(S) mcolor("120 94 240") ciopts(lwidth(0.3 1) color("120 94 240*.8" "120 94 240*.
+> 2")  recast(rcap)))  (pr6, offset(-0.2) msymbol(O) mcolor("220 38 127") ciopts(lwidth(0.3 1) color("220 38 127*.8" "220 38 127*.2")  recast(rcap))), keep(bonus_2 bonu
+> s_3 bonus) coeflabels(bonus = "Pooled Bonus" bonus_2 = "Small bonus" bonus_3="Large bonus") xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact r
+> elative to baseline in pp") msymbol(d)  xla(-0.3(0.1)0.3, nogrid) grid(none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2) recast(rcap)) mlabel(cond(@pval<.01, "
+> ***", cond(@pval<.05, "**", cond(@pval<.1, "*", "") )))  mlabsize(8pt)  mlabposition(12) mlabgap(-0.1)  legend(order(3 "Democratic" 6 "Pseudo-democratic" 9 "Dictator"
+> ) pos(6) ring(1) rows(1) bmargin(small)) graphregion(margin(tiny))
+
+. gr display, xsize(4) ysize(3)
+
+. 
+end of do-file
+
+. exit, clear

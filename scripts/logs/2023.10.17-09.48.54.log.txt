@@ -1,0 +1,273 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.10.17-09.48.54.log.txt
+  log type:  text
+ opened on:  17 Oct 2023, 09:48:54
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 17 Oct 2023 09:48:54
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD62b4_000000.tmp"
+
+. 
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD62b4_000000.tmp"
+
+. eststo sub2: xtmixed dem i.bonus bonus_order  || id: if type==2,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -19.596737  
+Iteration 1:   log restricted-likelihood = -19.596494  
+Iteration 2:   log restricted-likelihood = -19.596494  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      14.05
+Log restricted-likelihood = -19.596494          Prob > chi2       =     0.0009
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |         .5   .1356402     3.69   0.000     .2341501    .7658499
+          bonus_order |  -.1309524   .1920815    -0.68   0.495    -.5074253    .2455205
+                _cons |   .0833333   .1779209     0.47   0.640    -.2653852    .4320519
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   .2212279   .1048617      .0873719    .5601549
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .3673154    .056678      .2714538    .4970298
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.85          Prob >= chibar2 = 0.0870
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD62b4_000000.tmp"
+
+. eststo sub2: xtmixed dem i.bonus_size bonus_order  || id: if type==2,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood =  -20.35802  
+Iteration 1:   log restricted-likelihood = -20.357637  
+Iteration 2:   log restricted-likelihood = -20.357637  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(3)      =      13.94
+Log restricted-likelihood = -20.357637          Prob > chi2       =     0.0030
+
+------------------------------------------------------------------------------
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  bonus_size |
+Small Bonus  |   .5454545   .1591991     3.43   0.001       .23343     .857479
+Large Bonus  |   .4545455   .1591991     2.86   0.004      .142521      .76657
+             |
+ bonus_order |  -.1309524   .1920815    -0.68   0.495    -.5074253    .2455205
+       _cons |   .0833333   .1786812     0.47   0.641    -.2668753     .433542
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   .2178318   .1070705       .083125    .5708355
+-----------------------------+------------------------------------------------
+                sd(Residual) |    .373355   .0590326      .2738641    .5089894
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.65          Prob >= chibar2 = 0.0994
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD62b4_000000.tmp"
+
+. eststo sub2: xtmixed dem bonus_2 bonus_3 bonus_order  || id: if type==2,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood =  -20.35802  
+Iteration 1:   log restricted-likelihood = -20.357637  
+Iteration 2:   log restricted-likelihood = -20.357637  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(3)      =      13.94
+Log restricted-likelihood = -20.357637          Prob > chi2       =     0.0030
+
+------------------------------------------------------------------------------
+         dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     bonus_2 |   .5454545   .1591991     3.43   0.001       .23343     .857479
+     bonus_3 |   .4545455   .1591991     2.86   0.004      .142521      .76657
+ bonus_order |  -.1309524   .1920815    -0.68   0.495    -.5074253    .2455205
+       _cons |   .0833333   .1786812     0.47   0.641    -.2668753     .433542
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   .2178318   .1070705       .083125    .5708355
+-----------------------------+------------------------------------------------
+                sd(Residual) |    .373355   .0590326      .2738641    .5089894
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.65          Prob >= chibar2 = 0.0994
+
+. 
+end of do-file
+
+. testparm bonus_2 bonus_3
+
+ ( 1)  [dem]bonus_2 = 0
+ ( 2)  [dem]bonus_3 = 0
+
+           chi2(  2) =   13.48
+         Prob > chi2 =    0.0012
+
+. testparm bonus_2-bonus_3=0
+=exp not allowed
+r(101);
+
+. testparm bonus_2 bonus_3, equal
+
+ ( 1)  - [dem]bonus_2 + [dem]bonus_3 = 0
+
+           chi2(  1) =    0.33
+         Prob > chi2 =    0.5680
+
+. exit, clear

@@ -1,0 +1,2330 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.10.12-14.22.38.log.txt
+  log type:  text
+ opened on:  12 Oct 2023, 14:22:38
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 12 Oct 2023 14:22:38
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. * (1) Analysis Long Format
+. *--------------------------------------------------
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+. *revision: time trend
+. gen round= 1 if bonus_first==.
+(128 missing values generated)
+
+. replace round = 2 if bonus_first==1
+(64 real changes made)
+
+. replace round = 3 if bonus_first==0
+(64 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. lab def order1 0 "Base-Large-Small" 1 "Base-Small-Large", replace
+
+. lab val bonus_order order1
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. gen type=0
+
+. replace type=1 if rule_base!=1 & extrinsic==0
+(36 real changes made)
+
+. replace type=2 if rule_base!=1 & extrinsic==1
+(33 real changes made)
+
+. replace type=3 if rule_base==1 & extrinsic==0
+(69 real changes made)
+
+. replace type=4 if rule_base==1 & extrinsic==1
+(54 real changes made)
+
+. lab def typo 1 "Box I" 2 "Box III" 3 "Box II" 4 "Box IV", replace
+
+. lab val type typo
+
+. prtest extrinsic_leader, by(TL)
+
+Two-sample test of proportions                     0: Number of obs =       96
+                                                   1: Number of obs =       96
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |     .34375   .0484753                      .2487402    .4387598
+           1 |      .5625   .0506308                      .4632655    .6617345
+-------------+----------------------------------------------------------------
+        diff |    -.21875   .0700952                      -.356134    -.081366
+             |  under Ho:   .0718509    -3.04   0.002
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =  -3.0445
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0012         Pr(|Z| > |z|) = 0.0023          Pr(Z > z) = 0.9988
+
+. bys extrinsic_leader: sum helpauthentic
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Intrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |        105    11.28571    3.858177          5   15.33333
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Extrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |         87           9    4.123106          4         15
+
+
+. ttest helpauthentic if decision <2, by(extrinsic_leader)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+Intrinsi |      35    11.28571    .6585136    3.895819    9.947454    12.62397
+Extrinsi |      29           9    .7747027    4.171902    7.413094    10.58691
+---------+--------------------------------------------------------------------
+combined |      64       10.25    .5190379    4.152303    9.212786    11.28721
+---------+--------------------------------------------------------------------
+    diff |            2.285714    1.010161                .2664311    4.304997
+------------------------------------------------------------------------------
+    diff = mean(Intrinsi) - mean(Extrinsi)                        t =   2.2627
+Ho: diff = 0                                     degrees of freedom =       62
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9864         Pr(|T| > |t|) = 0.0272          Pr(T > t) = 0.0136
+
+. 
+. preserve
+
+. replace dem=dem*100
+(123 real changes made)
+
+. eststo sub1: xtmixed dem i.bonus bonus_order  || id: if type==1,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -170.53525  
+Iteration 1:   log restricted-likelihood = -170.53486  
+Iteration 2:   log restricted-likelihood = -170.53486  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         36
+Group variable: id                              Number of groups  =         12
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       5.90
+Log restricted-likelihood = -170.53486          Prob > chi2       =     0.0522
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   29.16667   12.00719     2.43   0.015     5.632999    52.70033
+          bonus_order |   -.952381   16.22964    -0.06   0.953     -32.7619    30.85714
+                _cons |   .5555556   14.75559     0.04   0.970    -28.36488    29.47599
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.59065   9.233882      7.777541    49.34637
+-----------------------------+------------------------------------------------
+                sd(Residual) |   33.96147   5.007346      25.43804    45.34082
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.80          Prob >= chibar2 = 0.0899
+
+. eststo sub2: xtmixed dem i.bonus bonus_order  || id: if type==2,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -157.75184  
+Iteration 1:   log restricted-likelihood =  -157.7516  
+Iteration 2:   log restricted-likelihood =  -157.7516  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      14.05
+Log restricted-likelihood =  -157.7516          Prob > chi2       =     0.0009
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |         50   13.56402     3.69   0.000     23.41501    76.58499
+          bonus_order |  -13.09524   19.20815    -0.68   0.495    -50.74253    24.55205
+                _cons |   8.333333   17.79209     0.47   0.640    -26.53852    43.20519
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    22.1228   10.48617       8.73719     56.0155
+-----------------------------+------------------------------------------------
+                sd(Residual) |   36.73154     5.6678      27.14538    49.70298
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.85          Prob >= chibar2 = 0.0870
+
+. eststo sub3: xtmixed dem i.bonus bonus_order  || id: if type==3,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -333.40791  
+Iteration 1:   log restricted-likelihood = -333.40781  
+Iteration 2:   log restricted-likelihood = -333.40781  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         69
+Group variable: id                              Number of groups  =         23
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      11.38
+Log restricted-likelihood = -333.40781          Prob > chi2       =     0.0034
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -26.08696    7.88491    -3.31   0.001     -41.5411   -10.63282
+          bonus_order |   7.323232   11.14045     0.66   0.511    -14.51165    29.15812
+                _cons |   96.17918   9.611701    10.01   0.000      77.3406    115.0178
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.86239   5.784713      11.22349    35.15079
+-----------------------------+------------------------------------------------
+                sd(Residual) |   30.87557   3.254571      25.11253    37.96117
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.02          Prob >= chibar2 = 0.0125
+
+. eststo sub4: xtmixed dem i.bonus bonus_order  || id: if type==4,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -252.01258  
+Iteration 1:   log restricted-likelihood = -251.99877  
+Iteration 2:   log restricted-likelihood = -251.99876  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         54
+Group variable: id                              Number of groups  =         18
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       4.16
+Log restricted-likelihood = -251.99876          Prob > chi2       =     0.1249
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -16.66667   8.451537    -1.97   0.049    -33.23138   -.1019579
+          bonus_order |          5   9.601445     0.52   0.603    -13.81849    23.81849
+                _cons |   97.77778   8.527504    11.47   0.000     81.06418    114.4914
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   11.13595   7.190758      3.141127    39.47927
+-----------------------------+------------------------------------------------
+                sd(Residual) |   29.27698    3.49926      23.16267    37.00532
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.74          Prob >= chibar2 = 0.1944
+
+. restore
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. eststo dem_het1: xtmixed dem i.bonus##i.extrinsic_leader  bonus_order || id: if rule_base==1 ,  reml coeflegend
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -46.370698  
+Iteration 1:   log restricted-likelihood = -46.368955  
+Iteration 2:   log restricted-likelihood = -46.368955  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =        123
+Group variable: id                              Number of groups  =         41
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(4)      =      16.53
+Log restricted-likelihood = -46.368955          Prob > chi2       =     0.0024
+
+-------------------------------------------------------------------------------------------------
+                            dem |      Coef.  Legend
+--------------------------------+----------------------------------------------------------------
+                          bonus |
+          Pooled Bonus (n=128)  |  -.2608696  _b[1.bonus]
+                                |
+               extrinsic_leader |
+                     Extrinsic  |   .0048768  _b[1.extrinsic_leader]
+                                |
+         bonus#extrinsic_leader |
+Pooled Bonus (n=128)#Extrinsic  |   .0942029  _b[1.bonus#1.extrinsic_leader]
+                                |
+                    bonus_order |    .063093  _b[bonus_order]
+                          _cons |   .9670819  _b[_cons]
+-------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   .1620974   .0427378      .0966835    .2717688
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .3018662   .0238646       .258536    .3524584
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.31          Prob >= chibar2 = 0.0106
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. esttab sub1 sub2 sub3 sub4 using "$working_ANALYSIS\results\tables\tableS9_social_norms_boxes_democratic.rtf",  klabel se(%4.3f)  transform(ln*: exp(@)
+>  exp(@)) mgroups("Democratic Rule (=1)", pattern(1 0 0))   nomtitles b(%4.3f) stats(N N_clust r2_a, labels("N" "Cluster" "Adjusted R-squared" fmt(%4.0f
+>  %4.0f %4.2f))) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:_cons "{break}{hline @width}")) nonotes addnotes("Notes: Robust standard errors c
+> lin brackets: * p < 0.10, ** p < 0.05, *** p < 0.01.") replace 
+option klabel not allowed
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. 
+. 
+. esttab sub1 sub2 sub3 sub4 using "$working_ANALYSIS\results\tables\tableS9_social_norms_boxes_democratic.rtf",  label se(%4.3f)  transform(ln*: exp(@) 
+> exp(@)) mgroups("Democratic Rule (=1)", pattern(1 0 0))   nomtitles b(%4.3f) stats(N N_clust r2_a, labels("N" "Cluster" "Adjusted R-squared" fmt(%4.0f 
+> %4.0f %4.2f))) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:_cons "{break}{hline @width}")) nonotes addnotes("Notes: Robust standard errors cl
+> in brackets: * p < 0.10, ** p < 0.05, *** p < 0.01.") replace 
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\tables\tableS9_social_norms_boxes_demo
+> cratic.rtf not found)
+(output written to C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\tables\tableS9_social_norms_box
+> es_democratic.rtf)
+
+. 
+end of do-file
+
+. help xtmixed
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. 
+. preserve
+
+. replace dem=dem*100
+(123 real changes made)
+
+. eststo sub1: xtmixed dem i.bonus bonus_order  || id: if type==1,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -170.53525  
+Iteration 1:   log restricted-likelihood = -170.53486  
+Iteration 2:   log restricted-likelihood = -170.53486  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         36
+Group variable: id                              Number of groups  =         12
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       5.90
+Log restricted-likelihood = -170.53486          Prob > chi2       =     0.0522
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   29.16667   12.00719     2.43   0.015     5.632999    52.70033
+          bonus_order |   -.952381   16.22964    -0.06   0.953     -32.7619    30.85714
+                _cons |   .5555556   14.75559     0.04   0.970    -28.36488    29.47599
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.59065   9.233882      7.777541    49.34637
+-----------------------------+------------------------------------------------
+                sd(Residual) |   33.96147   5.007346      25.43804    45.34082
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.80          Prob >= chibar2 = 0.0899
+
+. eststo sub2: xtmixed dem i.bonus bonus_order  || id: if type==2,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -157.75184  
+Iteration 1:   log restricted-likelihood =  -157.7516  
+Iteration 2:   log restricted-likelihood =  -157.7516  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      14.05
+Log restricted-likelihood =  -157.7516          Prob > chi2       =     0.0009
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |         50   13.56402     3.69   0.000     23.41501    76.58499
+          bonus_order |  -13.09524   19.20815    -0.68   0.495    -50.74253    24.55205
+                _cons |   8.333333   17.79209     0.47   0.640    -26.53852    43.20519
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    22.1228   10.48617       8.73719     56.0155
+-----------------------------+------------------------------------------------
+                sd(Residual) |   36.73154     5.6678      27.14538    49.70298
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.85          Prob >= chibar2 = 0.0870
+
+. eststo sub3: xtmixed dem i.bonus bonus_order  || id: if type==3,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -333.40791  
+Iteration 1:   log restricted-likelihood = -333.40781  
+Iteration 2:   log restricted-likelihood = -333.40781  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         69
+Group variable: id                              Number of groups  =         23
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      11.38
+Log restricted-likelihood = -333.40781          Prob > chi2       =     0.0034
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -26.08696    7.88491    -3.31   0.001     -41.5411   -10.63282
+          bonus_order |   7.323232   11.14045     0.66   0.511    -14.51165    29.15812
+                _cons |   96.17918   9.611701    10.01   0.000      77.3406    115.0178
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.86239   5.784713      11.22349    35.15079
+-----------------------------+------------------------------------------------
+                sd(Residual) |   30.87557   3.254571      25.11253    37.96117
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.02          Prob >= chibar2 = 0.0125
+
+. eststo sub4: xtmixed dem i.bonus bonus_order  || id: if type==4,  reml 
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -252.01258  
+Iteration 1:   log restricted-likelihood = -251.99877  
+Iteration 2:   log restricted-likelihood = -251.99876  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         54
+Group variable: id                              Number of groups  =         18
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       4.16
+Log restricted-likelihood = -251.99876          Prob > chi2       =     0.1249
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -16.66667   8.451537    -1.97   0.049    -33.23138   -.1019579
+          bonus_order |          5   9.601445     0.52   0.603    -13.81849    23.81849
+                _cons |   97.77778   8.527504    11.47   0.000     81.06418    114.4914
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   11.13595   7.190758      3.141127    39.47927
+-----------------------------+------------------------------------------------
+                sd(Residual) |   29.27698    3.49926      23.16267    37.00532
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.74          Prob >= chibar2 = 0.1944
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. preserve
+
+. replace dem=dem*100
+(123 real changes made)
+
+. eststo sub1: xtmixed dem i.bonus bonus_order  || id: if type==1,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -170.53525  
+Iteration 1:   log restricted-likelihood = -170.53486  
+Iteration 2:   log restricted-likelihood = -170.53486  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         36
+Group variable: id                              Number of groups  =         12
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       5.90
+Log restricted-likelihood = -170.53486          Prob > chi2       =     0.0522
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   29.16667   12.00719     2.43   0.015     5.632999    52.70033
+          bonus_order |   -.952381   16.22964    -0.06   0.953     -32.7619    30.85714
+                _cons |   .5555556   14.75559     0.04   0.970    -28.36488    29.47599
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.59065   9.233882      7.777541    49.34637
+-----------------------------+------------------------------------------------
+                sd(Residual) |   33.96147   5.007346      25.43804    45.34082
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.80          Prob >= chibar2 = 0.0899
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'
+
+added macro:
+        e(individuals) : "12"
+
+. eststo sub2: xtmixed dem i.bonus bonus_order  || id: if type==2,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -157.75184  
+Iteration 1:   log restricted-likelihood =  -157.7516  
+Iteration 2:   log restricted-likelihood =  -157.7516  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      14.05
+Log restricted-likelihood =  -157.7516          Prob > chi2       =     0.0009
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |         50   13.56402     3.69   0.000     23.41501    76.58499
+          bonus_order |  -13.09524   19.20815    -0.68   0.495    -50.74253    24.55205
+                _cons |   8.333333   17.79209     0.47   0.640    -26.53852    43.20519
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    22.1228   10.48617       8.73719     56.0155
+-----------------------------+------------------------------------------------
+                sd(Residual) |   36.73154     5.6678      27.14538    49.70298
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.85          Prob >= chibar2 = 0.0870
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals' 
+
+added macro:
+        e(individuals) : "11"
+
+. eststo sub3: xtmixed dem i.bonus bonus_order  || id: if type==3,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -333.40791  
+Iteration 1:   log restricted-likelihood = -333.40781  
+Iteration 2:   log restricted-likelihood = -333.40781  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         69
+Group variable: id                              Number of groups  =         23
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      11.38
+Log restricted-likelihood = -333.40781          Prob > chi2       =     0.0034
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -26.08696    7.88491    -3.31   0.001     -41.5411   -10.63282
+          bonus_order |   7.323232   11.14045     0.66   0.511    -14.51165    29.15812
+                _cons |   96.17918   9.611701    10.01   0.000      77.3406    115.0178
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.86239   5.784713      11.22349    35.15079
+-----------------------------+------------------------------------------------
+                sd(Residual) |   30.87557   3.254571      25.11253    37.96117
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.02          Prob >= chibar2 = 0.0125
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'
+
+added macro:
+        e(individuals) : "23"
+
+. eststo sub4: xtmixed dem i.bonus bonus_order  || id: if type==4,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -252.01258  
+Iteration 1:   log restricted-likelihood = -251.99877  
+Iteration 2:   log restricted-likelihood = -251.99876  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         54
+Group variable: id                              Number of groups  =         18
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       4.16
+Log restricted-likelihood = -251.99876          Prob > chi2       =     0.1249
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -16.66667   8.451537    -1.97   0.049    -33.23138   -.1019579
+          bonus_order |          5   9.601445     0.52   0.603    -13.81849    23.81849
+                _cons |   97.77778   8.527504    11.47   0.000     81.06418    114.4914
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   11.13595   7.190758      3.141127    39.47927
+-----------------------------+------------------------------------------------
+                sd(Residual) |   29.27698    3.49926      23.16267    37.00532
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.74          Prob >= chibar2 = 0.1944
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'
+
+added macro:
+        e(individuals) : "18"
+
+. restore
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. 
+. esttab sub1 sub2 sub3 sub4 using "$working_ANALYSIS\results\tables\tableS9_social_norms_boxes_democratic.rtf",  label se(%4.3f)  transform(ln*: exp(@) 
+> exp(@)) mgroups("Democratic Rule (=1)", pattern(1 0 0))   nomtitles b(%4.3f) stats(N individuals chi2 p, labels("N" "Individuals" "Wald Chi2" "p" ) fmt
+> (%4.0f %4.0f %4.2f)) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:_cons "{break}{hline @width}")) nonotes addnotes("Notes: Robust standard err
+> ors in brackets: * p < 0.10, ** p < 0.05, *** p < 0.01.") replace 
+file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for
+    democracy\analysis\results\tables\tableS9_social_norms_boxes_democratic.rtf is read-only; cannot be modified or erased
+r(608);
+
+end of do-file
+
+r(608);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. 
+. esttab sub1 sub2 sub3 sub4 using "$working_ANALYSIS\results\tables\tableS9_social_norms_boxes_democratic.rtf",  label se(%4.3f)  transform(ln*: exp(@) 
+> exp(@)) mgroups("Democratic Rule (=1)", pattern(1 0 0))   mtitles("Box 1" "Box 2" "Box 3" "Box 4") b(%4.3f) stats(N individuals chi2 p, labels("N" "Ind
+> ividuals" "Wald Chi2" "p" ) fmt(%4.0f %4.0f %4.2f)) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:_cons "{break}{hline @width}")) nonotes addno
+> tes("Notes: Estimates are from multilevel panel regressions that account for the grouping structure of the data at the individual level (random interce
+> pt). Standard errors with stars indicating the following significant levels: * p < 0.10, ** p < 0.05, *** p < 0.01") replace 
+(output written to C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\tables\tableS9_social_norms_box
+> es_democratic.rtf)
+
+. 
+end of do-file
+
+. tab authentic_leader1
+
+     1=high |
+  authentic |
+leadership, |
+0 otherwise |      Freq.     Percent        Cum.
+------------+-----------------------------------
+        Low |         90       46.88       46.88
+       High |        102       53.13      100.00
+------------+-----------------------------------
+      Total |        192      100.00
+
+. tab authentic_leader2
+
+ Measure of |
+  authentic |
+ leadership |
+   based on |
+    dummies |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        141       73.44       73.44
+          1 |         51       26.56      100.00
+------------+-----------------------------------
+      Total |        192      100.00
+
+. tab helpauthentic
+
+helpauthent |
+         ic |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          4 |          3        1.56        1.56
+          5 |         24       12.50       14.06
+   5.333333 |         12        6.25       20.31
+   5.666667 |          9        4.69       25.00
+          6 |         21       10.94       35.94
+          7 |         15        7.81       43.75
+   11.66667 |          3        1.56       45.31
+         12 |          3        1.56       46.88
+   12.33333 |          6        3.13       50.00
+   12.66667 |          3        1.56       51.56
+         13 |         15        7.81       59.38
+   13.33333 |         18        9.38       68.75
+   13.66667 |          9        4.69       73.44
+         14 |         12        6.25       79.69
+   14.66667 |         24       12.50       92.19
+         15 |          3        1.56       93.75
+   15.33333 |         12        6.25      100.00
+------------+-----------------------------------
+      Total |        192      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. gen type_AL=1 if rule_base!=1 & authentic_leader1==1
+(159 missing values generated)
+
+. replace type_AL=2 if rule_base!=1 & authentic_leader1==0
+(36 real changes made)
+
+. replace type_AL=3 if rule_base==1 & authentic_leader1==1
+(69 real changes made)
+
+. replace type_AL=4 if rule_base==1 & authentic_leader1==0
+(54 real changes made)
+
+. lab val type_AL typo
+
+. 
+end of do-file
+
+. pwcorr type_AL type
+
+             |  type_AL     type
+-------------+------------------
+     type_AL |   1.0000 
+        type |   0.8388   1.0000 
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. 
+. 
+. esttab sub1_rc sub2_rc sub3_rc sub4_rc using "$working_ANALYSIS\results\tables\tableS10_social_norms_boxes_democratic_rc.rtf",  label se(%4.3f)  transf
+> orm(ln*: exp(@) exp(@)) mgroups("Democratic Rule (=1)", pattern(1 0 0))   mtitles("Box 1" "Box 2" "Box 3" "Box 4") b(%4.3f) stats(N individuals chi2 p,
+>  labels("N" "Individuals" "Wald Chi2" "p" ) fmt(%4.0f %4.0f %4.2f)) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:_cons "{break}{hline @width}"
+> )) nonotes addnotes("Notes: Estimates are from multilevel panel regressions that account for the grouping structure of the data at the individual level
+>  (random intercept). Standard errors with stars indicating the following significant levels: * p < 0.10, ** p < 0.05, *** p < 0.01") replace 
+estimation result sub1_rc not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. 
+. preserve
+
+. replace dem=dem*100
+(123 real changes made)
+
+. eststo sub1_rc: xtmixed dem i.bonus bonus_order  || id: if type_AL==1,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -155.85414  
+Iteration 1:   log restricted-likelihood = -155.85412  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         33
+Group variable: id                              Number of groups  =         11
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       8.82
+Log restricted-likelihood = -155.85412          Prob > chi2       =     0.0122
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   36.36364   12.38883     2.94   0.003     12.08198    60.64529
+          bonus_order |  -11.11111   24.56756    -0.45   0.651    -59.26263    37.04041
+                _cons |   9.090909   23.70739     0.38   0.701    -37.37472    55.55654
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   24.74814   9.692932      11.48573     53.3245
+-----------------------------+------------------------------------------------
+                sd(Residual) |   33.54911   5.176745      24.79348    45.39671
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 3.25          Prob >= chibar2 = 0.0358
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'
+
+added macro:
+        e(individuals) : "11"
+
+. eststo sub2_rc: xtmixed dem i.bonus bonus_order  || id: if type_AL==2,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -173.47935  
+Iteration 1:   log restricted-likelihood = -173.47802  
+Iteration 2:   log restricted-likelihood = -173.47802  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         36
+Group variable: id                              Number of groups  =         12
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       9.76
+Log restricted-likelihood = -173.47802          Prob > chi2       =     0.0076
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |   41.66667   13.34691     3.12   0.002      15.5072    67.82614
+          bonus_order |  -1.904762   17.07925    -0.11   0.911    -35.37947    31.56995
+                _cons |   .7936508    14.1674     0.06   0.955    -26.97395    28.56125
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.38436   10.45827      6.733023    55.80753
+-----------------------------+------------------------------------------------
+                sd(Residual) |   37.75077   5.566047      28.27633    50.39978
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 1.26          Prob >= chibar2 = 0.1306
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals' 
+
+added macro:
+        e(individuals) : "12"
+
+. eststo sub3_rc: xtmixed dem i.bonus bonus_order  || id: if type_AL==3,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -329.78353  
+Iteration 1:   log restricted-likelihood = -329.78348  
+Iteration 2:   log restricted-likelihood = -329.78348  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         69
+Group variable: id                              Number of groups  =         23
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =      12.62
+Log restricted-likelihood = -329.78348          Prob > chi2       =     0.0018
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -23.91304   7.411169    -3.23   0.001    -38.43867   -9.387418
+          bonus_order |   15.90909   10.70566     1.49   0.137    -5.073615     36.8918
+                _cons |    91.6996   9.176514     9.99   0.000     73.71397    109.6852
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   19.41747   5.444666      11.20767    33.64108
+-----------------------------+------------------------------------------------
+                sd(Residual) |   29.02051    3.05903      23.60372    35.68039
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 5.60          Prob >= chibar2 = 0.0090
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'
+
+added macro:
+        e(individuals) : "23"
+
+. eststo sub4_rc: xtmixed dem i.bonus bonus_order  || id: if type_AL==4,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -255.23327  
+Iteration 1:   log restricted-likelihood = -255.19305  
+Iteration 2:   log restricted-likelihood = -255.19305  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =         54
+Group variable: id                              Number of groups  =         18
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(2)      =       4.94
+Log restricted-likelihood = -255.19305          Prob > chi2       =     0.0844
+
+---------------------------------------------------------------------------------------
+                  dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+                bonus |
+Pooled Bonus (n=128)  |  -19.44444   9.188887    -2.12   0.034    -37.45433   -1.434558
+          bonus_order |  -6.666667   9.762811    -0.68   0.495    -25.80142    12.46809
+                _cons |    102.963   8.938011    11.52   0.000     85.44478    120.4811
+---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   9.266522   9.180537      1.329271    64.59813
+-----------------------------+------------------------------------------------
+                sd(Residual) |   31.83124   3.804553      25.18348    40.23383
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.29          Prob >= chibar2 = 0.2953
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'
+
+added macro:
+        e(individuals) : "18"
+
+. restore
+
+. 
+. 
+. esttab sub1_rc sub2_rc sub3_rc sub4_rc using "$working_ANALYSIS\results\tables\tableS10_social_norms_boxes_democratic_rc.rtf",  label se(%4.3f)  transf
+> orm(ln*: exp(@) exp(@)) mgroups("Democratic Rule (=1)", pattern(1 0 0))   mtitles("Box 1" "Box 2" "Box 3" "Box 4") b(%4.3f) stats(N individuals chi2 p,
+>  labels("N" "Individuals" "Wald Chi2" "p" ) fmt(%4.0f %4.0f %4.2f)) star(* 0.10 ** 0.05 *** 0.01) varlabels(,elist(weight:_cons "{break}{hline @width}"
+> )) nonotes addnotes("Notes: Estimates are from multilevel panel regressions that account for the grouping structure of the data at the individual level
+>  (random intercept). Standard errors with stars indicating the following significant levels: * p < 0.10, ** p < 0.05, *** p < 0.01") replace 
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\tables\tableS10_social_norms_boxes_dem
+> ocratic_rc.rtf not found)
+(output written to C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\tables\tableS10_social_norms_bo
+> xes_democratic_rc.rtf)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. *Figure S5.     Subsample treatment effects: Robustness check with authentic leadership
+. coefplot (sub1_rc, label (Box I)) (sub_rc, label (Box III))  (sub3_rc, label (Box II))  (sub4_rc, label (Box IV)) , keep(1.bonus) coeflabels(1.bonus = 
+> "Pooled Bonus")  byopts(xrescale) xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact relative to baseline in pp") grid(none) leve
+> ls(95 90) ciopts(lwidth(0.8 2)  lcolor(*1 *.3) recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) msize(3pt) 
+> msymbol(D) mlabsize(8pt) mlabposition(1) mlabgap(-0.4) subtitle(, size(6pt) lstyle(none) margin(medium) nobox justification(left)  bmargin(top))  xla(-
+> 50(25)75, nogrid)  xsize(3.465) ysize(2) scale(1.2)
+estimation result sub_rc not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. coefplot (sub1_rc, label (Box I)) (sub2_rc, label (Box III))  (sub3_rc, label (Box II))  (sub4_rc, label (Box IV)) , keep(1.bonus) coeflabels(1.bonus =
+>  "Pooled Bonus")  byopts(xrescale) xline(0, lpattern(dash) lcolor(gs3)) xtitle("Regression estimated impact relative to baseline in pp") grid(none) lev
+> els(95 90) ciopts(lwidth(0.8 2)  lcolor(*1 *.3) recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", "")))) msize(3pt)
+>  msymbol(D) mlabsize(8pt) mlabposition(1) mlabgap(-0.4) subtitle(, size(6pt) lstyle(none) margin(medium) nobox justification(left)  bmargin(top))  xla(
+> -50(25)75, nogrid)  xsize(3.465) ysize(2) scale(1.2)
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. gr_edit style.editstyle margin(vsmall) editcopy
+
+. gr save  "$working_ANALYSIS\results\intermediate\figureS5_subsample_democratic.gph", replace
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\intermediate\figureS5_subsample_democr
+> atic.gph not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\intermediate\figureS5_subsample_democratic.g
+> ph saved)
+
+. gr export "$working_ANALYSIS\results\figures\figureS5_subsample_democratic.tif", replace width(4000) 
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\figures\figureS5_subsample_democratic.
+> tif not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\results\figures\figureS5_subsample_democratic.tif wr
+> itten in TIFF format)
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. 
+. preserve
+
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+. * Table S2.     Participants characteristics
+. global controls2 male age education rootedness pca_wealth d3a d3c 
+
+. iebaltab $controls2, grpvar(id1) rowvarlabels format(%9.2f) stdev ftest fmissok tblnonote save("$working_ANALYSIS/results/tables/tableS2_sample_charact
+> eristics.xlsx") replace
+    Balance table saved to: C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for
+        democracy\analysis/results/tables/tableS2_sample_characteristics.xlsx
+
+. prtest male, by(villager)
+
+Two-sample test of proportions                     0: Number of obs =       64
+                                                   1: Number of obs =      383
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |     .71875   .0562012                      .6085978    .8289022
+           1 |    .381201   .0248172                      .3325603    .4298418
+-------------+----------------------------------------------------------------
+        diff |    .337549   .0614366                      .2171353    .4579626
+             |  under Ho:   .0668463     5.05   0.000
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =   5.0496
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 1.0000         Pr(|Z| > |z|) = 0.0000          Pr(Z > z) = 0.0000
+
+. foreach x of varlist age education rootedness pca_wealth d3a d3c {
+  2.         ranksum `x', by(villager)
+  3.         }
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+    villager |      obs    rank sum    expected
+-------------+---------------------------------
+           0 |       64       21611       14336
+           1 |      383       78517       85792
+-------------+---------------------------------
+    combined |      447      100128      100128
+
+unadjusted variance   915114.67
+adjustment for ties     -459.84
+                     ----------
+adjusted variance     914654.83
+
+Ho: age(villager==0) = age(villager==1)
+             z =   7.607
+    Prob > |z| =   0.0000
+
+Note: Exact p-value is not computed by default for sample sizes > 200.
+      Use option exact to compute it.
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+    villager |      obs    rank sum    expected
+-------------+---------------------------------
+           0 |       63     12355.5       14049
+           1 |      382     86879.5       85186
+-------------+---------------------------------
+    combined |      445       99235       99235
+
+unadjusted variance   894453.00
+adjustment for ties   -19195.80
+                     ----------
+adjusted variance     875257.20
+
+Ho: educat~n(villager==0) = educat~n(villager==1)
+             z =  -1.810
+    Prob > |z| =   0.0703
+
+Note: Exact p-value is not computed by default for sample sizes > 200.
+      Use option exact to compute it.
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+    villager |      obs    rank sum    expected
+-------------+---------------------------------
+           0 |       64       11164       14368
+           1 |      384       89412       86208
+-------------+---------------------------------
+    combined |      448      100576      100576
+
+unadjusted variance   919552.00
+adjustment for ties  -239244.82
+                     ----------
+adjusted variance     680307.18
+
+Ho: rooted~s(villager==0) = rooted~s(villager==1)
+             z =  -3.885
+    Prob > |z| =   0.0001
+
+Note: Exact p-value is not computed by default for sample sizes > 200.
+      Use option exact to compute it.
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+    villager |      obs    rank sum    expected
+-------------+---------------------------------
+           0 |       64     18992.5       13824
+           1 |      367     74103.5       79272
+-------------+---------------------------------
+    combined |      431       93096       93096
+
+unadjusted variance   845568.00
+adjustment for ties    -2070.36
+                     ----------
+adjusted variance     843497.64
+
+Ho: pca_we~h(villager==0) = pca_we~h(villager==1)
+             z =   5.628
+    Prob > |z| =   0.0000
+
+Note: Exact p-value is not computed by default for sample sizes > 200.
+      Use option exact to compute it.
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+    villager |      obs    rank sum    expected
+-------------+---------------------------------
+           0 |       64       18709       14176
+           1 |      378       79194       83727
+-------------+---------------------------------
+    combined |      442       97903       97903
+
+unadjusted variance   893088.00
+adjustment for ties   -66216.48
+                     ----------
+adjusted variance     826871.52
+
+Ho: d3a(villager==0) = d3a(villager==1)
+             z =   4.985
+    Prob > |z| =   0.0000
+
+Note: Exact p-value is not computed by default for sample sizes > 200.
+      Use option exact to compute it.
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+    villager |      obs    rank sum    expected
+-------------+---------------------------------
+           0 |       64     17714.5       14176
+           1 |      378     80188.5       83727
+-------------+---------------------------------
+    combined |      442       97903       97903
+
+unadjusted variance   893088.00
+adjustment for ties   -29599.40
+                     ----------
+adjusted variance     863488.60
+
+Ho: d3c(villager==0) = d3c(villager==1)
+             z =   3.808
+    Prob > |z| =   0.0001
+
+Note: Exact p-value is not computed by default for sample sizes > 200.
+      Use option exact to compute it.
+
+. reg id1 $controls2 if id1 !=0 // chiefs vs villagers
+
+      Source |       SS           df       MS      Number of obs   =       394
+-------------+----------------------------------   F(7, 386)       =     29.30
+       Model |  10.2010544         7  1.45729349   Prob > F        =    0.0000
+    Residual |  19.1999608       386  .049740831   R-squared       =    0.3470
+-------------+----------------------------------   Adj R-squared   =    0.3351
+       Total |  29.4010152       393  .074811744   Root MSE        =    .22303
+
+------------------------------------------------------------------------------
+         id1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        male |  -.1296617   .0236755    -5.48   0.000    -.1762108   -.0831127
+         age |  -.0066006   .0007591    -8.69   0.000    -.0080931    -.005108
+   education |  -.0078332   .0040656    -1.93   0.055    -.0158267    .0001603
+  rootedness |   .0907614    .039103     2.32   0.021     .0138798     .167643
+  pca_wealth |  -.0293369   .0074095    -3.96   0.000     -.043905   -.0147688
+         d3a |    .000388   .0006738     0.58   0.565    -.0009367    .0017128
+         d3c |    -.00293   .0008376    -3.50   0.001    -.0045769   -.0012831
+       _cons |   2.269217   .0634849    35.74   0.000     2.144398    2.394037
+------------------------------------------------------------------------------
+
+. reg id1 $controls2 if id1 !=1 // DEL vs villagers
+
+      Source |       SS           df       MS      Number of obs   =       393
+-------------+----------------------------------   F(7, 385)       =      4.80
+       Model |  9.17075049         7  1.31010721   Prob > F        =    0.0000
+    Residual |  105.048079       385  .272852153   R-squared       =    0.0803
+-------------+----------------------------------   Adj R-squared   =    0.0636
+       Total |   114.21883       392  .291374565   Root MSE        =    .52235
+
+------------------------------------------------------------------------------
+         id1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        male |  -.0322257   .0555344    -0.58   0.562    -.1414145    .0769631
+         age |  -.0097613   .0019009    -5.13   0.000    -.0134988   -.0060238
+   education |  -.0229965    .009749    -2.36   0.019    -.0421644   -.0038286
+  rootedness |   .1147954   .0918885     1.25   0.212    -.0658707    .2954616
+  pca_wealth |   -.039424   .0183658    -2.15   0.032    -.0755339   -.0033141
+         d3a |   .0002838   .0016126     0.18   0.860    -.0028868    .0034543
+         d3c |  -.0012367   .0024103    -0.51   0.608    -.0059757    .0035024
+       _cons |   2.337824   .1550281    15.08   0.000     2.033017    2.642632
+------------------------------------------------------------------------------
+
+. * Leaders only
+. global controls1 male age education rootedness pca_wealth d3a d3c  married experience motivation helpauthentic
+
+. iebaltab $controls1, grpvar(TL) rowvarlabels format(%9.2f) stdev ftest fmissok tblnonote save("$working_ANALYSIS/results/tables/tableS2_leaders_charact
+> eristics.xlsx") replace
+    Balance table saved to: C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for
+        democracy\analysis/results/tables/tableS2_leaders_characteristics.xlsx
+
+. reg TL $controls1
+
+      Source |       SS           df       MS      Number of obs   =        63
+-------------+----------------------------------   F(11, 51)       =      4.42
+       Model |  7.68364189        11  .698512899   Prob > F        =    0.0001
+    Residual |  8.06238986        51  .158086076   R-squared       =    0.4880
+-------------+----------------------------------   Adj R-squared   =    0.3775
+       Total |  15.7460317        62  .253968254   Root MSE        =     .3976
+
+-------------------------------------------------------------------------------
+           TL |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+--------------+----------------------------------------------------------------
+         male |   .5756709   .1515165     3.80   0.000     .2714888    .8798529
+          age |  -.0013323    .004849    -0.27   0.785    -.0110671    .0084025
+    education |   .0115139   .0171882     0.67   0.506    -.0229929    .0460208
+   rootedness |  -.3209752    .192027    -1.67   0.101    -.7064855    .0645352
+   pca_wealth |   .0641615   .0340908     1.88   0.066    -.0042786    .1326016
+          d3a |  -.0022809   .0048669    -0.47   0.641    -.0120516    .0074897
+          d3c |   .0026512     .00324     0.82   0.417    -.0038534    .0091558
+      married |  -.1502687   .1648473    -0.91   0.366    -.4812135     .180676
+   experience |   .0104446   .0052226     2.00   0.051    -.0000402    .0209294
+   motivation |  -.1329139   .1301428    -1.02   0.312    -.3941865    .1283587
+helpauthentic |  -.0045327   .0140829    -0.32   0.749    -.0328052    .0237399
+        _cons |   .3461321   .3151008     1.10   0.277    -.2864591    .9787234
+-------------------------------------------------------------------------------
+
+. 
+. *Table S3.      Summary statistics of  main outcomes for leaders
+. * Stage 1 rule choices by leaders
+. estpost tabulate rule1 
+
+       rule1 |      e(b)     e(pct)  e(cumpct) 
+-------------+---------------------------------
+  Democratic |        41    64.0625    64.0625 
+Pseudo-dem~c |        14     21.875    85.9375 
+  Autocratic |         9    14.0625        100 
+-------------+---------------------------------
+       Total |        64        100            
+
+. esttab using "$output\tableS3_outcome-variables.rtf", cell("b pct(fmt(0)) cumpct(fmt(0))") unstack noobs replace
+(note: file \tableS3_outcome-variables.rtf not found)
+(output written to \tableS3_outcome-variables.rtf)
+
+. estpost tabulate rule5
+
+       rule5 |      e(b)     e(pct)  e(cumpct) 
+-------------+---------------------------------
+  Democratic |        41    64.0625    64.0625 
+Pseudo-dem~c |        20      31.25    95.3125 
+  Autocratic |         3     4.6875        100 
+-------------+---------------------------------
+       Total |        64        100            
+
+. esttab using "$output\tableS3_outcome-variables.rtf", cell("b pct(fmt(0)) cumpct(fmt(0))") unstack noobs append
+(output written to \tableS3_outcome-variables.rtf)
+
+. estpost tabulate rule6
+
+       rule6 |      e(b)     e(pct)  e(cumpct) 
+-------------+---------------------------------
+  Democratic |        41    64.0625    64.0625 
+Pseudo-dem~c |        21    32.8125     96.875 
+  Autocratic |         2      3.125        100 
+-------------+---------------------------------
+       Total |        64        100            
+
+. esttab using "$output\tableS3_outcome-variables.rtf", cell("b pct(fmt(0)) cumpct(fmt(0))") unstack noobs append
+(output written to \tableS3_outcome-variables.rtf)
+
+. 
+. * Stage 2 distribution decisions by leaders
+. estpost tabulate  vote1  if id <65 & rule1==1
+
+       vote1 |      e(b)     e(pct)  e(cumpct) 
+-------------+---------------------------------
+Distributi~A |        19   46.34146   46.34146 
+Distributi~B |        22   53.65854        100 
+-------------+---------------------------------
+       Total |        41        100            
+
+. bysort rule1: tab vote1 if id <65
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule1 = Democratic
+
+    Benefit to |
+ leader at the |
+    expense of |
+     villagers |      Freq.     Percent        Cum.
+---------------+-----------------------------------
+Distribution A |         19       46.34       46.34
+Distribution B |         22       53.66      100.00
+---------------+-----------------------------------
+         Total |         41      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule1 = Pseudo-democratic
+
+    Benefit to |
+ leader at the |
+    expense of |
+     villagers |      Freq.     Percent        Cum.
+---------------+-----------------------------------
+Distribution A |          9       64.29       64.29
+Distribution B |          5       35.71      100.00
+---------------+-----------------------------------
+         Total |         14      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule1 = Autocratic
+
+    Benefit to |
+ leader at the |
+    expense of |
+     villagers |      Freq.     Percent        Cum.
+---------------+-----------------------------------
+Distribution A |          6       66.67       66.67
+Distribution B |          3       33.33      100.00
+---------------+-----------------------------------
+         Total |          9      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule1 = .
+no observations
+
+
+. bysort rule5: tab vote5 if id <65
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule5 = Democratic
+
+Small bonus |
+  (+10) for |
+   choosing |
+majority or |
+       fake |
+   majority |      Freq.     Percent        Cum.
+------------+-----------------------------------
+    Chose A |         17       41.46       41.46
+    Chose B |         24       58.54      100.00
+------------+-----------------------------------
+      Total |         41      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule5 = Pseudo-democratic
+
+Small bonus |
+  (+10) for |
+   choosing |
+majority or |
+       fake |
+   majority |      Freq.     Percent        Cum.
+------------+-----------------------------------
+    Chose A |         15       75.00       75.00
+    Chose B |          5       25.00      100.00
+------------+-----------------------------------
+      Total |         20      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule5 = Autocratic
+
+Small bonus |
+  (+10) for |
+   choosing |
+majority or |
+       fake |
+   majority |      Freq.     Percent        Cum.
+------------+-----------------------------------
+    Chose A |          2       66.67       66.67
+    Chose B |          1       33.33      100.00
+------------+-----------------------------------
+      Total |          3      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule5 = .
+no observations
+
+
+. bysort rule6: tab vote6 if id <65
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule6 = Democratic
+
+  Big bonus |
+ (+100) for |
+   choosing |
+majority or |
+       fake |
+   majority |      Freq.     Percent        Cum.
+------------+-----------------------------------
+    Chose A |         23       56.10       56.10
+    Chose B |         18       43.90      100.00
+------------+-----------------------------------
+      Total |         41      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule6 = Pseudo-democratic
+
+  Big bonus |
+ (+100) for |
+   choosing |
+majority or |
+       fake |
+   majority |      Freq.     Percent        Cum.
+------------+-----------------------------------
+    Chose A |         14       66.67       66.67
+    Chose B |          7       33.33      100.00
+------------+-----------------------------------
+      Total |         21      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule6 = Autocratic
+
+  Big bonus |
+ (+100) for |
+   choosing |
+majority or |
+       fake |
+   majority |      Freq.     Percent        Cum.
+------------+-----------------------------------
+    Chose A |          1       50.00       50.00
+    Chose B |          1       50.00      100.00
+------------+-----------------------------------
+      Total |          2      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule6 = .
+no observations
+
+
+. 
+. 
+. restore
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. tab rule_base type, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |                    type
+       rule_base |     Box I    Box III     Box II     Box IV |     Total
+-----------------+--------------------------------------------+----------
+Base: Democratic |         0          0         69         54 |       123 
+                 |      0.00       0.00      56.10      43.90 |    100.00 
+-----------------+--------------------------------------------+----------
+    Base: Pseudo |        30         12          0          0 |        42 
+                 |     71.43      28.57       0.00       0.00 |    100.00 
+-----------------+--------------------------------------------+----------
+Base: Autocratic |         6         21          0          0 |        27 
+                 |     22.22      77.78       0.00       0.00 |    100.00 
+-----------------+--------------------------------------------+----------
+           Total |        36         33         69         54 |       192 
+                 |     18.75      17.19      35.94      28.13 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. tab rule_base type if round==2, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |                    type
+       rule_base |     Box I    Box III     Box II     Box IV |     Total
+-----------------+--------------------------------------------+----------
+Base: Democratic |         0          0         23         18 |        41 
+                 |      0.00       0.00      56.10      43.90 |    100.00 
+-----------------+--------------------------------------------+----------
+    Base: Pseudo |        10          4          0          0 |        14 
+                 |     71.43      28.57       0.00       0.00 |    100.00 
+-----------------+--------------------------------------------+----------
+Base: Autocratic |         2          7          0          0 |         9 
+                 |     22.22      77.78       0.00       0.00 |    100.00 
+-----------------+--------------------------------------------+----------
+           Total |        12         11         23         18 |        64 
+                 |     18.75      17.19      35.94      28.13 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. tab rule_base type if round==2, column
+
++-------------------+
+| Key               |
+|-------------------|
+|     frequency     |
+| column percentage |
++-------------------+
+
+                 |                    type
+       rule_base |     Box I    Box III     Box II     Box IV |     Total
+-----------------+--------------------------------------------+----------
+Base: Democratic |         0          0         23         18 |        41 
+                 |      0.00       0.00     100.00     100.00 |     64.06 
+-----------------+--------------------------------------------+----------
+    Base: Pseudo |        10          4          0          0 |        14 
+                 |     83.33      36.36       0.00       0.00 |     21.88 
+-----------------+--------------------------------------------+----------
+Base: Autocratic |         2          7          0          0 |         9 
+                 |     16.67      63.64       0.00       0.00 |     14.06 
+-----------------+--------------------------------------------+----------
+           Total |        12         11         23         18 |        64 
+                 |    100.00     100.00     100.00     100.00 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. tab rule5 type if round==2, column
+variable rule5 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. tab rule type if round==2, column
+
++-------------------+
+| Key               |
+|-------------------|
+|     frequency     |
+| column percentage |
++-------------------+
+
+                  |                    type
+             rule |     Box I    Box III     Box II     Box IV |     Total
+------------------+--------------------------------------------+----------
+       Democratic |         2          7         16         15 |        40 
+                  |     16.67      63.64      69.57      83.33 |     62.50 
+------------------+--------------------------------------------+----------
+Pseudo-democratic |         9          4          6          3 |        22 
+                  |     75.00      36.36      26.09      16.67 |     34.38 
+------------------+--------------------------------------------+----------
+       Autocratic |         1          0          1          0 |         2 
+                  |      8.33       0.00       4.35       0.00 |      3.13 
+------------------+--------------------------------------------+----------
+            Total |        12         11         23         18 |        64 
+                  |    100.00     100.00     100.00     100.00 |    100.00 
+
+. 
+end of do-file
+
+. tab round
+
+      round |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |         64       33.33       33.33
+          2 |         64       33.33       66.67
+          3 |         64       33.33      100.00
+------------+-----------------------------------
+      Total |        192      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. 
+. 
+. *Figure 1.      Normative expectations regarding group decision-making
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. * Please indicate for each of the statement whether you disagree strongly, disagree a little, neither agree nor disagree, agree a little, or strongly a
+> gree
+.  global dem_norm c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12
+
+.  foreach var of varlist $dem_norm {
+  2.         replace `var'=0 if `var'==. 
+  3.         }
+(51 real changes made)
+(53 real changes made)
+(49 real changes made)
+(113 real changes made)
+(23 real changes made)
+(61 real changes made)
+(86 real changes made)
+(26 real changes made)
+(63 real changes made)
+(52 real changes made)
+(36 real changes made)
+(32 real changes made)
+
+.         
+. foreach var of varlist $dem_norm {
+  2.         gen new_`var'=1 if `var'==1
+  3.         replace new_`var'=2 if `var'==2 
+  4.         replace new_`var'=3 if `var'==0 
+  5.         replace new_`var'=4 if `var'==3
+  6.         replace new_`var'=5 if `var'==4
+  7.         }
+(372 missing values generated)
+(8 real changes made)
+(51 real changes made)
+(19 real changes made)
+(294 real changes made)
+(353 missing values generated)
+(20 real changes made)
+(53 real changes made)
+(43 real changes made)
+(237 real changes made)
+(390 missing values generated)
+(10 real changes made)
+(49 real changes made)
+(30 real changes made)
+(301 real changes made)
+(353 missing values generated)
+(22 real changes made)
+(113 real changes made)
+(30 real changes made)
+(188 real changes made)
+(399 missing values generated)
+(4 real changes made)
+(23 real changes made)
+(9 real changes made)
+(363 real changes made)
+(191 missing values generated)
+(13 real changes made)
+(61 real changes made)
+(24 real changes made)
+(93 real changes made)
+(284 missing values generated)
+(45 real changes made)
+(86 real changes made)
+(34 real changes made)
+(119 real changes made)
+(397 missing values generated)
+(6 real changes made)
+(26 real changes made)
+(6 real changes made)
+(359 real changes made)
+(153 missing values generated)
+(11 real changes made)
+(63 real changes made)
+(12 real changes made)
+(67 real changes made)
+(334 missing values generated)
+(38 real changes made)
+(52 real changes made)
+(71 real changes made)
+(173 real changes made)
+(307 missing values generated)
+(40 real changes made)
+(36 real changes made)
+(55 real changes made)
+(176 real changes made)
+(375 missing values generated)
+(21 real changes made)
+(32 real changes made)
+(61 real changes made)
+(261 real changes made)
+
+. lab var new_c1 "For important decisions members of a group should be allowed to vote."
+
+. lab var new_c2 "Most people can learn to be leaders, it is not a matter of birth."
+
+. lab var new_c3 "Democratic elections in this village ensure that the elected authorities act in the interest of their people."
+note: label truncated to 80 characters
+
+. lab var new_c4 "In most cases, failures in this village are traceable to bad cicumstances and not bad leadership."
+note: label truncated to 80 characters
+
+. lab var new_c5 "Schools and parents schould teach children to obey authority."
+
+. lab var new_c6 "Favouring friends, relatives or supporters over others in the course of ones duties as a leader is sometimes justified."
+note: label truncated to 80 characters
+
+. lab var new_c7 "On the whole, men make better political leaders than women do."
+
+. lab var new_c8 "A leader hast to serve all people including those who did not vote for him/her or are not friends."
+note: label truncated to 80 characters
+
+. lab var new_c9 "Accepting a bribe in the course of ones duties is sometimes justified."
+
+. lab var new_c10 "Most people in this village can be trusted."
+
+. lab var new_c11 "On the whole, more educated people make better political leaders than the less educated do."
+note: label truncated to 80 characters
+
+. lab var new_c12 "On the whole, elders make better political leaders than the youth do."
+
+.         
+. gen new_c6r = 6- new_c6
+
+. gen new_c7r = 6- new_c7 
+
+. gen new_c9r = 6- new_c9
+
+. alpha new_c1 new_c3 new_c8 new_c9r 
+
+Test scale = mean(unstandardized items)
+
+Average interitem covariance:     .9378221
+Number of items in the scale:            4
+Scale reliability coefficient:      0.7613
+
+. pca new_c1 new_c3 new_c8 new_c9r , comp(1)
+
+Principal components/correlation                 Number of obs    =        448
+                                                 Number of comp.  =          1
+                                                 Trace            =          4
+    Rotation: (unrotated = principal)            Rho              =     0.5874
+
+    --------------------------------------------------------------------------
+       Component |   Eigenvalue   Difference         Proportion   Cumulative
+    -------------+------------------------------------------------------------
+           Comp1 |      2.34965      1.70985             0.5874       0.5874
+           Comp2 |        .6398     .0536761             0.1599       0.7474
+           Comp3 |      .586124      .161703             0.1465       0.8939
+           Comp4 |      .424421            .             0.1061       1.0000
+    --------------------------------------------------------------------------
+
+Principal components (eigenvectors) 
+
+    --------------------------------------
+        Variable |    Comp1 | Unexplained 
+    -------------+----------+-------------
+          new_c1 |   0.4617 |       .4992 
+          new_c3 |   0.5228 |       .3578 
+          new_c8 |   0.5257 |       .3506 
+         new_c9r |   0.4870 |       .4428 
+    --------------------------------------
+
+. screeplot, yline(1)
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. estat loadings
+
+Principal component loadings (unrotated)
+    component normalization: sum of squares(column) = 1
+
+    ------------------------
+                 |    Comp1 
+    -------------+----------
+          new_c1 |    .4617 
+          new_c3 |    .5228 
+          new_c8 |    .5257 
+         new_c9r |     .487 
+    ------------------------
+
+. predict dem_norm, score
+
+Scoring coefficients 
+    sum of squares(column-loading) = 1
+
+    ------------------------
+        Variable |    Comp1 
+    -------------+----------
+          new_c1 |   0.4617 
+          new_c3 |   0.5228 
+          new_c8 |   0.5257 
+         new_c9r |   0.4870 
+    ------------------------
+
+. estat kmo // legitimate pca, kmo=0.76
+
+Kaiser-Meyer-Olkin measure of sampling adequacy
+
+    -----------------------
+        Variable |     kmo 
+    -------------+---------
+          new_c1 |  0.8133 
+          new_c3 |  0.7374 
+          new_c8 |  0.7296 
+         new_c9r |  0.7952 
+    -------------+---------
+         Overall |  0.7622 
+    -----------------------
+
+. 
+. ttest dem_norm, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |      64   -1.331047    .3299075     2.63926   -1.990314   -.6717792
+       1 |     384    .2218411    .0570795    1.118526    .1096126    .3340696
+---------+--------------------------------------------------------------------
+combined |     448   -7.94e-09    .0724208    1.532858   -.1423274    .1423274
+---------+--------------------------------------------------------------------
+    diff |           -1.552888    .1937045               -1.933575   -1.172201
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  -8.0168
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+. lab def villy 0 "Leader" 1 "Villager", replace
+
+. lab val villager villy
+
+. 
+. gen types = 0 if villager==1
+(64 missing values generated)
+
+. replace types = 1 if extrinsic_leader==0
+(35 real changes made)
+
+. replace types = 2 if extrinsic_leader==1
+(29 real changes made)
+
+. lab def villy1 0 "Villager" 1 "Intrinsic leader" 2 "Extrinsic leader", replace
+
+. lab val types villy1
+
+. 
+. *graphical presentation
+. preserve
+
+. rename new_c1 norm1
+
+. rename new_c3 norm2
+
+. rename new_c8 norm3
+
+. 
+. 
+. reshape long norm ,i(id) j(pr_id)
+(note: j = 1 2 3)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                      448   ->    1344
+Number of variables                 459   ->     458
+j variable (3 values)                     ->   pr_id
+xij variables:
+                      norm1 norm2 norm3   ->   norm
+-----------------------------------------------------------------------------
+
+. label define pr1 1 "Group voting" 2 "Elections" 3 "Inclusive"
+
+. label values pr_id pr1
+
+. 
+. cibar norm, over1(types) over2(pr_id) bargap(0) gap(80) barlabel(on) blpos(11) blgap(0.01) blfmt(%9.1f) graphopts(legend() xsize(4) ysize(2) yla(1(1)5)
+>   ytitle("Mean") note("{bf: Group voting}='For important decisions members of a group should be allowed to vote.'" "{bf: Elections}='Democratic electio
+> ns in this village ensure that the elected authorities act in the interest of their people.'" "{bf: Inclusive}='A leader hast to serve all people inclu
+> ding those who did not vote for him/her or are not friends.'")) ciopts(lpattern(dash) lcolor(black))
+
+. gr save "$working_ANALYSIS/results/intermediate/figure6.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure6.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure6.tif", replace width(3465)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure6.tif written in TIFF format)
+
+. 
+. 
+. ttest new_c1 if types!= 2, by(types)
+new_c1 ambiguous abbreviation
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6c78_000000.tmp"
+
+. *Figure 6.      Villagers' satisfaction with their leader’s performance outside the lab
+. preserve
+
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+. bysort group_leader_type: sum satisfaction_leader
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = True-democrat
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |        246    3.827134    .6666073       1.75          5
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = Pseudo-democrat
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |         54    3.626852    .7306603        2.2        4.6
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = Paternalist
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |         30    3.844167    .5952282        2.6       4.75
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = Autocrat
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |         36       3.725    .5777419        2.6        4.5
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> group_leader_type = Benevolent-Autocrat
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+satisfacti~r |         18    3.816667    .7085611        1.4        4.5
+
+
+. reg z_satisfaction leader_type2 leader_type3 leader_type4 leader_type5 i.village, vce(robust)
+
+Linear regression                               Number of obs     =        384
+                                                F(35, 348)        =       1.58
+                                                Prob > F          =     0.0230
+                                                R-squared         =     0.1271
+                                                Root MSE          =     .98017
+
+------------------------------------------------------------------------------------
+                   |               Robust
+    z_satisfaction |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------+----------------------------------------------------------------
+      leader_type2 |  -.6611698    .208875    -3.17   0.002    -1.071986   -.2503536
+      leader_type3 |  -.2920114    .214623    -1.36   0.175    -.7141328    .1301101
+      leader_type4 |  -.4457453    .220525    -2.02   0.044    -.8794748   -.0120157
+      leader_type5 |   -.568856   .3146655    -1.81   0.071    -1.187741    .0500294
+                   |
+           village |
+            Ehafo  |   .2816941   .4406489     0.64   0.523     -.584976    1.148364
+           Endola  |   .1647852   .4608402     0.36   0.721    -.7415971    1.071168
+        Epatululo  |   .5070494   .4781111     1.06   0.290    -.4333015      1.4474
+            Epuku  |  -.2703627   .4603237    -0.59   0.557    -1.175729     .635004
+            Etale  |  -.2734926   .5295272    -0.52   0.606    -1.314969    .7679837
+         Etilashi  |   .0657285   .5410536     0.12   0.903    -.9984181    1.129875
+           Etomba  |  -.3036037   .4349979    -0.70   0.486     -1.15916     .551952
+        Ohangwena  |   .3807507   .4368951     0.87   0.384    -.4785364    1.240038
+       Oipapakane  |   .3098634   .4577618     0.68   0.499    -.5904644    1.210191
+          Okadiwa  |   .5539985   .4237442     1.31   0.192    -.2794234     1.38742
+          Okafitu  |   .2875579   .4625024     0.62   0.535    -.6220938     1.19721
+           Okakwa  |   .2336439   .4366642     0.54   0.593    -.6251892    1.092477
+         Okangudi  |   .5778497   .4702996     1.23   0.220    -.3471375    1.502837
+        Okapundja  |     .66628   .4807188     1.39   0.167    -.2791997     1.61176
+          Okatale  |    .200963   .4460237     0.45   0.653    -.6762783    1.078204
+         Okelemba  |   .2190954   .4276179     0.51   0.609    -.6219453    1.060136
+         Omahenge  |   .4006316   .4696826     0.85   0.394    -.5231421    1.324405
+         Omakango  |  -.0594688   .4918662    -0.12   0.904    -1.026873    .9079357
+         Omalyata  |   .3449401    .460573     0.75   0.454    -.5609169    1.250797
+          Omaputo  |  -.1502369   .4760151    -0.32   0.752    -1.086466    .7859916
+          Omukuve  |   .3574597   .4513268     0.79   0.429    -.5302117    1.245131
+Omutwe Oshimbungu  |   .1752763   .4832945     0.36   0.717    -.7752695    1.125822
+         Onangwhe  |   .7987806   .4775939     1.67   0.095    -.1405532    1.738114
+    Onekwaya East  |   .7645445   .4521417     1.69   0.092    -.1247297    1.653819
+    Onekwaya West  |  -.3536827   .5304743    -0.67   0.505    -1.397022    .6896564
+         Onengali  |   .8570611   .4781265     1.79   0.074    -.0833201    1.797442
+          Ongonga  |   .3030627   .5027781     0.60   0.547    -.6858034    1.291929
+        Onheleiwa  |   1.259779    .452481     2.78   0.006     .3698379    2.149721
+      Oshikwiyu 1  |   .9679903   .4408178     2.20   0.029     .1009881    1.834993
+      Oshikwiyu 2  |    .046949   .4978082     0.09   0.925    -.9321423     1.02604
+          Ouhongo  |   .7186967   .4882986     1.47   0.142     -.241691    1.679084
+                   |
+             _cons |  -.1293054     .36416    -0.36   0.723    -.8455369    .5869261
+------------------------------------------------------------------------------------
+
+. eststo reg_satisfaction: reg satisfaction_leader rule_base2 rule_base3 i.village, vce(robust)
+
+Linear regression                               Number of obs     =        384
+                                                F(33, 350)        =       1.62
+                                                Prob > F          =     0.0193
+                                                R-squared         =     0.1226
+                                                Root MSE          =     .65223
+
+------------------------------------------------------------------------------------
+                   |               Robust
+satisfaction_lea~r |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------+----------------------------------------------------------------
+        rule_base2 |   -.358179   .1199986    -2.98   0.003    -.5941881   -.1221699
+        rule_base3 |  -.2967078   .1229121    -2.41   0.016     -.538447   -.0549687
+                   |
+           village |
+            Ehafo  |   .1874999   .2924635     0.64   0.522    -.3877071     .762707
+           Endola  |   .1915895   .3034727     0.63   0.528      -.40527     .788449
+        Epatululo  |      .3375   .3173276     1.06   0.288    -.2866089    .9616089
+            Epuku  |  -.2209105   .3065403    -0.72   0.472    -.8238032    .3819822
+            Etale  |  -.2229939   .3493882    -0.64   0.524    -.9101583    .4641706
+         Etilashi  |   .0437499   .3591033     0.12   0.903    -.6625218    .7500217
+           Etomba  |  -.2020834   .2887129    -0.70   0.484    -.7699139    .3657471
+        Ohangwena  |   .3353394   .2888458     1.16   0.246    -.2327523    .9034312
+       Oipapakane  |   .2062499   .3038216     0.68   0.498    -.3912957    .8037955
+          Okadiwa  |     .36875   .2812437     1.31   0.191    -.1843903    .9218902
+          Okafitu  |   .1504372   .3234825     0.47   0.642    -.4857769    .7866513
+           Okakwa  |   .2374228   .2795042     0.85   0.396    -.3122963     .787142
+         Okangudi  |   .3436728   .3049252     1.13   0.260    -.2560434     .943389
+        Okapundja  |   .4025205   .2978602     1.35   0.177    -.1833004    .9883415
+          Okatale  |   .1337705   .2947688     0.45   0.650    -.4459704    .7135114
+         Okelemba  |   .1458333   .2838147     0.51   0.608    -.4123636    .7040302
+         Omahenge  |   .2666666   .3117335     0.86   0.393      -.34644    .8797731
+         Omakango  |  -.0395834   .3264571    -0.12   0.904    -.6816477    .6024809
+         Omalyata  |   .2296039   .3002282     0.76   0.445    -.3608743    .8200822
+          Omaputo  |        -.1   .3159365    -0.32   0.752    -.7213729    .5213728
+          Omukuve  |   .2379372    .298702     0.80   0.426    -.3495395    .8254139
+Omutwe Oshimbungu  |   .1166666   .3207679     0.36   0.716    -.5142085    .7475418
+         Onangwhe  |   .5316872   .3109826     1.71   0.088    -.0799425    1.143317
+    Onekwaya East  |   .5498457   .3088478     1.78   0.076    -.0575854    1.157277
+    Onekwaya West  |  -.2354167   .3520817    -0.67   0.504    -.9278786    .4570452
+         Onengali  |   .5295267   .3106328     1.70   0.089    -.0814151    1.140468
+          Ongonga  |   .1607767   .3359346     0.48   0.633    -.4999276    .8214811
+        Onheleiwa  |     .75661   .2810407     2.69   0.007      .203869    1.309351
+      Oshikwiyu 1  |   .6852623   .3040821     2.25   0.025     .0872042     1.28332
+      Oshikwiyu 2  |     .03125   .3304008     0.09   0.925    -.6185708    .6810707
+          Ouhongo  |   .4374228    .320296     1.37   0.173    -.1925242     1.06737
+                   |
+             _cons |   3.704167    .241697    15.33   0.000     3.228805    4.179528
+------------------------------------------------------------------------------------
+
+. est store satisfaction
+
+. 
+. coefplot (satisfaction), keep(rule_base2 rule_base3) coeflabels(rule_base2 = "Baseline: Pseudo-democratic rule" rule_base3 = "Baseline: Autocratic rule
+> ") xline(0, lpattern(dash) lcolor(gs3))  xtitle("Regression estimated imppact relative to 'Baseline: Democratic rule'") xla(-1(0.25)0.25, nogrid) grid(
+> none) levels(95 90) ciopts(lwidth(0.3 1) lcolor(*.8 *.2)   recast(rcap)) mlabel(cond(@pval<.01, "***", cond(@pval<.05, "**", cond(@pval<.1, "*", ""))))
+>  mlabsize(9pt) mlabposition(12) mlabgap(-0.1) 
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. gr save "$working_ANALYSIS/results/intermediate/figure6_satisfaction_villagers.gph", replace
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure6_satisfaction_vill
+> agers.gph not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure6_satisfaction_villagers.
+> gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure6_satisfaction_villagers.tif", replace width(3465)
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure6_satisfaction_villagers
+> .tif not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure6_satisfaction_villagers.tif w
+> ritten in TIFF format)
+
+. 
+. restore
+
+. 
+end of do-file
+
+. exit, clear

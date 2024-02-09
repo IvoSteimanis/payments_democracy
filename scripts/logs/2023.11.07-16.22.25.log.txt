@@ -1,0 +1,174 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.11.07-16.22.25.log.txt
+  log type:  text
+ opened on:   7 Nov 2023, 16:22:25
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time:  7 Nov 2023 16:22:25
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+. 
+end of do-file
+
+. tab intrsini
+no variables defined
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD6050_000000.tmp"
+
+. *--------------------------------------------------
+. * (1) Analysis for main paper
+. *--------------------------------------------------
+. 
+. 
+. *Figure 1.      Normative expectations regarding group decision-making
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. tab intrinsic
+intrinsic ambiguous abbreviation
+r(111);
+
+. tab extrinsic_leader
+
+extrinsic_l |
+      eader |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  Intrinsic |         35       54.69       54.69
+  Extrinsic |         29       45.31      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. bys DEL: tab extrinsic_leader
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> DEL = 0
+
+extrinsic_l |
+      eader |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  Intrinsic |         14       43.75       43.75
+  Extrinsic |         18       56.25      100.00
+------------+-----------------------------------
+      Total |         32      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> DEL = 1
+
+extrinsic_l |
+      eader |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  Intrinsic |         21       65.63       65.63
+  Extrinsic |         11       34.38      100.00
+------------+-----------------------------------
+      Total |         32      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> DEL = .
+no observations
+
+
+. prtest extrinsic_leader, by(DEL)
+
+Two-sample test of proportions                     0: Number of obs =       32
+                                                   1: Number of obs =       32
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |      .5625   .0876951                      .3906208    .7343792
+           1 |     .34375   .0839617                      .1791882    .5083118
+-------------+----------------------------------------------------------------
+        diff |     .21875   .1214084                      -.019206     .456706
+             |  under Ho:   .1244495     1.76   0.079
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =   1.7577
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9606         Pr(|Z| > |z|) = 0.0788          Pr(Z > z) = 0.0394
+
+. exit, clear

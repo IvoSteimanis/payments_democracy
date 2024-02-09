@@ -1,0 +1,951 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.07.20-09.47.29.log.txt
+  log type:  text
+ opened on:  20 Jul 2023, 09:47:29
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 20 Jul 2023 09:47:29
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. keep if COUNTRY==22
+(52,735 observations deleted)
+
+. rename *, lower
+
+. 
+. 
+. gen ohangwena= 0
+
+. replace ohangwena = 1 if region == 588
+(120 real changes made)
+
+. lab def ohang 0 "Rest of Namibia" 1 "Ohangwena", replace
+
+. lab val ohangwena ohang
+
+. *SUPPORT FOR DEMOCRACY
+. tab q30, nolab
+
+       Q30. |
+Support for |
+  democracy |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        192       16.00       16.00
+          2 |         96        8.00       24.00
+          3 |        884       73.67       97.67
+          9 |         28        2.33      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. lab def democracy 1 "Does't matter for someone like me" 2 "Sometimes non-democratic preferable" 3 "Always democracy preferable", replace 
+
+. lab val q30 democracy
+
+. foreach x of varlist q30 q52b q52j q52k q68d q71a {
+  2.         replace `x'=. if `x'==9
+  3. }
+(28 real changes made, 28 to missing)
+(31 real changes made, 31 to missing)
+(11 real changes made, 11 to missing)
+(27 real changes made, 27 to missing)
+(68 real changes made, 68 to missing)
+(11 real changes made, 11 to missing)
+
+. encode location_level_1, gen(constituency)
+
+. gen demo_pref= 1 if q30==3
+(316 missing values generated)
+
+. replace demo_pref = 0 if q30<3
+(288 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. tab q30 constituency if ohangwena==1
+
+     Q30. Support for |                                               Location Level 1
+            democracy |   Eenhana     Endola     Engela     Epembe  Ohangwena     Okongo   Omulonga  Omundaung    Ondombe    Ongenga |     Total
+----------------------+--------------------------------------------------------------------------------------------------------------+----------
+Does't matter for som |         0          4          4          0          5          3          3          2          3          1 |        27 
+Sometimes non-democra |         1          0          0          1          1          1          0          0          0          0 |         4 
+Always democracy pref |         7         11         11          6          2          4          5          6          4          7 |        83 
+----------------------+--------------------------------------------------------------------------------------------------------------+----------
+                Total |         8         15         15          7          8          8          8          8          7          8 |       114 
+
+
+     Q30. Support for |   Location Level 1
+            democracy | Oshikango  Oshikunde |     Total
+----------------------+----------------------+----------
+Does't matter for som |         1          1 |        27 
+Sometimes non-democra |         0          0 |         4 
+Always democracy pref |        14          6 |        83 
+----------------------+----------------------+----------
+                Total |        15          7 |       114 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. tab  constituency if ohangwena==1
+
+     Location Level 1 |      Freq.     Percent        Cum.
+----------------------+-----------------------------------
+              Eenhana |          8        6.67        6.67
+               Endola |         16       13.33       20.00
+               Engela |         16       13.33       33.33
+               Epembe |          8        6.67       40.00
+            Ohangwena |          8        6.67       46.67
+               Okongo |          8        6.67       53.33
+             Omulonga |          8        6.67       60.00
+         Omundaungilo |          8        6.67       66.67
+              Ondombe |          8        6.67       73.33
+              Ongenga |          8        6.67       80.00
+            Oshikango |         16       13.33       93.33
+            Oshikunde |          8        6.67      100.00
+----------------------+-----------------------------------
+                Total |        120      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. tab  constituency if ohangwena==1, nolab
+
+   Location |
+    Level 1 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          7 |          8        6.67        6.67
+          9 |         16       13.33       20.00
+         10 |         16       13.33       33.33
+         11 |          8        6.67       40.00
+         43 |          8        6.67       46.67
+         51 |          8        6.67       53.33
+         55 |          8        6.67       60.00
+         56 |          8        6.67       66.67
+         62 |          8        6.67       73.33
+         64 |          8        6.67       80.00
+         71 |         16       13.33       93.33
+         73 |          8        6.67      100.00
+------------+-----------------------------------
+      Total |        120      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. gen study_sites = 0
+
+. 
+end of do-file
+
+. tab study_sites
+
+study_sites |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,200      100.00      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. gen study_sites = 0
+variable study_sites already defined
+r(110);
+
+end of do-file
+
+r(110);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. replace study_sites = 1 if ohangwena==1
+(120 real changes made)
+
+. replace study_sites = 2 if constituency==9 | constituency==43 | constituency==71
+(40 real changes made)
+
+. lab def studies 0 "Rest of Namibia" 1 "Ohangwena (not in sample)" 2 "Ohangwena (in sample)", replace
+
+. lab val study_sites studies
+
+. catplot q30, over(study_sites) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(constituency) bargap(10) blabel(bar, format(%9.0f) po
+> s(center)  gap(0.1)) title("{Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. gen study_sites = 0
+variable study_sites already defined
+r(110);
+
+end of do-file
+
+r(110);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. catplot q30, over(study_sites) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(study_sites) bargap(10) blabel(bar, format(%9.0f) pos
+> (center)  gap(0.1)) title("{Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. catplot q30, over(study_sites) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(study_sites) bargap(10) blabel(bar, format(%9.0f) pos
+> (center)  gap(0.1)) title("Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(3))
+
+. 
+end of do-file
+
+. tab study_sites
+
+              study_sites |      Freq.     Percent        Cum.
+--------------------------+-----------------------------------
+          Rest of Namibia |      1,080       90.00       90.00
+Ohangwena (not in sample) |         80        6.67       96.67
+    Ohangwena (in sample) |         40        3.33      100.00
+--------------------------+-----------------------------------
+                    Total |      1,200      100.00
+
+. bys study_sites: sum q30
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> study_sites = Rest of Namibia
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         q30 |      1,058    2.601134    .7431037          1          3
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> study_sites = Ohangwena (not in sample)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         q30 |         76    2.513158    .8405303          1          3
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> study_sites = Ohangwena (in sample)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         q30 |         38    2.447368    .8913206          1          3
+
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. lab val study_sites studies
+
+. catplot q30, over(study_sites) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(study_sites) bargap(10) blabel(bar, format(%9.0f) pos
+> (center)  gap(0.1)) title("Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(3))
+
+. gr save  "$working_ANALYSIS/results/intermediate/support_dem_namibia.gph", replace
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/support_dem_namibia.gph n
+> ot found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/support_dem_namibia.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/afro_support_democracy.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/afro_support_democracy.tif written i
+> n TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. lab def studies 0 "Rest of Namibia (n=1058)" 1 "Ohangwena: other constituencies (n=76)" 2 "Ohangwena: study constituencies(n=38)", replace
+
+. lab val study_sites studies
+
+. catplot q30, over(study_sites) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(study_sites) bargap(10) blabel(bar, format(%9.0f) pos
+> (center)  gap(0.1)) title("Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(3))
+
+. gr save  "$working_ANALYSIS/results/intermediate/support_dem_namibia.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/support_dem_namibia.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/afro_support_democracy.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/afro_support_democracy.tif written i
+> n TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. lab def studies 0 "Rest of Namibia (n=1058)" 1 "'Rest of Ohangwena (n=76)" 2 "Study sites (n=38)", replace
+
+. lab val study_sites studies
+
+. catplot q30, over(study_sites) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(study_sites) bargap(10) blabel(bar, format(%9.0f) pos
+> (center)  gap(0.1)) title("Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(3))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. lab def studies 0 "Rest of Namibia (n=1058)" 1 "Rest of Ohangwena (n=76)" 2 "Study sites (n=38)", replace
+
+. lab val study_sites studies
+
+. catplot q30, over(study_sites) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(study_sites) bargap(10) blabel(bar, format(%9.0f) pos
+> (center)  gap(0.1)) title("Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(3))
+
+. gr save  "$working_ANALYSIS/results/intermediate/support_dem_namibia.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/support_dem_namibia.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/afro_support_democracy.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/afro_support_democracy.tif written i
+> n TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q30 if studysites!=2, by(study_sites)
+studysites not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q30 if study_sites!=2, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1058    601763.5      600415
+Rest of Ohan |       76     41781.5       43130
+-------------+---------------------------------
+    combined |     1134      643545      643545
+
+unadjusted variance  7605256.67
+adjustment for ties   -3.32e+06
+                     ----------
+adjusted variance    4286754.07
+
+Ho: q30(study_~s==Rest of Namibia (n=1058)) = q30(study_~s==Rest of Ohangwena (n=76))
+             z =   0.651
+    Prob > |z| =   0.5148
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. reg q30 i.study_sites, vce(hc3)
+
+Linear regression                               Number of obs     =      1,172
+                                                F(2, 1169)        =       0.90
+                                                Prob > F          =     0.4087
+                                                R-squared         =     0.0020
+                                                Root MSE          =     .75483
+
+-------------------------------------------------------------------------------------------
+                          |             Robust HC3
+                      q30 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+--------------------------+----------------------------------------------------------------
+              study_sites |
+Rest of Ohangwena (n=76)  |  -.0879763   .0997111    -0.88   0.378    -.2836091    .1076564
+      Study sites (n=38)  |  -.1537658   .1483041    -1.04   0.300    -.4447378    .1372062
+                          |
+                    _cons |   2.601134   .0228566   113.80   0.000      2.55629    2.645979
+-------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q30 if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1058    581626.5      580313
+Study sites  |       38     19529.5       20843
+-------------+---------------------------------
+    combined |     1096      601156      601156
+
+unadjusted variance  3675315.67
+adjustment for ties   -1.60e+06
+                     ----------
+adjusted variance    2073385.02
+
+Ho: q30(study_~s==Rest of Namibia (n=1058)) = q30(study_~s==Study sites (n=38))
+             z =   0.912
+    Prob > |z| =   0.3617
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q30 if study_sites!=0, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Ohan |       76      4414.5        4370
+Study sites  |       38      2140.5        2185
+-------------+---------------------------------
+    combined |      114        6555        6555
+
+unadjusted variance    27676.67
+adjustment for ties   -11049.14
+                     ----------
+adjusted variance      16627.52
+
+Ho: q30(study_~s==Rest of Ohangwena (n=76)) = q30(study_~s==Study sites (n=38))
+             z =   0.345
+    Prob > |z| =   0.7300
+    Exact Prob =   0.7819
+
+. 
+end of do-file
+
+. tab q30
+
+         Q30. Support for democracy |      Freq.     Percent        Cum.
+------------------------------------+-----------------------------------
+  Does't matter for someone like me |        192       16.38       16.38
+Sometimes non-democratic preferable |         96        8.19       24.57
+        Always democracy preferable |        884       75.43      100.00
+------------------------------------+-----------------------------------
+                              Total |      1,172      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. catplot q30, over(study_sites) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(study_sites) bargap(10) blabel(bar, format(%9.0f) pos
+> (center)  gap(0.1)) title("Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(3))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. gr save  "$working_ANALYSIS/results/intermediate/support_dem_namibia.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/support_dem_namibia.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/afro_support_democracy.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/afro_support_democracy.tif written i
+> n TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q30 if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1058    581626.5      580313
+Study sites  |       38     19529.5       20843
+-------------+---------------------------------
+    combined |     1096      601156      601156
+
+unadjusted variance  3675315.67
+adjustment for ties   -1.60e+06
+                     ----------
+adjusted variance    2073385.02
+
+Ho: q30(study_~s==Rest of Namibia (n=1058)) = q30(study_~s==Study sites (n=38))
+             z =   0.912
+    Prob > |z| =   0.3617
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q30 if study_sites!=0, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Ohan |       76      4414.5        4370
+Study sites  |       38      2140.5        2185
+-------------+---------------------------------
+    combined |      114        6555        6555
+
+unadjusted variance    27676.67
+adjustment for ties   -11049.14
+                     ----------
+adjusted variance      16627.52
+
+Ho: q30(study_~s==Rest of Ohangwena (n=76)) = q30(study_~s==Study sites (n=38))
+             z =   0.345
+    Prob > |z| =   0.7300
+    Exact Prob =   0.7819
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q30 if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1058    581626.5      580313
+Study sites  |       38     19529.5       20843
+-------------+---------------------------------
+    combined |     1096      601156      601156
+
+unadjusted variance  3675315.67
+adjustment for ties   -1.60e+06
+                     ----------
+adjusted variance    2073385.02
+
+Ho: q30(study_~s==Rest of Namibia (n=1058)) = q30(study_~s==Study sites (n=38))
+             z =   0.912
+    Prob > |z| =   0.3617
+
+. 
+end of do-file
+
+. help ranksum
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. 
+. reg q52b i.study_sites
+
+      Source |       SS           df       MS      Number of obs   =     1,169
+-------------+----------------------------------   F(2, 1166)      =      8.50
+       Model |  14.5127281         2  7.25636406   Prob > F        =    0.0002
+    Residual |  995.037315     1,166  .853376771   R-squared       =    0.0144
+-------------+----------------------------------   Adj R-squared   =    0.0127
+       Total |  1009.55004     1,168   .86434079   Root MSE        =    .92378
+
+-------------------------------------------------------------------------------------------
+                     q52b |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+--------------------------+----------------------------------------------------------------
+              study_sites |
+Rest of Ohangwena (n=76)  |   .4145027   .1077728     3.85   0.000     .2030524     .625953
+      Study sites (n=38)  |  -.1921429   .1488192    -1.29   0.197    -.4841262    .0998405
+                          |
+                    _cons |   2.117143   .0285086    74.26   0.000     2.061209    2.173077
+-------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. 
+. reg q52b i.study_sites, vce(hc3)
+
+Linear regression                               Number of obs     =      1,169
+                                                F(2, 1166)        =      11.40
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0144
+                                                Root MSE          =     .92378
+
+-------------------------------------------------------------------------------------------
+                          |             Robust HC3
+                     q52b |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+--------------------------+----------------------------------------------------------------
+              study_sites |
+Rest of Ohangwena (n=76)  |   .4145027    .091302     4.54   0.000     .2353682    .5936372
+      Study sites (n=38)  |  -.1921429   .1581376    -1.22   0.225    -.5024089    .1181232
+                          |
+                    _cons |   2.117143    .028798    73.52   0.000     2.060641    2.173645
+-------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. tab q52b
+
+ Q52b. Trust parliament/national |
+                        assembly |      Freq.     Percent        Cum.
+---------------------------------+-----------------------------------
+                      Not at all |         83        7.10        7.10
+                   Just a little |        186       15.91       23.01
+                        Somewhat |        386       33.02       56.03
+                           A lot |        514       43.97      100.00
+---------------------------------+-----------------------------------
+                           Total |      1,169      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q52b if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1050      575205      572775
+Study sites  |       40       19390       21820
+-------------+---------------------------------
+    combined |     1090      594595      594595
+
+unadjusted variance  3818500.00
+adjustment for ties  -454608.43
+                     ----------
+adjusted variance    3363891.57
+
+Ho: q52b(study_~s==Rest of Namibia (n=1058)) = q52b(study_~s==Study sites (n=38))
+             z =   1.325
+    Prob > |z| =   0.1852
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q52j if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1070      599015      594385
+Study sites  |       40       17590       22220
+-------------+---------------------------------
+    combined |     1110      616605      616605
+
+unadjusted variance  3962566.67
+adjustment for ties  -439504.03
+                     ----------
+adjusted variance    3523062.64
+
+Ho: q52j(study_~s==Rest of Namibia (n=1058)) = q52j(study_~s==Study sites (n=38))
+             z =   2.467
+    Prob > |z| =   0.0136
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q52k if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1053    580681.5      575991
+Study sites  |       40     17189.5       21880
+-------------+---------------------------------
+    combined |     1093      597871      597871
+
+unadjusted variance  3839940.00
+adjustment for ties  -466803.20
+                     ----------
+adjusted variance    3373136.80
+
+Ho: q52k(study_~s==Rest of Namibia (n=1058)) = q52k(study_~s==Study sites (n=38))
+             z =   2.554
+    Prob > |z| =   0.0107
+
+. 
+end of do-file
+
+. bys study_sites: sum q52k
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> study_sites = Rest of Namibia (n=1058)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        q52k |      1,053      2.1415    .8967179          0          3
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> study_sites = Rest of Ohangwena (n=76)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        q52k |         80      2.1125    .8112149          0          3
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> study_sites = Study sites (n=38)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        q52k |         40         1.8    .8828857          0          3
+
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ttest q52k if study_sites!=1, by(study_sites)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ Rest of |   1,053      2.1415    .0276339    .8967179    2.087277    2.195724
+Study si |      40         1.8    .1395965    .8828857    1.517639    2.082361
+---------+--------------------------------------------------------------------
+combined |   1,093    2.129003    .0271656    .8981109      2.0757    2.182305
+---------+--------------------------------------------------------------------
+    diff |            .3415005    .1443723                .0582216    .6247793
+------------------------------------------------------------------------------
+    diff = mean(Rest of) - mean(Study si)                         t =   2.3654
+Ho: diff = 0                                     degrees of freedom =     1091
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9909         Pr(|T| > |t|) = 0.0182          Pr(T > t) = 0.0091
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q71a if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1069      596168      593295
+Study sites  |       40       19327       22200
+-------------+---------------------------------
+    combined |     1109      615495      615495
+
+unadjusted variance  3955300.00
+adjustment for ties  -359561.61
+                     ----------
+adjusted variance    3595738.39
+
+Ho: q71a(study_~s==Rest of Namibia (n=1058)) = q71a(study_~s==Study sites (n=38))
+             z =   1.515
+    Prob > |z| =   0.1297
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q52b if study_sites!=0, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Ohan |       79        5330        4740
+Study sites  |       40        1810        2400
+-------------+---------------------------------
+    combined |      119        7140        7140
+
+unadjusted variance    31600.00
+adjustment for ties    -5990.77
+                     ----------
+adjusted variance      25609.23
+
+Ho: q52b(study_~s==Rest of Ohangwena (n=76)) = q52b(study_~s==Study sites (n=38))
+             z =   3.687
+    Prob > |z| =   0.0002
+    Exact Prob =   0.0002
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q52b if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1050      575205      572775
+Study sites  |       40       19390       21820
+-------------+---------------------------------
+    combined |     1090      594595      594595
+
+unadjusted variance  3818500.00
+adjustment for ties  -454608.43
+                     ----------
+adjusted variance    3363891.57
+
+Ho: q52b(study_~s==Rest of Namibia (n=1058)) = q52b(study_~s==Study sites (n=38))
+             z =   1.325
+    Prob > |z| =   0.1852
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q71a if study_sites!=0, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Ohan |       80      4909.5        4840
+Study sites  |       40      2350.5        2420
+-------------+---------------------------------
+    combined |      120        7260        7260
+
+unadjusted variance    32266.67
+adjustment for ties    -2498.60
+                     ----------
+adjusted variance      29768.07
+
+Ho: q71a(study_~s==Rest of Ohangwena (n=76)) = q71a(study_~s==Study sites (n=38))
+             z =   0.403
+    Prob > |z| =   0.6871
+    Exact Prob =   0.6895
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD41f8_000000.tmp"
+
+. ranksum q52b if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1050      575205      572775
+Study sites  |       40       19390       21820
+-------------+---------------------------------
+    combined |     1090      594595      594595
+
+unadjusted variance  3818500.00
+adjustment for ties  -454608.43
+                     ----------
+adjusted variance    3363891.57
+
+Ho: q52b(study_~s==Rest of Namibia (n=1058)) = q52b(study_~s==Study sites (n=38))
+             z =   1.325
+    Prob > |z| =   0.1852
+
+. ranksum q71a if study_sites!=1, by(study_sites)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+ study_sites |      obs    rank sum    expected
+-------------+---------------------------------
+Rest of Nami |     1069      596168      593295
+Study sites  |       40       19327       22200
+-------------+---------------------------------
+    combined |     1109      615495      615495
+
+unadjusted variance  3955300.00
+adjustment for ties  -359561.61
+                     ----------
+adjusted variance    3595738.39
+
+Ho: q71a(study_~s==Rest of Namibia (n=1058)) = q71a(study_~s==Study sites (n=38))
+             z =   1.515
+    Prob > |z| =   0.1297
+
+. 
+end of do-file
+
+. exit, clear

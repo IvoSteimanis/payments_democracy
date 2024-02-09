@@ -1,0 +1,282 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.04.26-11.04.01.log.txt
+  log type:  text
+ opened on:  26 Apr 2023, 11:04:01
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 26 Apr 2023 11:04:01
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss;lmatasem;
+> lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduces transpar
+> ency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD5d68_000000.tmp"
+
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD5d68_000000.tmp"
+
+. prtest extrinsic_leader, by(TL)
+
+Two-sample test of proportions                     0: Number of obs =       96
+                                                   1: Number of obs =       96
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |     .34375   .0484753                      .2487402    .4387598
+           1 |      .5625   .0506308                      .4632655    .6617345
+-------------+----------------------------------------------------------------
+        diff |    -.21875   .0700952                      -.356134    -.081366
+             |  under Ho:   .0718509    -3.04   0.002
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =  -3.0445
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0012         Pr(|Z| > |z|) = 0.0023          Pr(Z > z) = 0.9988
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD5d68_000000.tmp"
+
+. bys extrinsic_leader: sum helpauthentic
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Intrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |        105    11.28571    3.858177          5   15.33333
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Extrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |         87           9    4.123106          4         15
+
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD5d68_000000.tmp"
+
+. ttest helpauthentic if decision <2, by(extrinsic_leader)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+Intrinsi |      35    11.28571    .6585136    3.895819    9.947454    12.62397
+Extrinsi |      29           9    .7747027    4.171902    7.413094    10.58691
+---------+--------------------------------------------------------------------
+combined |      64       10.25    .5190379    4.152303    9.212786    11.28721
+---------+--------------------------------------------------------------------
+    diff |            2.285714    1.010161                .2664311    4.304997
+------------------------------------------------------------------------------
+    diff = mean(Intrinsi) - mean(Extrinsi)                        t =   2.2627
+Ho: diff = 0                                     degrees of freedom =       62
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9864         Pr(|T| > |t|) = 0.0272          Pr(T > t) = 0.0136
+
+. 
+end of do-file
+
+. bys bonus: tab rule extrinsic_leader
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Baseline (n=64)
+
+                  |   extrinsic_leader
+             rule | Intrinsic  Extrinsic |     Total
+------------------+----------------------+----------
+       Democratic |        23         18 |        41 
+Pseudo-democratic |        10          4 |        14 
+       Autocratic |         2          7 |         9 
+------------------+----------------------+----------
+            Total |        35         29 |        64 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Pooled Bonus (n=128)
+
+                  |   extrinsic_leader
+             rule | Intrinsic  Extrinsic |     Total
+------------------+----------------------+----------
+       Democratic |        41         41 |        82 
+Pseudo-democratic |        24         17 |        41 
+       Autocratic |         5          0 |         5 
+------------------+----------------------+----------
+            Total |        70         58 |       128 
+
+
+. bys bonus extrinsic_leader: sum rule
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Baseline (n=64), extrinsic_leader = Intrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        rule |         35         1.4    .6039088          1          3
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Baseline (n=64), extrinsic_leader = Extrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        rule |         29     1.62069     .862463          1          3
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Pooled Bonus (n=128), extrinsic_leader = Intrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        rule |         70    1.485714    .6311447          1          3
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Pooled Bonus (n=128), extrinsic_leader = Extrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        rule |         58    1.293103     .459161          1          2
+
+
+. bys bonus extrinsic_leader: tab rule
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Baseline (n=64), extrinsic_leader = Intrinsic
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         23       65.71       65.71
+Pseudo-democratic |         10       28.57       94.29
+       Autocratic |          2        5.71      100.00
+------------------+-----------------------------------
+            Total |         35      100.00
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Baseline (n=64), extrinsic_leader = Extrinsic
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         18       62.07       62.07
+Pseudo-democratic |          4       13.79       75.86
+       Autocratic |          7       24.14      100.00
+------------------+-----------------------------------
+            Total |         29      100.00
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Pooled Bonus (n=128), extrinsic_leader = Intrinsic
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       58.57       58.57
+Pseudo-democratic |         24       34.29       92.86
+       Autocratic |          5        7.14      100.00
+------------------+-----------------------------------
+            Total |         70      100.00
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus = Pooled Bonus (n=128), extrinsic_leader = Extrinsic
+
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       70.69       70.69
+Pseudo-democratic |         17       29.31      100.00
+------------------+-----------------------------------
+            Total |         58      100.00
+
+

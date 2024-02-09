@@ -1,0 +1,1744 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.07.11-10.29.46.log.txt
+  log type:  text
+ opened on:  11 Jul 2023, 10:29:46
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 11 Jul 2023 10:29:46
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. keep if COUNTRY==22
+(52,735 observations deleted)
+
+. rename *, lower
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab q30, nolab
+
+       Q30. |
+Support for |
+  democracy |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        192       16.00       16.00
+          2 |         96        8.00       24.00
+          3 |        884       73.67       97.67
+          9 |         28        2.33      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. lab def democracy 1 "Does't matter" 2 "Non-democratic preferable" 3 "Democracy preferable", replace 
+
+. lab val q30 democracy
+
+. replace q30=. if q30==9
+(28 real changes made, 28 to missing)
+
+. *PANEL A: Democracy is preferable to any other kind of government.
+. catplot q30 ,  horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) title("{bf:A} Support f
+> or democracy")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. 
+. 
+end of do-file
+
+. tab region
+
+              Province or Region |      Freq.     Percent        Cum.
+---------------------------------+-----------------------------------
+                         Zambezi |         48        4.00        4.00
+                          Erongo |         96        8.00       12.00
+                          Hardap |         48        4.00       16.00
+                          !Karas |         48        4.00       20.00
+                    Kavango West |         40        3.33       23.33
+                    Kavango East |         72        6.00       29.33
+                          Khomas |        232       19.33       48.67
+                          Kunene |         48        4.00       52.67
+                       Ohangwena |        120       10.00       62.67
+                         Omaheke |         40        3.33       66.00
+                         Omusati |        128       10.67       76.67
+                          Oshana |        104        8.67       85.33
+                        Oshikoto |         96        8.00       93.33
+                    Otjozondjupa |         80        6.67      100.00
+---------------------------------+-----------------------------------
+                           Total |      1,200      100.00
+
+. tab region, nolab
+
+Province or |
+     Region |      Freq.     Percent        Cum.
+------------+-----------------------------------
+        580 |         48        4.00        4.00
+        581 |         96        8.00       12.00
+        582 |         48        4.00       16.00
+        583 |         48        4.00       20.00
+        584 |         40        3.33       23.33
+        585 |         72        6.00       29.33
+        586 |        232       19.33       48.67
+        587 |         48        4.00       52.67
+        588 |        120       10.00       62.67
+        589 |         40        3.33       66.00
+        590 |        128       10.67       76.67
+        591 |        104        8.67       85.33
+        592 |         96        8.00       93.33
+        593 |         80        6.67      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. gen ohangwena= 0
+
+. replace ohangwena = 1 if region == 588
+(120 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. lab def ohang 0 "Rest of Namibia" 1 "Ohangwena", replace
+
+. lab val ohangwena ohang
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. keep if COUNTRY==22
+(52,735 observations deleted)
+
+. rename *, lower
+
+. 
+. gen ohangwena= 0
+
+. replace ohangwena = 1 if region == 588
+(120 real changes made)
+
+. lab def ohang 0 "Rest of Namibia" 1 "Ohangwena", replace
+
+. lab val ohangwena ohang
+
+. *SUPPORT FOR DEMOCRACY
+. tab q30, nolab
+
+       Q30. |
+Support for |
+  democracy |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        192       16.00       16.00
+          2 |         96        8.00       24.00
+          3 |        884       73.67       97.67
+          9 |         28        2.33      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. lab def democracy 1 "Does't matter" 2 "Non-democratic preferable" 3 "Democracy preferable", replace 
+
+. lab val q30 democracy
+
+. replace q30=. if q30==9
+(28 real changes made, 28 to missing)
+
+. *PANEL A: Democracy is preferable to any other kind of government.
+. catplot q30 , over(ohangwena)  horizontal recast(bar) yla(0(20)100, nogrid) percent(ohangwena) bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.
+> 1)) title("{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. catplot q30 , over(ohangwena) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(ohangwena) bargap(10) blabel(bar, format(%9.0f) pos(ce
+> nter)  gap(0.1)) title("{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. catplot q30 , over(ohangwena) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(ohangwena) bargap(10) blabel(bar, format(%9.0f) pos(ce
+> nter)  gap(0.1)) title("{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. *PANEL B: In some circumstances, a non-democratic government can be preferable.
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab q31
+
+      Q31. Government gets |
+things done but no citizen |
+       influence vs. Govt. |
+              accountable  |      Freq.     Percent        Cum.
+---------------------------+-----------------------------------
+Agree very strongly with 1 |        129       10.75       10.75
+              Agree with 1 |        325       27.08       37.83
+              Agree with 2 |        478       39.83       77.67
+Agree very strongly with 2 |        248       20.67       98.33
+        Agree with neither |         13        1.08       99.42
+                Don’t know |          7        0.58      100.00
+---------------------------+-----------------------------------
+                     Total |      1,200      100.00
+
+. 
+end of do-file
+
+. tab q19b
+
+Q19b. Member of |
+      voluntary |
+ association or |
+community group |      Freq.     Percent        Cum.
+----------------+-----------------------------------
+   Not a Member |        913       76.08       76.08
+Inactive Member |        117        9.75       85.83
+  Active Member |        141       11.75       97.58
+Official Leader |         28        2.33       99.92
+     Don't Know |          1        0.08      100.00
+----------------+-----------------------------------
+          Total |      1,200      100.00
+
+. tab q19b, nolab
+
+      Q19b. |
+  Member of |
+  voluntary |
+association |
+         or |
+  community |
+      group |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        913       76.08       76.08
+          1 |        117        9.75       85.83
+          2 |        141       11.75       97.58
+          3 |         28        2.33       99.92
+          9 |          1        0.08      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. gen com_member = 0
+
+. replace com_member = 1 if q19b==3 | q19b==2
+(169 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. catplot q30 , over(com_member) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(com_member) bargap(10) blabel(bar, format(%9.0f) pos(
+> center)  gap(0.1)) title("{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. catplot q30 , over(ohangwena) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(ohangwena) bargap(10) blabel(bar, format(%9.0f) pos(ce
+> nter)  gap(0.1)) title("{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. * (2) Analysis WIDE format
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+.  do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab rule_base rule_bonus_first, chi2 exact
+
+Enumerating sample-space combinations:
+stage 3:  enumerations = 1
+stage 2:  enumerations = 6
+stage 1:  enumerations = 0
+
+                 |         rule_bonus_first
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        31          9          1 |        41 
+    Base: Pseudo |         3         10          1 |        14 
+Base: Autocratic |         6          3          0 |         9 
+-----------------+---------------------------------+----------
+           Total |        40         22          2 |        64 
+
+          Pearson chi2(4) =  13.4328   Pr = 0.009
+           Fisher's exact =                 0.003
+
+. 
+end of do-file
+
+.  do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. bysort rule1: tab stable_rule
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule1 = Democratic
+
+stable_rule |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         13       31.71       31.71
+          1 |         28       68.29      100.00
+------------+-----------------------------------
+      Total |         41      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule1 = Pseudo-democratic
+
+stable_rule |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         12       85.71       85.71
+          1 |          2       14.29      100.00
+------------+-----------------------------------
+      Total |         14      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule1 = Autocratic
+
+stable_rule |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |          9      100.00      100.00
+------------+-----------------------------------
+      Total |          9      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> rule1 = .
+
+stable_rule |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        384      100.00      100.00
+------------+-----------------------------------
+      Total |        384      100.00
+
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab rule_base rule_bonus_first, chi2 exact
+
+Enumerating sample-space combinations:
+stage 3:  enumerations = 1
+stage 2:  enumerations = 6
+stage 1:  enumerations = 0
+
+                 |         rule_bonus_first
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        31          9          1 |        41 
+    Base: Pseudo |         3         10          1 |        14 
+Base: Autocratic |         6          3          0 |         9 
+-----------------+---------------------------------+----------
+           Total |        40         22          2 |        64 
+
+          Pearson chi2(4) =  13.4328   Pr = 0.009
+           Fisher's exact =                 0.003
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab rule_base rule_bonus_first if extrinsic_leader==1, chi2 exact
+
+Enumerating sample-space combinations:
+stage 3:  enumerations = 1
+stage 2:  enumerations = 3
+stage 1:  enumerations = 0
+
+                 |   rule_bonus_first
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+    Base: Pseudo |         1          3 |         4 
+Base: Autocratic |         6          1 |         7 
+-----------------+----------------------+----------
+           Total |        22          7 |        29 
+
+          Pearson chi2(2) =   6.5707   Pr = 0.037
+           Fisher's exact =                 0.053
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab rule_base rule_bonus_first if extrinsic_leader==1, chi2 exact percent
+option percent not allowed
+r(198);
+
+end of do-file
+
+r(198);
+
+. help tab
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab rule_base rule_bonus_first if extrinsic_leader==1, column
+
++-------------------+
+| Key               |
+|-------------------|
+|     frequency     |
+| column percentage |
++-------------------+
+
+                 |   rule_bonus_first
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     68.18      42.86 |     62.07 
+-----------------+----------------------+----------
+    Base: Pseudo |         1          3 |         4 
+                 |      4.55      42.86 |     13.79 
+-----------------+----------------------+----------
+Base: Autocratic |         6          1 |         7 
+                 |     27.27      14.29 |     24.14 
+-----------------+----------------------+----------
+           Total |        22          7 |        29 
+                 |    100.00     100.00 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab rule_base rule_bonus_first if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |   rule_bonus_first
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     83.33      16.67 |    100.00 
+-----------------+----------------------+----------
+    Base: Pseudo |         1          3 |         4 
+                 |     25.00      75.00 |    100.00 
+-----------------+----------------------+----------
+Base: Autocratic |         6          1 |         7 
+                 |     85.71      14.29 |    100.00 
+-----------------+----------------------+----------
+           Total |        22          7 |        29 
+                 |     75.86      24.14 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab rule_base rule_bonus_first if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |         rule_bonus_first
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        16          6          1 |        23 
+                 |     69.57      26.09       4.35 |    100.00 
+-----------------+---------------------------------+----------
+    Base: Pseudo |         2          7          1 |        10 
+                 |     20.00      70.00      10.00 |    100.00 
+-----------------+---------------------------------+----------
+Base: Autocratic |         0          2          0 |         2 
+                 |      0.00     100.00       0.00 |    100.00 
+-----------------+---------------------------------+----------
+           Total |        18         15          2 |        35 
+                 |     51.43      42.86       5.71 |    100.00 
+
+. 
+end of do-file
+
+. tab rule_base3
+
+group_rule_ |
+base==Base: |
+ Autocratic |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        385       85.94       85.94
+          1 |         63       14.06      100.00
+------------+-----------------------------------
+      Total |        448      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab rule_base3 rule_bonus_first if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+group_rule |
+_base==Bas |
+        e: |         rule_bonus_first
+Autocratic | Democrati  Pseudo-de  Autocrati |     Total
+-----------+---------------------------------+----------
+         0 |        18         13          2 |        33 
+           |     54.55      39.39       6.06 |    100.00 
+-----------+---------------------------------+----------
+         1 |         0          2          0 |         2 
+           |      0.00     100.00       0.00 |    100.00 
+-----------+---------------------------------+----------
+     Total |        18         15          2 |        35 
+           |     51.43      42.86       5.71 |    100.00 
+
+. 
+end of do-file
+
+. tab group_rule_base#
+interactions not allowed
+r(101);
+
+. tab rule_base
+
+       rule_base |      Freq.     Percent        Cum.
+-----------------+-----------------------------------
+Base: Democratic |         41       64.06       64.06
+    Base: Pseudo |         14       21.88       85.94
+Base: Autocratic |          9       14.06      100.00
+-----------------+-----------------------------------
+           Total |         64      100.00
+
+. tab rule_base, nolab
+
+  rule_base |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |         41       64.06       64.06
+          2 |         14       21.88       85.94
+          3 |          9       14.06      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. gen base_no_vote = 0
+
+. replace base_no_vote =1 if rule_base==2 | rule_base==3
+(23 real changes made)
+
+. replace base_no_vote = . if rule_base==.
+(384 real changes made, 384 to missing)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab base_no_vote rule_bonus_first if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+base_no_vo |         rule_bonus_first
+        te | Democrati  Pseudo-de  Autocrati |     Total
+-----------+---------------------------------+----------
+         0 |        16          6          1 |        23 
+           |     69.57      26.09       4.35 |    100.00 
+-----------+---------------------------------+----------
+         1 |         2          9          1 |        12 
+           |     16.67      75.00       8.33 |    100.00 
+-----------+---------------------------------+----------
+     Total |        18         15          2 |        35 
+           |     51.43      42.86       5.71 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab base_no_vote rule_bonus_first if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+base_no_vo |   rule_bonus_first
+        te | Democrati  Pseudo-de |     Total
+-----------+----------------------+----------
+         0 |        15          3 |        18 
+           |     83.33      16.67 |    100.00 
+-----------+----------------------+----------
+         1 |         7          4 |        11 
+           |     63.64      36.36 |    100.00 
+-----------+----------------------+----------
+     Total |        22          7 |        29 
+           |     75.86      24.14 |    100.00 
+
+. 
+end of do-file
+
+. tab extrinsic_leader
+
+extrinsic_l |
+      eader |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  Intrinsic |         35       54.69       54.69
+  Extrinsic |         29       45.31      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. tab base_no_vote
+
+base_no_vot |
+          e |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         41       64.06       64.06
+          1 |         23       35.94      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. keep if COUNTRY==22
+(52,735 observations deleted)
+
+. rename *, lower
+
+. 
+. gen ohangwena= 0
+
+. replace ohangwena = 1 if region == 588
+(120 real changes made)
+
+. lab def ohang 0 "Rest of Namibia" 1 "Ohangwena", replace
+
+. lab val ohangwena ohang
+
+. *SUPPORT FOR DEMOCRACY
+. tab q30, nolab
+
+       Q30. |
+Support for |
+  democracy |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        192       16.00       16.00
+          2 |         96        8.00       24.00
+          3 |        884       73.67       97.67
+          9 |         28        2.33      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. lab def democracy 1 "Does't matter" 2 "Non-democratic preferable" 3 "Democracy preferable", replace 
+
+. lab val q30 democracy
+
+. replace q30=. if q30==9
+(28 real changes made, 28 to missing)
+
+. 
+. gen com_member = 0
+
+. replace com_member = 1 if q19b==3 | q19b==2
+(169 real changes made)
+
+. 
+. *PANEL A: Democracy is preferable to any other kind of government.
+. catplot q30 , over(ohangwena) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(ohangwena) bargap(10) blabel(bar, format(%9.0f) pos(ce
+> nter)  gap(0.1)) b1title("") legend(ring(1) pos(6) rows(1))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/afro_support_democracy.tif", replace width(4000)
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/afro_support_democracy.tif not
+>  found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/afro_support_democracy.tif written i
+> n TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. keep if COUNTRY==22
+(52,735 observations deleted)
+
+. rename *, lower
+
+. 
+. gen ohangwena= 0
+
+. replace ohangwena = 1 if region == 588
+(120 real changes made)
+
+. lab def ohang 0 "Rest of Namibia" 1 "Ohangwena", replace
+
+. lab val ohangwena ohang
+
+. *SUPPORT FOR DEMOCRACY
+. tab q30, nolab
+
+       Q30. |
+Support for |
+  democracy |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        192       16.00       16.00
+          2 |         96        8.00       24.00
+          3 |        884       73.67       97.67
+          9 |         28        2.33      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. lab def democracy 1 "Does't matter for someone like me" 2 "Sometimes non-democratic preferable" 3 "Always democracy preferable", replace 
+
+. lab val q30 democracy
+
+. replace q30=. if q30==9
+(28 real changes made, 28 to missing)
+
+. 
+. gen com_member = 0
+
+. replace com_member = 1 if q19b==3 | q19b==2
+(169 real changes made)
+
+. 
+. *PANEL A: Democracy is preferable to any other kind of government.
+. catplot q30 , over(ohangwena) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(ohangwena) bargap(10) blabel(bar, format(%9.0f) pos(ce
+> nter)  gap(0.1)) title("Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/afro_support_democracy.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/afro_support_democracy.tif written i
+> n TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. *PANEL A: Democracy is preferable to any other kind of government.
+. catplot q30 , over(ohangwena) asyvars stack horizontal recast(bar) yla(0(20)100, nogrid) percent(ohangwena) bargap(10) blabel(bar, format(%9.0f) pos(ce
+> nter)  gap(0.1)) title("Which of these three statements is closest to your own opinion?")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/afro_support_democracy.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/afro_support_democracy.tif written i
+> n TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. *--------------------------------------------------
+. * (2) Analysis WIDE format
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+. * Table 1.      Participants characteristics
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. ** Figure 6:  democratic valuues
+. * Please indicate for each of the statement whether you disagree strongly, disagree a little, neither agree nor disagree, agree a little, or strongly a
+> gree
+.  global dem_norm c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12
+
+.  foreach var of varlist $dem_norm {
+  2.         replace `var'=0 if `var'==. 
+  3.         }
+(51 real changes made)
+(53 real changes made)
+(49 real changes made)
+(113 real changes made)
+(23 real changes made)
+(61 real changes made)
+(86 real changes made)
+(26 real changes made)
+(63 real changes made)
+(52 real changes made)
+(36 real changes made)
+(32 real changes made)
+
+.         
+. foreach var of varlist $dem_norm {
+  2.         gen new_`var'=1 if `var'==1
+  3.         replace new_`var'=2 if `var'==2 
+  4.         replace new_`var'=3 if `var'==0 
+  5.         replace new_`var'=4 if `var'==3
+  6.         replace new_`var'=5 if `var'==4
+  7.         }
+(372 missing values generated)
+(8 real changes made)
+(51 real changes made)
+(19 real changes made)
+(294 real changes made)
+(353 missing values generated)
+(20 real changes made)
+(53 real changes made)
+(43 real changes made)
+(237 real changes made)
+(390 missing values generated)
+(10 real changes made)
+(49 real changes made)
+(30 real changes made)
+(301 real changes made)
+(353 missing values generated)
+(22 real changes made)
+(113 real changes made)
+(30 real changes made)
+(188 real changes made)
+(399 missing values generated)
+(4 real changes made)
+(23 real changes made)
+(9 real changes made)
+(363 real changes made)
+(191 missing values generated)
+(13 real changes made)
+(61 real changes made)
+(24 real changes made)
+(93 real changes made)
+(284 missing values generated)
+(45 real changes made)
+(86 real changes made)
+(34 real changes made)
+(119 real changes made)
+(397 missing values generated)
+(6 real changes made)
+(26 real changes made)
+(6 real changes made)
+(359 real changes made)
+(153 missing values generated)
+(11 real changes made)
+(63 real changes made)
+(12 real changes made)
+(67 real changes made)
+(334 missing values generated)
+(38 real changes made)
+(52 real changes made)
+(71 real changes made)
+(173 real changes made)
+(307 missing values generated)
+(40 real changes made)
+(36 real changes made)
+(55 real changes made)
+(176 real changes made)
+(375 missing values generated)
+(21 real changes made)
+(32 real changes made)
+(61 real changes made)
+(261 real changes made)
+
+. lab var new_c1 "For important decisions members of a group should be allowed to vote."
+
+. lab var new_c2 "Most people can learn to be leaders, it is not a matter of birth."
+
+. lab var new_c3 "Democratic elections in this village ensure that the elected authorities act in the interest of their people."
+note: label truncated to 80 characters
+
+. lab var new_c4 "In most cases, failures in this village are traceable to bad cicumstances and not bad leadership."
+note: label truncated to 80 characters
+
+. lab var new_c5 "Schools and parents schould teach children to obey authority."
+
+. lab var new_c6 "Favouring friends, relatives or supporters over others in the course of ones duties as a leader is sometimes justified."
+note: label truncated to 80 characters
+
+. lab var new_c7 "On the whole, men make better political leaders than women do."
+
+. lab var new_c8 "A leader hast to serve all people including those who did not vote for him/her or are not friends."
+note: label truncated to 80 characters
+
+. lab var new_c9 "Accepting a bribe in the course of ones duties is sometimes justified."
+
+. lab var new_c10 "Most people in this village can be trusted."
+
+. lab var new_c11 "On the whole, more educated people make better political leaders than the less educated do."
+note: label truncated to 80 characters
+
+. lab var new_c12 "On the whole, elders make better political leaders than the youth do."
+
+.         
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+.         
+. gen new_c6r = 6- new_c6
+
+. gen new_c7r = 6- new_c7 
+
+. gen new_c9r = 6- new_c9
+
+. alpha new_c1 new_c3 new_c8 new_c9r 
+
+Test scale = mean(unstandardized items)
+
+Average interitem covariance:     .9378221
+Number of items in the scale:            4
+Scale reliability coefficient:      0.7613
+
+. pca new_c1 new_c3 new_c8 new_c9r , comp(1)
+
+Principal components/correlation                 Number of obs    =        448
+                                                 Number of comp.  =          1
+                                                 Trace            =          4
+    Rotation: (unrotated = principal)            Rho              =     0.5874
+
+    --------------------------------------------------------------------------
+       Component |   Eigenvalue   Difference         Proportion   Cumulative
+    -------------+------------------------------------------------------------
+           Comp1 |      2.34965      1.70985             0.5874       0.5874
+           Comp2 |        .6398     .0536761             0.1599       0.7474
+           Comp3 |      .586124      .161703             0.1465       0.8939
+           Comp4 |      .424421            .             0.1061       1.0000
+    --------------------------------------------------------------------------
+
+Principal components (eigenvectors) 
+
+    --------------------------------------
+        Variable |    Comp1 | Unexplained 
+    -------------+----------+-------------
+          new_c1 |   0.4617 |       .4992 
+          new_c3 |   0.5228 |       .3578 
+          new_c8 |   0.5257 |       .3506 
+         new_c9r |   0.4870 |       .4428 
+    --------------------------------------
+
+. screeplot, yline(1)
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. estat loadings
+
+Principal component loadings (unrotated)
+    component normalization: sum of squares(column) = 1
+
+    ------------------------
+                 |    Comp1 
+    -------------+----------
+          new_c1 |    .4617 
+          new_c3 |    .5228 
+          new_c8 |    .5257 
+         new_c9r |     .487 
+    ------------------------
+
+. predict dem_norm, score
+
+Scoring coefficients 
+    sum of squares(column-loading) = 1
+
+    ------------------------
+        Variable |    Comp1 
+    -------------+----------
+          new_c1 |   0.4617 
+          new_c3 |   0.5228 
+          new_c8 |   0.5257 
+         new_c9r |   0.4870 
+    ------------------------
+
+. estat kmo // legitimate pca, kmo=0.76
+
+Kaiser-Meyer-Olkin measure of sampling adequacy
+
+    -----------------------
+        Variable |     kmo 
+    -------------+---------
+          new_c1 |  0.8133 
+          new_c3 |  0.7374 
+          new_c8 |  0.7296 
+         new_c9r |  0.7952 
+    -------------+---------
+         Overall |  0.7622 
+    -----------------------
+
+. 
+. ttest dem_norm, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |      64   -1.331047    .3299075     2.63926   -1.990314   -.6717792
+       1 |     384    .2218411    .0570795    1.118526    .1096126    .3340696
+---------+--------------------------------------------------------------------
+combined |     448   -7.94e-09    .0724208    1.532858   -.1423274    .1423274
+---------+--------------------------------------------------------------------
+    diff |           -1.552888    .1937045               -1.933575   -1.172201
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  -8.0168
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+. lab def villy 0 "Leader" 1 "Villager", replace
+
+. lab val villager villy
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. ttest new_c1 if types!= 2, by(types)
+types not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. ttest dem_norm, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+  Leader |      64   -1.331047    .3299075     2.63926   -1.990314   -.6717792
+Villager |     384    .2218411    .0570795    1.118526    .1096126    .3340696
+---------+--------------------------------------------------------------------
+combined |     448   -7.94e-09    .0724208    1.532858   -.1423274    .1423274
+---------+--------------------------------------------------------------------
+    diff |           -1.552888    .1937045               -1.933575   -1.172201
+------------------------------------------------------------------------------
+    diff = mean(Leader) - mean(Villager)                          t =  -8.0168
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+. 
+end of do-file
+
+. tab demo_norm
+variable demo_norm not found
+r(111);
+
+. sum dem_norm
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+    dem_norm |        448   -7.94e-09    1.532858  -4.348159   1.184203
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. *--------------------------------------------------
+. * (2) Analysis WIDE format
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. *created in powerpoint, tests are reported here
+. * Crowding effects between baseline and first bonus round (these are used for creating figure 3)
+. gen base_no_vote = 0
+
+. replace base_no_vote =1 if rule_base==2 | rule_base==3
+(23 real changes made)
+
+. replace base_no_vote = . if rule_base==.
+(384 real changes made, 384 to missing)
+
+. tab rule_base rule_bonus_first if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |   rule_bonus_first
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     83.33      16.67 |    100.00 
+-----------------+----------------------+----------
+    Base: Pseudo |         1          3 |         4 
+                 |     25.00      75.00 |    100.00 
+-----------------+----------------------+----------
+Base: Autocratic |         6          1 |         7 
+                 |     85.71      14.29 |    100.00 
+-----------------+----------------------+----------
+           Total |        22          7 |        29 
+                 |     75.86      24.14 |    100.00 
+
+. tab rule_base rule_bonus_first if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |         rule_bonus_first
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        16          6          1 |        23 
+                 |     69.57      26.09       4.35 |    100.00 
+-----------------+---------------------------------+----------
+    Base: Pseudo |         2          7          1 |        10 
+                 |     20.00      70.00      10.00 |    100.00 
+-----------------+---------------------------------+----------
+Base: Autocratic |         0          2          0 |         2 
+                 |      0.00     100.00       0.00 |    100.00 
+-----------------+---------------------------------+----------
+           Total |        18         15          2 |        35 
+                 |     51.43      42.86       5.71 |    100.00 
+
+. 
+. tab base_no_vote rule_bonus_first if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+base_no_vo |         rule_bonus_first
+        te | Democrati  Pseudo-de  Autocrati |     Total
+-----------+---------------------------------+----------
+         0 |        16          6          1 |        23 
+           |     69.57      26.09       4.35 |    100.00 
+-----------+---------------------------------+----------
+         1 |         2          9          1 |        12 
+           |     16.67      75.00       8.33 |    100.00 
+-----------+---------------------------------+----------
+     Total |        18         15          2 |        35 
+           |     51.43      42.86       5.71 |    100.00 
+
+. tab base_no_vote rule_bonus_first if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+base_no_vo |   rule_bonus_first
+        te | Democrati  Pseudo-de |     Total
+-----------+----------------------+----------
+         0 |        15          3 |        18 
+           |     83.33      16.67 |    100.00 
+-----------+----------------------+----------
+         1 |         7          4 |        11 
+           |     63.64      36.36 |    100.00 
+-----------+----------------------+----------
+     Total |        22          7 |        29 
+           |     75.86      24.14 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. tab group_rule_base, gen(rule_base)
+
+ group_rule_base |      Freq.     Percent        Cum.
+-----------------+-----------------------------------
+Base: Democratic |        287       64.06       64.06
+    Base: Pseudo |         98       21.88       85.94
+Base: Autocratic |         63       14.06      100.00
+-----------------+-----------------------------------
+           Total |        448      100.00
+variable rule_base1 already defined
+r(110);
+
+end of do-file
+
+r(110);
+
+. tab group_rule_base
+
+ group_rule_base |      Freq.     Percent        Cum.
+-----------------+-----------------------------------
+Base: Democratic |        287       64.06       64.06
+    Base: Pseudo |         98       21.88       85.94
+Base: Autocratic |         63       14.06      100.00
+-----------------+-----------------------------------
+           Total |        448      100.00
+
+. tab rule_base3
+
+group_rule_ |
+base==Base: |
+ Autocratic |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        385       85.94       85.94
+          1 |         63       14.06      100.00
+------------+-----------------------------------
+      Total |        448      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. ttest c1 if villagers==1, by(rule_base3)
+villagers not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. ttest c1 if villager==1, by(rule_base3)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |     287    3.407666    .0665289    1.127072    3.276717    3.538614
+       1 |      46     3.76087    .1128668    .7655001    3.533544    3.988195
+---------+--------------------------------------------------------------------
+combined |     333    3.456456    .0597445    1.090234    3.338931    3.573982
+---------+--------------------------------------------------------------------
+    diff |           -.3532041     .172321               -.6921865   -.0142216
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  -2.0497
+Ho: diff = 0                                     degrees of freedom =      331
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0206         Pr(|T| > |t|) = 0.0412          Pr(T > t) = 0.9794
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. ttest new_c1 if villager==1, by(rule_base3)
+variable new_c1 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. 
+. ** Figure 6: Normative expecations related to participatory decision-making
+. * Please indicate for each of the statement whether you disagree strongly, disagree a little, neither agree nor disagree, agree a little, or strongly a
+> gree
+.  global dem_norm c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12
+
+.  foreach var of varlist $dem_norm {
+  2.         replace `var'=0 if `var'==. 
+  3.         }
+(51 real changes made)
+(53 real changes made)
+(49 real changes made)
+(113 real changes made)
+(23 real changes made)
+(61 real changes made)
+(86 real changes made)
+(26 real changes made)
+(63 real changes made)
+(52 real changes made)
+(36 real changes made)
+(32 real changes made)
+
+.         
+. foreach var of varlist $dem_norm {
+  2.         gen new_`var'=1 if `var'==1
+  3.         replace new_`var'=2 if `var'==2 
+  4.         replace new_`var'=3 if `var'==0 
+  5.         replace new_`var'=4 if `var'==3
+  6.         replace new_`var'=5 if `var'==4
+  7.         }
+(372 missing values generated)
+(8 real changes made)
+(51 real changes made)
+(19 real changes made)
+(294 real changes made)
+(353 missing values generated)
+(20 real changes made)
+(53 real changes made)
+(43 real changes made)
+(237 real changes made)
+(390 missing values generated)
+(10 real changes made)
+(49 real changes made)
+(30 real changes made)
+(301 real changes made)
+(353 missing values generated)
+(22 real changes made)
+(113 real changes made)
+(30 real changes made)
+(188 real changes made)
+(399 missing values generated)
+(4 real changes made)
+(23 real changes made)
+(9 real changes made)
+(363 real changes made)
+(191 missing values generated)
+(13 real changes made)
+(61 real changes made)
+(24 real changes made)
+(93 real changes made)
+(284 missing values generated)
+(45 real changes made)
+(86 real changes made)
+(34 real changes made)
+(119 real changes made)
+(397 missing values generated)
+(6 real changes made)
+(26 real changes made)
+(6 real changes made)
+(359 real changes made)
+(153 missing values generated)
+(11 real changes made)
+(63 real changes made)
+(12 real changes made)
+(67 real changes made)
+(334 missing values generated)
+(38 real changes made)
+(52 real changes made)
+(71 real changes made)
+(173 real changes made)
+(307 missing values generated)
+(40 real changes made)
+(36 real changes made)
+(55 real changes made)
+(176 real changes made)
+(375 missing values generated)
+(21 real changes made)
+(32 real changes made)
+(61 real changes made)
+(261 real changes made)
+
+. lab var new_c1 "For important decisions members of a group should be allowed to vote."
+
+. lab var new_c2 "Most people can learn to be leaders, it is not a matter of birth."
+
+. lab var new_c3 "Democratic elections in this village ensure that the elected authorities act in the interest of their people."
+note: label truncated to 80 characters
+
+. lab var new_c4 "In most cases, failures in this village are traceable to bad cicumstances and not bad leadership."
+note: label truncated to 80 characters
+
+. lab var new_c5 "Schools and parents schould teach children to obey authority."
+
+. lab var new_c6 "Favouring friends, relatives or supporters over others in the course of ones duties as a leader is sometimes justified."
+note: label truncated to 80 characters
+
+. lab var new_c7 "On the whole, men make better political leaders than women do."
+
+. lab var new_c8 "A leader hast to serve all people including those who did not vote for him/her or are not friends."
+note: label truncated to 80 characters
+
+. lab var new_c9 "Accepting a bribe in the course of ones duties is sometimes justified."
+
+. lab var new_c10 "Most people in this village can be trusted."
+
+. lab var new_c11 "On the whole, more educated people make better political leaders than the less educated do."
+note: label truncated to 80 characters
+
+. lab var new_c12 "On the whole, elders make better political leaders than the youth do."
+
+.         
+. gen new_c6r = 6- new_c6
+
+. gen new_c7r = 6- new_c7 
+
+. gen new_c9r = 6- new_c9
+
+. alpha new_c1 new_c3 new_c8 new_c9r 
+
+Test scale = mean(unstandardized items)
+
+Average interitem covariance:     .9378221
+Number of items in the scale:            4
+Scale reliability coefficient:      0.7613
+
+. pca new_c1 new_c3 new_c8 new_c9r , comp(1)
+
+Principal components/correlation                 Number of obs    =        448
+                                                 Number of comp.  =          1
+                                                 Trace            =          4
+    Rotation: (unrotated = principal)            Rho              =     0.5874
+
+    --------------------------------------------------------------------------
+       Component |   Eigenvalue   Difference         Proportion   Cumulative
+    -------------+------------------------------------------------------------
+           Comp1 |      2.34965      1.70985             0.5874       0.5874
+           Comp2 |        .6398     .0536761             0.1599       0.7474
+           Comp3 |      .586124      .161703             0.1465       0.8939
+           Comp4 |      .424421            .             0.1061       1.0000
+    --------------------------------------------------------------------------
+
+Principal components (eigenvectors) 
+
+    --------------------------------------
+        Variable |    Comp1 | Unexplained 
+    -------------+----------+-------------
+          new_c1 |   0.4617 |       .4992 
+          new_c3 |   0.5228 |       .3578 
+          new_c8 |   0.5257 |       .3506 
+         new_c9r |   0.4870 |       .4428 
+    --------------------------------------
+
+. screeplot, yline(1)
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. estat loadings
+
+Principal component loadings (unrotated)
+    component normalization: sum of squares(column) = 1
+
+    ------------------------
+                 |    Comp1 
+    -------------+----------
+          new_c1 |    .4617 
+          new_c3 |    .5228 
+          new_c8 |    .5257 
+         new_c9r |     .487 
+    ------------------------
+
+. predict dem_norm, score
+
+Scoring coefficients 
+    sum of squares(column-loading) = 1
+
+    ------------------------
+        Variable |    Comp1 
+    -------------+----------
+          new_c1 |   0.4617 
+          new_c3 |   0.5228 
+          new_c8 |   0.5257 
+         new_c9r |   0.4870 
+    ------------------------
+
+. estat kmo // legitimate pca, kmo=0.76
+
+Kaiser-Meyer-Olkin measure of sampling adequacy
+
+    -----------------------
+        Variable |     kmo 
+    -------------+---------
+          new_c1 |  0.8133 
+          new_c3 |  0.7374 
+          new_c8 |  0.7296 
+         new_c9r |  0.7952 
+    -------------+---------
+         Overall |  0.7622 
+    -----------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. 
+. *normative expecation related to group voting by leader baseline choice
+. ttest new_c1 if villager==1, by(rule_base3)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |     330    4.063636    .0806202    1.464539     3.90504    4.222233
+       1 |      54    4.444444    .1510889    1.110272    4.141398     4.74749
+---------+--------------------------------------------------------------------
+combined |     384    4.117187    .0727191    1.424997    3.974209    4.260166
+---------+--------------------------------------------------------------------
+    diff |           -.3808081    .2085482               -.7908542     .029238
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  -1.8260
+Ho: diff = 0                                     degrees of freedom =      382
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0343         Pr(|T| > |t|) = 0.0686          Pr(T > t) = 0.9657
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. reg new_c1 i.types
+variable types not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. tab rule_base
+
+       rule_base |      Freq.     Percent        Cum.
+-----------------+-----------------------------------
+Base: Democratic |         41       64.06       64.06
+    Base: Pseudo |         14       21.88       85.94
+Base: Autocratic |          9       14.06      100.00
+-----------------+-----------------------------------
+           Total |         64      100.00
+
+. tab group_rule_base
+
+ group_rule_base |      Freq.     Percent        Cum.
+-----------------+-----------------------------------
+Base: Democratic |        287       64.06       64.06
+    Base: Pseudo |         98       21.88       85.94
+Base: Autocratic |         63       14.06      100.00
+-----------------+-----------------------------------
+           Total |        448      100.00
+
+. reg new_c1 i.rule_base3 if villager==3, vce(hc3)
+no observations
+r(2000);
+
+. reg new_c1 i.rule_base3 if villager==1, vce(hc3)
+
+Linear regression                               Number of obs     =        384
+                                                F(1, 382)         =       4.87
+                                                Prob > F          =     0.0279
+                                                R-squared         =     0.0087
+                                                Root MSE          =     1.4207
+
+------------------------------------------------------------------------------
+             |             Robust HC3
+      new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+1.rule_base3 |   .3808081   .1725629     2.21   0.028     .0415161    .7201001
+       _cons |   4.063636   .0807426    50.33   0.000     3.904881    4.222392
+------------------------------------------------------------------------------
+
+. do "C:\Users\istei\AppData\Local\Temp\STD4450_000000.tmp"
+
+. reg new_c1 i.rule_base3 if villager==1, vce(hc3)
+
+Linear regression                               Number of obs     =        384
+                                                F(1, 382)         =       4.87
+                                                Prob > F          =     0.0279
+                                                R-squared         =     0.0087
+                                                Root MSE          =     1.4207
+
+------------------------------------------------------------------------------
+             |             Robust HC3
+      new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+1.rule_base3 |   .3808081   .1725629     2.21   0.028     .0415161    .7201001
+       _cons |   4.063636   .0807426    50.33   0.000     3.904881    4.222392
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. reg new_c1 i.rule_base3 if villager==1
+
+      Source |       SS           df       MS      Number of obs   =       384
+-------------+----------------------------------   F(1, 382)       =      3.33
+       Model |   6.7295928         1   6.7295928   Prob > F        =    0.0686
+    Residual |   770.99697       382  2.01831667   R-squared       =    0.0087
+-------------+----------------------------------   Adj R-squared   =    0.0061
+       Total |  777.726563       383  2.03061766   Root MSE        =    1.4207
+
+------------------------------------------------------------------------------
+      new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+1.rule_base3 |   .3808081   .2085482     1.83   0.069     -.029238    .7908542
+       _cons |   4.063636   .0782056    51.96   0.000     3.909869    4.217404
+------------------------------------------------------------------------------
+
+. reg new_c1 i.rule_base3 if villager==1, robust
+
+Linear regression                               Number of obs     =        384
+                                                F(1, 382)         =       4.99
+                                                Prob > F          =     0.0260
+                                                R-squared         =     0.0087
+                                                Root MSE          =     1.4207
+
+------------------------------------------------------------------------------
+             |               Robust
+      new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+1.rule_base3 |   .3808081   .1704003     2.23   0.026      .045768    .7158481
+       _cons |   4.063636   .0807084    50.35   0.000     3.904948    4.222325
+------------------------------------------------------------------------------
+
+. exit, clear

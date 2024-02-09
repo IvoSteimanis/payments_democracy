@@ -1,0 +1,3 @@
+ 9 Feb 2024
+using `"C:\Users\Sustuse\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\replication_package/results/tables/tableS8_multi_probit.txt"'
+drop() addstat(Pseudo R-squared, e(r2_p)) adec(3) dec(3) word append

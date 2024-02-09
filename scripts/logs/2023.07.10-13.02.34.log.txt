@@ -1,0 +1,1595 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.07.10-13.02.34.log.txt
+  log type:  text
+ opened on:  10 Jul 2023, 13:02:34
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 10 Jul 2023 13:02:34
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. import spss using "$working_ANALYSIS/data/nam_r6_data.sav", case(lower)
+error reading file
+r(692);
+
+end of do-file
+
+r(692);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. import spss using "$working_ANALYSIS/data/nam_r6_data.sav", case(lower)
+error reading file
+r(692);
+
+end of do-file
+
+r(692);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. import spss using "$working_ANALYSIS/data/nam_r6_data.sav"
+error reading file
+r(692);
+
+end of do-file
+
+r(692);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. import spss using "$working_ANALYSIS/data/nam_r6_data.sav", clear
+error reading file
+r(692);
+
+end of do-file
+
+r(692);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. 
+. clear
+
+. import spss https://www.stata.com/sampledata/auto.sav
+(12 vars, 74 obs)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. import spss using "$working_ANALYSIS/data/nam_r9", clear
+error reading file
+r(692);
+
+end of do-file
+
+r(692);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. import spss using "$working_ANALYSIS/data/nam_r6_data.sav", clear
+error reading file
+r(692);
+
+end of do-file
+
+r(692);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. import spss using "$working_ANALYSIS/data/merged_r6.sav", clear
+error reading file
+r(692);
+
+end of do-file
+
+r(692);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/processed/afro_r6.dta"
+file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/processed/afro_r6.dta not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. 
+. 
+end of do-file
+
+. tab COUNTRY
+
+              Country |      Freq.     Percent        Cum.
+----------------------+-----------------------------------
+              Algeria |      1,200        2.22        2.22
+                Benin |      1,200        2.22        4.45
+             Botswana |      1,200        2.22        6.67
+         Burkina Faso |      1,200        2.22        8.90
+              Burundi |      1,200        2.22       11.12
+             Cameroon |      1,182        2.19       13.32
+           Cape Verde |      1,200        2.22       15.54
+        Cote d'Ivoire |      1,199        2.22       17.76
+                Egypt |      1,198        2.22       19.99
+                Gabon |      1,198        2.22       22.21
+                Ghana |      2,400        4.45       26.66
+               Guinea |      1,200        2.22       28.88
+                Kenya |      2,397        4.44       33.33
+              Lesotho |      1,200        2.22       35.55
+              Liberia |      1,199        2.22       37.77
+           Madagascar |      1,200        2.22       40.00
+               Malawi |      2,400        4.45       44.45
+                 Mali |      1,200        2.22       46.67
+            Mauritius |      1,200        2.22       48.90
+              Morocco |      1,200        2.22       51.12
+           Mozambique |      2,400        4.45       55.57
+              Namibia |      1,200        2.22       57.80
+                Niger |      1,200        2.22       60.02
+              Nigeria |      2,400        4.45       64.47
+São Tomé and Príncipe |      1,196        2.22       66.69
+              Senegal |      1,200        2.22       68.91
+         Sierra Leone |      1,191        2.21       71.12
+         South Africa |      2,390        4.43       75.55
+                Sudan |      1,200        2.22       77.78
+            Swaziland |      1,200        2.22       80.00
+             Tanzania |      2,386        4.42       84.43
+                 Togo |      1,200        2.22       86.65
+              Tunisia |      1,200        2.22       88.88
+               Uganda |      2,400        4.45       93.33
+               Zambia |      1,199        2.22       95.55
+             Zimbabwe |      2,400        4.45      100.00
+----------------------+-----------------------------------
+                Total |     53,935      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. keep if COUNTRY=="Namibia"
+type mismatch
+r(109);
+
+end of do-file
+
+r(109);
+
+. tab COUNTRY, nolab
+
+    Country |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |      1,200        2.22        2.22
+          2 |      1,200        2.22        4.45
+          3 |      1,200        2.22        6.67
+          4 |      1,200        2.22        8.90
+          5 |      1,200        2.22       11.12
+          6 |      1,182        2.19       13.32
+          7 |      1,200        2.22       15.54
+          8 |      1,199        2.22       17.76
+          9 |      1,198        2.22       19.99
+         10 |      1,198        2.22       22.21
+         11 |      2,400        4.45       26.66
+         12 |      1,200        2.22       28.88
+         13 |      2,397        4.44       33.33
+         14 |      1,200        2.22       35.55
+         15 |      1,199        2.22       37.77
+         16 |      1,200        2.22       40.00
+         17 |      2,400        4.45       44.45
+         18 |      1,200        2.22       46.67
+         19 |      1,200        2.22       48.90
+         20 |      1,200        2.22       51.12
+         21 |      2,400        4.45       55.57
+         22 |      1,200        2.22       57.80
+         23 |      1,200        2.22       60.02
+         24 |      2,400        4.45       64.47
+         25 |      1,196        2.22       66.69
+         26 |      1,200        2.22       68.91
+         27 |      1,191        2.21       71.12
+         28 |      2,390        4.43       75.55
+         29 |      1,200        2.22       77.78
+         30 |      1,200        2.22       80.00
+         31 |      2,386        4.42       84.43
+         32 |      1,200        2.22       86.65
+         33 |      1,200        2.22       88.88
+         34 |      2,400        4.45       93.33
+         35 |      1,199        2.22       95.55
+         36 |      2,400        4.45      100.00
+------------+-----------------------------------
+      Total |     53,935      100.00
+
+. tab Q30
+
+             Q30. Support for democracy |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+                                Missing |         53        0.10        0.10
+            STATEMENT 3: Doesn't matter |      6,348       11.77       11.87
+STATEMENT 2: Sometimes non-democratic p |      6,010       11.14       23.01
+      STATEMENT 1: Democracy preferable |     35,698       66.19       89.20
+                             Don't know |      5,826       10.80      100.00
+----------------------------------------+-----------------------------------
+                                  Total |     53,935      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------
+. * (2) Analysis WIDE format
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. tab intrinsic_TL
+
+intrinsic_T |
+          L |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         18       56.25       56.25
+          1 |         14       43.75      100.00
+------------+-----------------------------------
+      Total |         32      100.00
+
+. tab extrinsic_leader
+
+extrinsic_l |
+      eader |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  Intrinsic |         35       54.69       54.69
+  Extrinsic |         29       45.31      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. tab extrinsic_leader, nolab
+
+extrinsic_l |
+      eader |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         35       54.69       54.69
+          1 |         29       45.31      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. * Please indicate for each of the statement whether you disagree strongly, disagree a little, neither agree nor disagree, agree a little, or strongly a
+> gree
+.  global dem_norm c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12
+
+.  foreach var of varlist $dem_norm {
+  2.         replace `var'=0 if `var'==. 
+  3.         }
+(51 real changes made)
+(53 real changes made)
+(49 real changes made)
+(113 real changes made)
+(23 real changes made)
+(61 real changes made)
+(86 real changes made)
+(26 real changes made)
+(63 real changes made)
+(52 real changes made)
+(36 real changes made)
+(32 real changes made)
+
+.         
+. foreach var of varlist $dem_norm {
+  2.         gen new_`var'=1 if `var'==1
+  3.         replace new_`var'=2 if `var'==2 
+  4.         replace new_`var'=3 if `var'==0 
+  5.         replace new_`var'=4 if `var'==3
+  6.         replace new_`var'=5 if `var'==4
+  7.         }
+(372 missing values generated)
+(8 real changes made)
+(51 real changes made)
+(19 real changes made)
+(294 real changes made)
+(353 missing values generated)
+(20 real changes made)
+(53 real changes made)
+(43 real changes made)
+(237 real changes made)
+(390 missing values generated)
+(10 real changes made)
+(49 real changes made)
+(30 real changes made)
+(301 real changes made)
+(353 missing values generated)
+(22 real changes made)
+(113 real changes made)
+(30 real changes made)
+(188 real changes made)
+(399 missing values generated)
+(4 real changes made)
+(23 real changes made)
+(9 real changes made)
+(363 real changes made)
+(191 missing values generated)
+(13 real changes made)
+(61 real changes made)
+(24 real changes made)
+(93 real changes made)
+(284 missing values generated)
+(45 real changes made)
+(86 real changes made)
+(34 real changes made)
+(119 real changes made)
+(397 missing values generated)
+(6 real changes made)
+(26 real changes made)
+(6 real changes made)
+(359 real changes made)
+(153 missing values generated)
+(11 real changes made)
+(63 real changes made)
+(12 real changes made)
+(67 real changes made)
+(334 missing values generated)
+(38 real changes made)
+(52 real changes made)
+(71 real changes made)
+(173 real changes made)
+(307 missing values generated)
+(40 real changes made)
+(36 real changes made)
+(55 real changes made)
+(176 real changes made)
+(375 missing values generated)
+(21 real changes made)
+(32 real changes made)
+(61 real changes made)
+(261 real changes made)
+
+. lab var new_c1 "For important decisions members of a group should be allowed to vote."
+
+. lab var new_c2 "Most people can learn to be leaders, it is not a matter of birth."
+
+. lab var new_c3 "Democratic elections in this village ensure that the elected authorities act in the interest of their people."
+note: label truncated to 80 characters
+
+. lab var new_c4 "In most cases, failures in this village are traceable to bad cicumstances and not bad leadership."
+note: label truncated to 80 characters
+
+. lab var new_c5 "Schools and parents schould teach children to obey authority."
+
+. lab var new_c6 "Favouring friends, relatives or supporters over others in the course of ones duties as a leader is sometimes justified."
+note: label truncated to 80 characters
+
+. lab var new_c7 "On the whole, men make better political leaders than women do."
+
+. lab var new_c8 "A leader hast to serve all people including those who did not vote for him/her or are not friends."
+note: label truncated to 80 characters
+
+. lab var new_c9 "Accepting a bribe in the course of ones duties is sometimes justified."
+
+. lab var new_c10 "Most people in this village can be trusted."
+
+. lab var new_c11 "On the whole, more educated people make better political leaders than the less educated do."
+note: label truncated to 80 characters
+
+. lab var new_c12 "On the whole, elders make better political leaders than the youth do."
+
+.         
+. gen new_c6r = 6- new_c6
+
+. gen new_c7r = 6- new_c7 
+
+. gen new_c9r = 6- new_c9
+
+. alpha new_c1 new_c3 new_c8 new_c9r 
+
+Test scale = mean(unstandardized items)
+
+Average interitem covariance:     .9378221
+Number of items in the scale:            4
+Scale reliability coefficient:      0.7613
+
+. pca new_c1 new_c3 new_c8 new_c9r , comp(1)
+
+Principal components/correlation                 Number of obs    =        448
+                                                 Number of comp.  =          1
+                                                 Trace            =          4
+    Rotation: (unrotated = principal)            Rho              =     0.5874
+
+    --------------------------------------------------------------------------
+       Component |   Eigenvalue   Difference         Proportion   Cumulative
+    -------------+------------------------------------------------------------
+           Comp1 |      2.34965      1.70985             0.5874       0.5874
+           Comp2 |        .6398     .0536761             0.1599       0.7474
+           Comp3 |      .586124      .161703             0.1465       0.8939
+           Comp4 |      .424421            .             0.1061       1.0000
+    --------------------------------------------------------------------------
+
+Principal components (eigenvectors) 
+
+    --------------------------------------
+        Variable |    Comp1 | Unexplained 
+    -------------+----------+-------------
+          new_c1 |   0.4617 |       .4992 
+          new_c3 |   0.5228 |       .3578 
+          new_c8 |   0.5257 |       .3506 
+         new_c9r |   0.4870 |       .4428 
+    --------------------------------------
+
+. screeplot, yline(1)
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. estat loadings
+
+Principal component loadings (unrotated)
+    component normalization: sum of squares(column) = 1
+
+    ------------------------
+                 |    Comp1 
+    -------------+----------
+          new_c1 |    .4617 
+          new_c3 |    .5228 
+          new_c8 |    .5257 
+         new_c9r |     .487 
+    ------------------------
+
+. predict dem_norm, score
+
+Scoring coefficients 
+    sum of squares(column-loading) = 1
+
+    ------------------------
+        Variable |    Comp1 
+    -------------+----------
+          new_c1 |   0.4617 
+          new_c3 |   0.5228 
+          new_c8 |   0.5257 
+         new_c9r |   0.4870 
+    ------------------------
+
+. estat kmo // legitimate pca, kmo=0.76
+
+Kaiser-Meyer-Olkin measure of sampling adequacy
+
+    -----------------------
+        Variable |     kmo 
+    -------------+---------
+          new_c1 |  0.8133 
+          new_c3 |  0.7374 
+          new_c8 |  0.7296 
+         new_c9r |  0.7952 
+    -------------+---------
+         Overall |  0.7622 
+    -----------------------
+
+. 
+. ttest dem_norm, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |      64   -1.331047    .3299075     2.63926   -1.990314   -.6717792
+       1 |     384    .2218411    .0570795    1.118526    .1096126    .3340696
+---------+--------------------------------------------------------------------
+combined |     448   -7.94e-09    .0724208    1.532858   -.1423274    .1423274
+---------+--------------------------------------------------------------------
+    diff |           -1.552888    .1937045               -1.933575   -1.172201
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  -8.0168
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+. lab def villy 0 "Leader" 1 "Villager", replace
+
+. lab val villager villy
+
+. 
+. gen types = 0 if villager==1
+(64 missing values generated)
+
+. replace types = 1 if extrinsic_leader==0
+(35 real changes made)
+
+. replace types = 2 if extrinsic_leader==1
+(29 real changes made)
+
+. lab def villy1 0 "Villager" 1 "Intrinsic leader" 2 "Extrinsic leader", replace
+
+. lab val types villy1
+
+. *graphical presentation
+. preserve
+
+. rename new_c1 norm1
+
+. rename new_c3 norm2
+
+. rename new_c8 norm3
+
+. 
+. 
+. reshape long norm ,i(id) j(pr_id)
+(note: j = 1 2 3)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                      448   ->    1344
+Number of variables                 459   ->     458
+j variable (3 values)                     ->   pr_id
+xij variables:
+                      norm1 norm2 norm3   ->   norm
+-----------------------------------------------------------------------------
+
+. label define pr1 1 "Group voting" 2 "Elections" 3 "Inclusive"
+
+. label values pr_id pr1
+
+. 
+. cibar norm, over1(types) over2(pr_id) bargap(0) gap(80) barlabel(on) blpos(11) blgap(0.01) blfmt(%9.1f) graphopts(legend() xsize(4) ysize(2) yla(1(1)5)
+>   ytitle("Mean") note("{bf: Group voting}='For important decisions members of a group should be allowed to vote.'" "{bf: Elections}='Democratic electio
+> ns in this village ensure that the elected authorities act in the interest of their people.'" "{bf: Inclusive}='A leader hast to serve all people inclu
+> ding those who did not vote for him/her or are not friends.'")) ciopts(lpattern(dash) lcolor(black))
+
+. gr save "$working_ANALYSIS/results/intermediate/figure6.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure6.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure6.tif", replace width(3465)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure6.tif written in TIFF format)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. ttest new_c1, by(types)
+more than 2 groups found, only 2 allowed
+r(420);
+
+end of do-file
+
+r(420);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. reg new_c1 i.types
+
+      Source |       SS           df       MS      Number of obs   =       448
+-------------+----------------------------------   F(2, 445)       =     11.23
+       Model |  50.9697275         2  25.4848638   Prob > F        =    0.0000
+    Residual |  1010.02804       445  2.26972593   R-squared       =    0.0480
+-------------+----------------------------------   Adj R-squared   =    0.0438
+       Total |  1060.99777       447   2.3735968   Root MSE        =    1.5066
+
+-----------------------------------------------------------------------------------
+           new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+            types |
+Intrinsic leader  |  -.4314732   .2660076    -1.62   0.106    -.9542605     .091314
+Extrinsic leader  |  -1.324084    .290133    -4.56   0.000    -1.894285    -.753883
+                  |
+            _cons |   4.117188   .0768814    53.55   0.000     3.966092    4.268283
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. testparm i.types
+
+ ( 1)  1.types = 0
+ ( 2)  2.types = 0
+
+       F(  2,   445) =   11.23
+            Prob > F =    0.0000
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. testparm 1.types 2.types, equal
+
+ ( 1)  - 1.types + 2.types = 0
+
+       F(  1,   445) =    5.57
+            Prob > F =    0.0187
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. reg new_c3 i.types
+
+      Source |       SS           df       MS      Number of obs   =       448
+-------------+----------------------------------   F(2, 445)       =     32.82
+       Model |  116.276065         2  58.1380324   Prob > F        =    0.0000
+    Residual |  788.215007       445  1.77126968   R-squared       =    0.1286
+-------------+----------------------------------   Adj R-squared   =    0.1246
+       Total |  904.491071       447  2.02346996   Root MSE        =    1.3309
+
+-----------------------------------------------------------------------------------
+           new_c3 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+            types |
+Intrinsic leader  |   -.652753   .2349902    -2.78   0.006    -1.114581   -.1909246
+Extrinsic leader  |  -1.999551   .2563025    -7.80   0.000    -2.503265   -1.495837
+                  |
+            _cons |   4.309896   .0679167    63.46   0.000     4.176418    4.443373
+-----------------------------------------------------------------------------------
+
+. testparm 1.types 2.types, equal
+
+ ( 1)  - 1.types + 2.types = 0
+
+       F(  1,   445) =   16.24
+            Prob > F =    0.0001
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. reg new_c1 i.types, vce(hc3)
+
+Linear regression                               Number of obs     =        448
+                                                F(2, 445)         =       6.47
+                                                Prob > F          =     0.0017
+                                                R-squared         =     0.0480
+                                                Root MSE          =     1.5066
+
+-----------------------------------------------------------------------------------
+                  |             Robust HC3
+           new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+            types |
+Intrinsic leader  |  -.4314732   .3270819    -1.32   0.188     -1.07429    .2113438
+Extrinsic leader  |  -1.324084   .3894582    -3.40   0.001     -2.08949   -.5586783
+                  |
+            _cons |   4.117188    .072814    56.54   0.000     3.974086    4.260289
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. reg new_c3 i.types, vce(hc3)
+
+Linear regression                               Number of obs     =        448
+                                                F(2, 445)         =      19.56
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1286
+                                                Root MSE          =     1.3309
+
+-----------------------------------------------------------------------------------
+                  |             Robust HC3
+           new_c3 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+            types |
+Intrinsic leader  |   -.652753   .3228877    -2.02   0.044    -1.287327   -.0181788
+Extrinsic leader  |  -1.999551   .3337905    -5.99   0.000    -2.655552    -1.34355
+                  |
+            _cons |   4.309896   .0633192    68.07   0.000     4.185454    4.434338
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. reg new_c8 i.types, vce(hc3)
+
+Linear regression                               Number of obs     =        448
+                                                F(2, 445)         =      16.19
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1495
+                                                Root MSE          =     1.2404
+
+-----------------------------------------------------------------------------------
+                  |             Robust HC3
+           new_c8 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+            types |
+Intrinsic leader  |  -.9443452   .3349403    -2.82   0.005    -1.602606    -.286084
+Extrinsic leader  |  -1.917744   .3828851    -5.01   0.000    -2.670232   -1.165257
+                  |
+            _cons |   4.572917   .0551377    82.94   0.000     4.464554    4.681279
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. testparm 1.types 2.types, equal
+
+ ( 1)  - 1.types + 2.types = 0
+
+       F(  1,   445) =    3.75
+            Prob > F =    0.0535
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. reg new_c1 i.types, vce(hc3)
+
+Linear regression                               Number of obs     =        448
+                                                F(2, 445)         =       6.47
+                                                Prob > F          =     0.0017
+                                                R-squared         =     0.0480
+                                                Root MSE          =     1.5066
+
+-----------------------------------------------------------------------------------
+                  |             Robust HC3
+           new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+            types |
+Intrinsic leader  |  -.4314732   .3270819    -1.32   0.188     -1.07429    .2113438
+Extrinsic leader  |  -1.324084   .3894582    -3.40   0.001     -2.08949   -.5586783
+                  |
+            _cons |   4.117188    .072814    56.54   0.000     3.974086    4.260289
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. testparm 1.types 2.types, equal
+
+ ( 1)  - 1.types + 2.types = 0
+
+       F(  1,   445) =    3.21
+            Prob > F =    0.0738
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. ranksum new_c1 if types< 2, by(types)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+       types |      obs    rank sum    expected
+-------------+---------------------------------
+    Villager |      384       81139       80640
+Intrinsic le |       35        6851        7350
+-------------+---------------------------------
+    combined |      419       87990       87990
+
+unadjusted variance   470400.00
+adjustment for ties  -144162.34
+                     ----------
+adjusted variance     326237.66
+
+Ho: new_c1(types==Villager) = new_c1(types==Intrinsic leader)
+             z =   0.874
+    Prob > |z| =   0.3823
+
+Note: Exact p-value is not computed by default for sample sizes > 200.
+      Use option exact to compute it.
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. ttest new_c1 if types< 2, by(types)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+Villager |     384    4.117188    .0727191    1.424997    3.974209    4.260166
+Intrinsi |      35    3.685714    .3142857    1.859339    3.047009     4.32442
+---------+--------------------------------------------------------------------
+combined |     419    4.081146     .071734    1.468359    3.940141     4.22215
+---------+--------------------------------------------------------------------
+    diff |            .4314732    .2587118               -.0770686     .940015
+------------------------------------------------------------------------------
+    diff = mean(Villager) - mean(Intrinsi)                        t =   1.6678
+Ho: diff = 0                                     degrees of freedom =      417
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9519         Pr(|T| > |t|) = 0.0961          Pr(T > t) = 0.0481
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. ranksum new_c1 if types!= 1, by(types)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+       types |      obs    rank sum    expected
+-------------+---------------------------------
+    Villager |      384       81341       79488
+Extrinsic le |       29        4150        6003
+-------------+---------------------------------
+    combined |      413       85491       85491
+
+unadjusted variance   384192.00
+adjustment for ties  -110872.43
+                     ----------
+adjusted variance     273319.57
+
+Ho: new_c1(types==Villager) = new_c1(types==Extrinsic leader)
+             z =   3.544
+    Prob > |z| =   0.0004
+
+Note: Exact p-value is not computed by default for sample sizes > 200.
+      Use option exact to compute it.
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. ranksum new_c1 if types!= 0, by(types)
+
+Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+       types |      obs    rank sum    expected
+-------------+---------------------------------
+Intrinsic le |       35      1259.5      1137.5
+Extrinsic le |       29       820.5       942.5
+-------------+---------------------------------
+    combined |       64        2080        2080
+
+unadjusted variance     5497.92
+adjustment for ties    -1346.28
+                     ----------
+adjusted variance       4151.63
+
+Ho: new_c1(types==Intrinsic leader) = new_c1(types==Extrinsic leader)
+             z =   1.893
+    Prob > |z| =   0.0583
+    Exact Prob =   0.0707
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. reg new_c1 i.types, vce(hc3)
+
+Linear regression                               Number of obs     =        448
+                                                F(2, 445)         =       6.47
+                                                Prob > F          =     0.0017
+                                                R-squared         =     0.0480
+                                                Root MSE          =     1.5066
+
+-----------------------------------------------------------------------------------
+                  |             Robust HC3
+           new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+            types |
+Intrinsic leader  |  -.4314732   .3270819    -1.32   0.188     -1.07429    .2113438
+Extrinsic leader  |  -1.324084   .3894582    -3.40   0.001     -2.08949   -.5586783
+                  |
+            _cons |   4.117188    .072814    56.54   0.000     3.974086    4.260289
+-----------------------------------------------------------------------------------
+
+. testparm 1.types 2.types, equal
+
+ ( 1)  - 1.types + 2.types = 0
+
+       F(  1,   445) =    3.21
+            Prob > F =    0.0738
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. reg new_c1 i.types
+
+      Source |       SS           df       MS      Number of obs   =       448
+-------------+----------------------------------   F(2, 445)       =     11.23
+       Model |  50.9697275         2  25.4848638   Prob > F        =    0.0000
+    Residual |  1010.02804       445  2.26972593   R-squared       =    0.0480
+-------------+----------------------------------   Adj R-squared   =    0.0438
+       Total |  1060.99777       447   2.3735968   Root MSE        =    1.5066
+
+-----------------------------------------------------------------------------------
+           new_c1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+            types |
+Intrinsic leader  |  -.4314732   .2660076    -1.62   0.106    -.9542605     .091314
+Extrinsic leader  |  -1.324084    .290133    -4.56   0.000    -1.894285    -.753883
+                  |
+            _cons |   4.117188   .0768814    53.55   0.000     3.966092    4.268283
+-----------------------------------------------------------------------------------
+
+. testparm 1.types 2.types, equal
+
+ ( 1)  - 1.types + 2.types = 0
+
+       F(  1,   445) =    5.57
+            Prob > F =    0.0187
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. ttest new_c1 if types!= 2, by(types)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+Villager |     384    4.117188    .0727191    1.424997    3.974209    4.260166
+Intrinsi |      35    3.685714    .3142857    1.859339    3.047009     4.32442
+---------+--------------------------------------------------------------------
+combined |     419    4.081146     .071734    1.468359    3.940141     4.22215
+---------+--------------------------------------------------------------------
+    diff |            .4314732    .2587118               -.0770686     .940015
+------------------------------------------------------------------------------
+    diff = mean(Villager) - mean(Intrinsi)                        t =   1.6678
+Ho: diff = 0                                     degrees of freedom =      417
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9519         Pr(|T| > |t|) = 0.0961          Pr(T > t) = 0.0481
+
+. 
+end of do-file
+
+. di 0.43-1.32
+-.89
+
+. bysort types: sum new_c1
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> types = Villager
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+      new_c1 |        384    4.117188    1.424997          1          5
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> types = Intrinsic leader
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+      new_c1 |         35    3.685714    1.859339          1          5
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> types = Extrinsic leader
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+      new_c1 |         29    2.793103    2.024481          1          5
+
+
+. di 3.685714 -2.793103
+.892611
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. 
+. 
+end of do-file
+
+. tab COUNTRY
+
+              Country |      Freq.     Percent        Cum.
+----------------------+-----------------------------------
+              Algeria |      1,200        2.22        2.22
+                Benin |      1,200        2.22        4.45
+             Botswana |      1,200        2.22        6.67
+         Burkina Faso |      1,200        2.22        8.90
+              Burundi |      1,200        2.22       11.12
+             Cameroon |      1,182        2.19       13.32
+           Cape Verde |      1,200        2.22       15.54
+        Cote d'Ivoire |      1,199        2.22       17.76
+                Egypt |      1,198        2.22       19.99
+                Gabon |      1,198        2.22       22.21
+                Ghana |      2,400        4.45       26.66
+               Guinea |      1,200        2.22       28.88
+                Kenya |      2,397        4.44       33.33
+              Lesotho |      1,200        2.22       35.55
+              Liberia |      1,199        2.22       37.77
+           Madagascar |      1,200        2.22       40.00
+               Malawi |      2,400        4.45       44.45
+                 Mali |      1,200        2.22       46.67
+            Mauritius |      1,200        2.22       48.90
+              Morocco |      1,200        2.22       51.12
+           Mozambique |      2,400        4.45       55.57
+              Namibia |      1,200        2.22       57.80
+                Niger |      1,200        2.22       60.02
+              Nigeria |      2,400        4.45       64.47
+São Tomé and Príncipe |      1,196        2.22       66.69
+              Senegal |      1,200        2.22       68.91
+         Sierra Leone |      1,191        2.21       71.12
+         South Africa |      2,390        4.43       75.55
+                Sudan |      1,200        2.22       77.78
+            Swaziland |      1,200        2.22       80.00
+             Tanzania |      2,386        4.42       84.43
+                 Togo |      1,200        2.22       86.65
+              Tunisia |      1,200        2.22       88.88
+               Uganda |      2,400        4.45       93.33
+               Zambia |      1,199        2.22       95.55
+             Zimbabwe |      2,400        4.45      100.00
+----------------------+-----------------------------------
+                Total |     53,935      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. keep if country==22
+country not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *Afrobarometer Data Round 6 (2014)
+. clear
+
+. use "$working_ANALYSIS/data/afro_r6.dta"
+
+. keep if COUNTRY==22
+(52,735 observations deleted)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. rename *, lower
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. tab q30
+
+             Q30. Support for democracy |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+            STATEMENT 3: Doesn't matter |        192       16.00       16.00
+STATEMENT 2: Sometimes non-democratic p |         96        8.00       24.00
+      STATEMENT 1: Democracy preferable |        884       73.67       97.67
+                             Don't know |         28        2.33      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      1,200      100.00
+
+. 
+end of do-file
+
+. tab urbrur
+
+   Urban or |
+      rural |
+    Primary |
+   Sampling |
+       Unit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      Urban |        584       48.67       48.67
+      Rural |        616       51.33      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. tab q96a
+
+         Q96a. Occupation of respondent |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+                        Never had a job |        251       20.92       20.92
+                                Student |        124       10.33       31.25
+                  Housewife / homemaker |         57        4.75       36.00
+Agriculture / farming / fishing / fores |         57        4.75       40.75
+               Trader / hawker / vendor |         39        3.25       44.00
+                          Retail / Shop |         72        6.00       50.00
+                Unskilled manual worker |        207       17.25       67.25
+       Artisan or skilled manual worker |         83        6.92       74.17
+                Clerical or secretarial |         31        2.58       76.75
+  Supervisor / Foreman / Senior Manager |         32        2.67       79.42
+                      Security services |         65        5.42       84.83
+                 Mid-level professional |        107        8.92       93.75
+               Upper-level professional |         41        3.42       97.17
+                                  Other |         33        2.75       99.92
+                             Don't know |          1        0.08      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      1,200      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. tab q30
+
+             Q30. Support for democracy |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+            STATEMENT 3: Doesn't matter |        192       16.00       16.00
+STATEMENT 2: Sometimes non-democratic p |         96        8.00       24.00
+      STATEMENT 1: Democracy preferable |        884       73.67       97.67
+                             Don't know |         28        2.33      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      1,200      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. tab q30, nolab
+
+       Q30. |
+Support for |
+  democracy |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        192       16.00       16.00
+          2 |         96        8.00       24.00
+          3 |        884       73.67       97.67
+          9 |         28        2.33      100.00
+------------+-----------------------------------
+      Total |      1,200      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. replace q30=. if q30==9
+(28 real changes made, 28 to missing)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30 , over(urbrur) asyvar recast(bar) yla(0(20)100, nogrid) percent(urbrur) bargap(10) blabel(bar, format(%9.0f) pos(outside)  gap(0.1)) title(
+> "{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30 , over(urbrur) asyvar stack recast(bar) yla(0(20)100, nogrid) percent(urbrur) bargap(10) blabel(bar, format(%9.0f) pos(outside)  gap(0.1)) 
+> title("{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30 , over(urbrur) asyvar stack horizontal recast(bar) yla(0(20)100, nogrid) percent(urbrur) bargap(10) blabel(bar, format(%9.0f) pos(outside) 
+>  gap(0.1)) title("{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30 q31 , asyvar stack horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(outside)  gap(0.1)) title(
+> "{bf:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30  , asyvar stack horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(outside)  gap(0.1)) title("{b
+> f:A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(1))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30  , asyvar stack horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) title("{bf
+> :A} Support for democracy")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30  , asyvar  horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) title("{bf:A} S
+> upport for democracy")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30 ,  horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) title("{bf:A} Support f
+> or democracy")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. 
+end of do-file
+
+. tab q30
+
+             Q30. Support for democracy |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+            STATEMENT 3: Doesn't matter |        192       16.38       16.38
+STATEMENT 2: Sometimes non-democratic p |         96        8.19       24.57
+      STATEMENT 1: Democracy preferable |        884       75.43      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      1,172      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. lab def democracy 1 "Does't matter" 2 "Sometimes non-democratic preferable" 3 "Democracy preferable", replace 
+
+. lab val q390 democracy
+variable q390 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30 ,  horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) title("{bf:A} Democracy
+>  is preferable to any other kind of government")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. lab val q30 democracy
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30 ,  horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) title("{bf:A} Democracy
+>  is preferable to any other kind of government")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. lab def democracy 1 "Does't matter" 2 "Non-democratic preferable" 3 "Democracy preferable", replace 
+
+. lab val q30 democracy
+
+. replace q30=. if q30==9
+(0 real changes made)
+
+. *PANEL A: Support for democracy 
+. catplot q30 ,  horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) title("{bf:A} Democracy
+>  is preferable to any other kind of government.")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. catplot q30 ,  horizontal recast(bar) yla(0(20)100, nogrid) percent bargap(10) blabel(bar, format(%9.0f) pos(center)  gap(0.1)) title("{bf:A} Democracy
+>  is preferable to any other kind of government.")  b1title("") legend(ring(1) pos(6) rows(2))
+
+. gr save  "$working_ANALYSIS/results/intermediate/afro_a.gph", replace
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/afro_a.gph saved)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD20e0_000000.tmp"
+
+. tab q31
+
+      Q31. Government gets |
+things done but no citizen |
+       influence vs. Govt. |
+              accountable  |      Freq.     Percent        Cum.
+---------------------------+-----------------------------------
+Agree very strongly with 1 |        129       10.75       10.75
+              Agree with 1 |        325       27.08       37.83
+              Agree with 2 |        478       39.83       77.67
+Agree very strongly with 2 |        248       20.67       98.33
+        Agree with neither |         13        1.08       99.42
+                Don’t know |          7        0.58      100.00
+---------------------------+-----------------------------------
+                     Total |      1,200      100.00
+
+. 
+end of do-file
+
+. exit, clear

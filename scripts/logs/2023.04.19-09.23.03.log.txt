@@ -1,0 +1,352 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.04.19-09.23.03.log.txt
+  log type:  text
+ opened on:  19 Apr 2023, 09:23:03
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 19 Apr 2023 09:23:03
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss;lmatasem;
+> lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduces transpar
+> ency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STDcc8_000000.tmp"
+
+. 
+. *--------------------------------------------------
+. * (1) Analysis Long Format
+. *--------------------------------------------------
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+end of do-file
+
+. doedit "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis\scripts\03_analysis.do"
+
+. do "C:\Users\istei\AppData\Local\Temp\STDcc8_000000.tmp"
+
+. 
+. 
+. *--------------------------------------------------
+. * (1) Analysis Long Format
+. *--------------------------------------------------
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STDcc8_000000.tmp"
+
+. *Figure 4.      Heterogeneous effects by leaders motivation
+. prtest extrinsic_leader, by(TL)
+
+Two-sample test of proportions                     0: Number of obs =       96
+                                                   1: Number of obs =       96
+------------------------------------------------------------------------------
+       Group |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           0 |     .34375   .0484753                      .2487402    .4387598
+           1 |      .5625   .0506308                      .4632655    .6617345
+-------------+----------------------------------------------------------------
+        diff |    -.21875   .0700952                      -.356134    -.081366
+             |  under Ho:   .0718509    -3.04   0.002
+------------------------------------------------------------------------------
+        diff = prop(0) - prop(1)                                  z =  -3.0445
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0012         Pr(|Z| > |z|) = 0.0023          Pr(Z > z) = 0.9988
+
+. bys extrinsic_leader: sum helpauthentic
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Intrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |        105    11.28571    3.858177          5   15.33333
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> extrinsic_leader = Extrinsic
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+helpauthen~c |         87           9    4.123106          4         15
+
+
+. ttest helpauthentic if decision <2, by(extrinsic_leader)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+Intrinsi |      35    11.28571    .6585136    3.895819    9.947454    12.62397
+Extrinsi |      29           9    .7747027    4.171902    7.413094    10.58691
+---------+--------------------------------------------------------------------
+combined |      64       10.25    .5190379    4.152303    9.212786    11.28721
+---------+--------------------------------------------------------------------
+    diff |            2.285714    1.010161                .2664311    4.304997
+------------------------------------------------------------------------------
+    diff = mean(Intrinsi) - mean(Extrinsi)                        t =   2.2627
+Ho: diff = 0                                     degrees of freedom =       62
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9864         Pr(|T| > |t|) = 0.0272          Pr(T > t) = 0.0136
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STDcc8_000000.tmp"
+
+. eststo reg_het1: xtmixed dem bonus extrinsic_leader bonus_extrinsic bonus_order || id:,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -121.82125  
+Iteration 1:   log restricted-likelihood = -121.82125  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(4)      =       2.76
+Log restricted-likelihood = -121.82125          Prob > chi2       =     0.5987
+
+----------------------------------------------------------------------------------
+             dem |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-----------------+----------------------------------------------------------------
+           bonus |  -.0714286   .0746965    -0.96   0.339    -.2178311    .0749739
+extrinsic_leader |  -.0376649   .1218715    -0.31   0.757    -.2765286    .2011989
+ bonus_extrinsic |   .1576355   .1109664     1.42   0.155    -.0598546    .3751256
+     bonus_order |  -.0473009   .0966126    -0.49   0.624    -.2366582    .1420563
+           _cons |   .6828205   .0973551     7.01   0.000     .4920081    .8736329
+----------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   .3244484   .0423308      .2512403    .4189885
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .3608185   .0227294        .31891    .4082343
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 33.90         Prob >= chibar2 = 0.0000
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'´
+
+added macro:
+        e(individuals) : "64´"
+
+. eststo reg_het2: xtmixed fake bonus extrinsic_leader bonus_extrinsic bonus_order || id:,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -112.47504  
+Iteration 1:   log restricted-likelihood = -112.47504  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(4)      =       6.05
+Log restricted-likelihood = -112.47504          Prob > chi2       =     0.1954
+
+----------------------------------------------------------------------------------
+            fake |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-----------------+----------------------------------------------------------------
+           bonus |   .0571429   .0725115     0.79   0.431    -.0849771    .1992628
+extrinsic_leader |    -.14581   .1138525    -1.28   0.200    -.3689568    .0773369
+ bonus_extrinsic |   .0980296   .1077204     0.91   0.363    -.1130986    .3091577
+     bonus_order |   .0770341   .0881302     0.87   0.382     -.095698    .2497662
+           _cons |   .2438958   .0903335     2.70   0.007     .0668453    .4209462
+----------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |   .2877669   .0399357      .2192365    .3777189
+-----------------------------+------------------------------------------------
+                sd(Residual) |    .350264   .0220646      .3095814    .3962927
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 27.32         Prob >= chibar2 = 0.0000
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'´
+
+added macro:
+        e(individuals) : "64´"
+
+. eststo reg_het3: xtmixed dic bonus extrinsic_leader bonus_extrinsic bonus_order || id:,  reml
+
+Performing EM optimization: 
+
+Performing gradient-based optimization: 
+
+Iteration 0:   log restricted-likelihood = -14.898712  
+Iteration 1:   log restricted-likelihood = -14.868234  
+Iteration 2:   log restricted-likelihood = -14.868225  
+Iteration 3:   log restricted-likelihood = -14.868225  
+
+Computing standard errors:
+
+Mixed-effects REML regression                   Number of obs     =        192
+Group variable: id                              Number of groups  =         64
+
+                                                Obs per group:
+                                                              min =          3
+                                                              avg =        3.0
+                                                              max =          3
+
+                                                Wald chi2(4)      =      21.39
+Log restricted-likelihood = -14.868225          Prob > chi2       =     0.0003
+
+----------------------------------------------------------------------------------
+             dic |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-----------------+----------------------------------------------------------------
+           bonus |   .0142857   .0483356     0.30   0.768    -.0804503    .1090217
+extrinsic_leader |   .1834748   .0631713     2.90   0.004     .0596612    .3072884
+ bonus_extrinsic |   -.255665   .0718055    -3.56   0.000    -.3964012   -.1149288
+     bonus_order |  -.0297332   .0411184    -0.72   0.470    -.1103237    .0508574
+           _cons |   .0732837   .0480207     1.53   0.127    -.0208352    .1674027
+----------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+id: Identity                 |
+                   sd(_cons) |    .093578   .0287817      .0512119    .1709923
+-----------------------------+------------------------------------------------
+                sd(Residual) |    .233483    .014708      .2063643    .2641654
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 3.31          Prob >= chibar2 = 0.0344
+
+. matrix N_g = e(N_g)
+
+. local individuals = N_g[1, 1]
+
+. estadd local individuals `individuals'´
+
+added macro:
+        e(individuals) : "64´"
+
+. 
+. 
+end of do-file
+
+. exit, clear

@@ -1,0 +1,30 @@
+StataFileTM:00001:01100:GREC:                          :
+00007:00007:00001:
+*! classname: combinegraph_g
+*! family: combine
+*! date: 27 Apr 2022
+*! time: 10:24:35
+*! graph_scheme: _GRSTYLE_
+*! naturallywhite: 1
+*! end
+
+// File created by Graph Editor Recorder.
+// Edit only if you know what you are doing.
+
+.plotregion1.graph1.plotregion1.AddLine added_lines editor 2.101865572224383 12279.21717900794 2.777186507366907 12279.21717900794
+.plotregion1.graph1.plotregion1.added_lines_new = 1
+.plotregion1.graph1.plotregion1.added_lines_rec = 1
+.plotregion1.graph1.plotregion1.added_lines[1].style.editstyle  linestyle( width( sztype(relative) val(.2) allow_pct(1)) color(black) pattern(solid) align(inside)) headstyle( symbol(circle) linestyle( width( sztype(relative) val(.2) allow_pct(1)) color(black) pattern(solid) align(inside)) fillcolor(black) size( sztype(relative) val(1.52778) allow_pct(1)) angle(stdarrow) symangle(zero) backsymbol(none) backline( width( sztype(relative) val(.2) allow_pct(1)) color(black) pattern(solid) align(inside)) backcolor(black) backsize( sztype(relative) val(0) allow_pct(1)) backangle(stdarrow) backsymangle(zero)) headpos(neither) editcopy
+// edits
+
+.plotregion1.graph1.plotregion1.AddTextBox added_text editor 12786.49764028781 2.337138672209519
+.plotregion1.graph1.plotregion1.added_text_new = 1
+.plotregion1.graph1.plotregion1.added_text_rec = 1
+.plotregion1.graph1.plotregion1.added_text[1].style.editstyle  angle(default) size( sztype(relative) val(2.777777777777778) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.graph1.plotregion1.added_text[1].style.editstyle size(8-pt) editcopy
+.plotregion1.graph1.plotregion1.added_text[1].text = {}
+.plotregion1.graph1.plotregion1.added_text[1].text.Arrpush ***
+// editor text[1] edits
+
+
+// <end>

@@ -1,0 +1,922 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.04.18-15.09.26.log.txt
+  log type:  text
+ opened on:  18 Apr 2023, 15:09:26
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 18 Apr 2023 15:09:26
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss;lmatasem;
+> lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduces transpar
+> ency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. *--------------------------------------------------
+. * (2) Analysis WIDE format
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. * Please indicate for each of the statement whether you disagree strongly, disagree a little, neither agree nor disagree, agree a little, or strongly agree
+.  global dem_norm c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12
+
+.  foreach var of varlist $dem_norm {
+  2.         replace `var'=0 if `var'==. 
+  3.         }
+(51 real changes made)
+(53 real changes made)
+(49 real changes made)
+(113 real changes made)
+(23 real changes made)
+(61 real changes made)
+(86 real changes made)
+(26 real changes made)
+(63 real changes made)
+(52 real changes made)
+(36 real changes made)
+(32 real changes made)
+
+.         
+. foreach var of varlist $dem_norm {
+  2.         gen new_`var'=1 if `var'==1
+  3.         replace new_`var'=2 if `var'==2 
+  4.         replace new_`var'=3 if `var'==0 
+  5.         replace new_`var'=4 if `var'==3
+  6.         replace new_`var'=5 if `var'==4
+  7.         }
+(372 missing values generated)
+(8 real changes made)
+(51 real changes made)
+(19 real changes made)
+(294 real changes made)
+(353 missing values generated)
+(20 real changes made)
+(53 real changes made)
+(43 real changes made)
+(237 real changes made)
+(390 missing values generated)
+(10 real changes made)
+(49 real changes made)
+(30 real changes made)
+(301 real changes made)
+(353 missing values generated)
+(22 real changes made)
+(113 real changes made)
+(30 real changes made)
+(188 real changes made)
+(399 missing values generated)
+(4 real changes made)
+(23 real changes made)
+(9 real changes made)
+(363 real changes made)
+(191 missing values generated)
+(13 real changes made)
+(61 real changes made)
+(24 real changes made)
+(93 real changes made)
+(284 missing values generated)
+(45 real changes made)
+(86 real changes made)
+(34 real changes made)
+(119 real changes made)
+(397 missing values generated)
+(6 real changes made)
+(26 real changes made)
+(6 real changes made)
+(359 real changes made)
+(153 missing values generated)
+(11 real changes made)
+(63 real changes made)
+(12 real changes made)
+(67 real changes made)
+(334 missing values generated)
+(38 real changes made)
+(52 real changes made)
+(71 real changes made)
+(173 real changes made)
+(307 missing values generated)
+(40 real changes made)
+(36 real changes made)
+(55 real changes made)
+(176 real changes made)
+(375 missing values generated)
+(21 real changes made)
+(32 real changes made)
+(61 real changes made)
+(261 real changes made)
+
+. lab var new_c1 "For important decisions members of a group should be allowed to vote."
+
+. lab var new_c2 "Most people can learn to be leaders, it is not a matter of birth."
+
+. lab var new_c3 "Democratic elections in this village ensure that the elected authorities act in the interest of their people."
+note: label truncated to 80 characters
+
+. lab var new_c4 "In most cases, failures in this village are traceable to bad cicumstances and not bad leadership."
+note: label truncated to 80 characters
+
+. lab var new_c5 "Schools and parents schould teach children to obey authority."
+
+. lab var new_c6 "Favouring friends, relatives or supporters over others in the course of ones duties as a leader is sometimes justified."
+note: label truncated to 80 characters
+
+. lab var new_c7 "On the whole, men make better political leaders than women do."
+
+. lab var new_c8 "A leader hast to serve all people including those who did not vote for him/her or are not friends."
+note: label truncated to 80 characters
+
+. lab var new_c9 "Accepting a bribe in the course of ones duties is sometimes justified."
+
+. lab var new_c10 "Most people in this village can be trusted."
+
+. lab var new_c11 "On the whole, more educated people make better political leaders than the less educated do."
+note: label truncated to 80 characters
+
+. lab var new_c12 "On the whole, elders make better political leaders than the youth do."
+
+.         
+. gen new_c6r = 6- new_c6
+
+. gen new_c7r = 6- new_c7 
+
+. gen new_c9r = 6- new_c9
+
+. alpha new_c1 new_c3 new_c8 new_c9r 
+
+Test scale = mean(unstandardized items)
+
+Average interitem covariance:     .9378221
+Number of items in the scale:            4
+Scale reliability coefficient:      0.7613
+
+. pca new_c1 new_c3 new_c8 new_c9r , comp(1)
+
+Principal components/correlation                 Number of obs    =        448
+                                                 Number of comp.  =          1
+                                                 Trace            =          4
+    Rotation: (unrotated = principal)            Rho              =     0.5874
+
+    --------------------------------------------------------------------------
+       Component |   Eigenvalue   Difference         Proportion   Cumulative
+    -------------+------------------------------------------------------------
+           Comp1 |      2.34965      1.70985             0.5874       0.5874
+           Comp2 |        .6398     .0536761             0.1599       0.7474
+           Comp3 |      .586124      .161703             0.1465       0.8939
+           Comp4 |      .424421            .             0.1061       1.0000
+    --------------------------------------------------------------------------
+
+Principal components (eigenvectors) 
+
+    --------------------------------------
+        Variable |    Comp1 | Unexplained 
+    -------------+----------+-------------
+          new_c1 |   0.4617 |       .4992 
+          new_c3 |   0.5228 |       .3578 
+          new_c8 |   0.5257 |       .3506 
+         new_c9r |   0.4870 |       .4428 
+    --------------------------------------
+
+. screeplot, yline(1)
+(note:  named style medthin not found in class linestyle, default attributes used)
+
+. estat loadings
+
+Principal component loadings (unrotated)
+    component normalization: sum of squares(column) = 1
+
+    ------------------------
+                 |    Comp1 
+    -------------+----------
+          new_c1 |    .4617 
+          new_c3 |    .5228 
+          new_c8 |    .5257 
+         new_c9r |     .487 
+    ------------------------
+
+. predict dem_norm, score
+
+Scoring coefficients 
+    sum of squares(column-loading) = 1
+
+    ------------------------
+        Variable |    Comp1 
+    -------------+----------
+          new_c1 |   0.4617 
+          new_c3 |   0.5228 
+          new_c8 |   0.5257 
+         new_c9r |   0.4870 
+    ------------------------
+
+. estat kmo // legitimate pca, kmo=0.76
+
+Kaiser-Meyer-Olkin measure of sampling adequacy
+
+    -----------------------
+        Variable |     kmo 
+    -------------+---------
+          new_c1 |  0.8133 
+          new_c3 |  0.7374 
+          new_c8 |  0.7296 
+         new_c9r |  0.7952 
+    -------------+---------
+         Overall |  0.7622 
+    -----------------------
+
+. 
+. ttest dem_norm, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |      64   -1.331047    .3299075     2.63926   -1.990314   -.6717792
+       1 |     384    .2218411    .0570795    1.118526    .1096126    .3340696
+---------+--------------------------------------------------------------------
+combined |     448   -7.94e-09    .0724208    1.532858   -.1423274    .1423274
+---------+--------------------------------------------------------------------
+    diff |           -1.552888    .1937045               -1.933575   -1.172201
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  -8.0168
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+. lab def villy 0 "Leader" 1 "Villager", replace
+
+. lab val villager villy
+
+. 
+. *graphical presentation
+. preserve
+
+. rename new_c1 norm1
+
+. rename new_c3 norm2
+
+. rename new_c6 norm3
+
+. rename new_c7 norm4
+
+. rename new_c9 norm5
+
+. 
+. 
+. reshape long norm ,i(id) j(pr_id)
+(note: j = 1 2 3 4 5)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                      448   ->    2240
+Number of variables                 458   ->     455
+j variable (5 values)                     ->   pr_id
+xij variables:
+                  norm1 norm2 ... norm5   ->   norm
+-----------------------------------------------------------------------------
+
+. label define pr1 1 "Group voting" 2 "Elections" 3 "Nepotism"  4 "Inclusive" 5 " Bribes"
+
+. label values pr_id pr1
+
+. 
+. cibar norm, over1(villager) over2(pr_id) bargap(0) gap(80) barlabel(on) blpos(11) blgap(0.01) blfmt(%9.1f) graphopts(legend() xsize(4) ysize(2) yla(1(1)5)  ytitl
+> e("Mean") note("{bf: Group voting}='For important decisions members of a group should be allowed to vote.'" "{bf: Elections}='Democratic elections in this villag
+> e ensure that the elected authorities act in the interest of their people.'" "{bf: Nepotism}='Favouring friends, relatives or supporters over others in the cours
+> e of ones duties as a leader is sometimes justified.'" "{bf: Inclusive}='A leader hast to serve all people including those who did not vote for him/her or are no
+> t friends.'" "{bf: Bribes}='Accepting a bribe in the course of ones duties is sometimes justified.'")) ciopts(lpattern(dash) lcolor(black))
+
+. gr save "$working_ANALYSIS/results/intermediate/figure6.gph", replace
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure6.gph not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure6.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure6.tif", replace width(3465)
+(note: file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure6.tif not found)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure6.tif written in TIFF format)
+
+. 
+. restore
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. cibar new_c1, over1(TL) over2(pr_id) bargap(0) gap(80) barlabel(on) blpos(11) blgap(0.01) blfmt(%9.1f) graphopts(legend() xsize(4) ysize(2) yla(1(1)5)  ytitle("M
+> ean") note("{bf: Group voting}='For important decisions members of a group should be allowed to vote.'" "{bf: Elections}='Democratic elections in this village en
+> sure that the elected authorities act in the interest of their people.'" "{bf: Nepotism}='Favouring friends, relatives or supporters over others in the course of
+>  ones duties as a leader is sometimes justified.'" "{bf: Inclusive}='A leader hast to serve all people including those who did not vote for him/her or are not fr
+> iends.'" "{bf: Bribes}='Accepting a bribe in the course of ones duties is sometimes justified.'")) ciopts(lpattern(dash) lcolor(black))
+variable pr_id not found
+invalid over() option
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. cibar new_c1, over1(TL)  bargap(0) gap(80) barlabel(on) blpos(11) blgap(0.01) blfmt(%9.1f) graphopts(legend() xsize(4) ysize(2) yla(1(1)5)  ytitle("Mean") note("
+> {bf: Group voting}='For important decisions members of a group should be allowed to vote.'" "{bf: Elections}='Democratic elections in this village ensure that th
+> e elected authorities act in the interest of their people.'" "{bf: Nepotism}='Favouring friends, relatives or supporters over others in the course of ones duties
+>  as a leader is sometimes justified.'" "{bf: Inclusive}='A leader hast to serve all people including those who did not vote for him/her or are not friends.'" "{b
+> f: Bribes}='Accepting a bribe in the course of ones duties is sometimes justified.'")) ciopts(lpattern(dash) lcolor(black))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. cibar new_c1, over1(extrinsic_leader)  bargap(0) gap(80) barlabel(on) blpos(11) blgap(0.01) blfmt(%9.1f) graphopts(legend() xsize(4) ysize(2) yla(1(1)5)  ytitle(
+> "Mean") note("{bf: Group voting}='For important decisions members of a group should be allowed to vote.'" "{bf: Elections}='Democratic elections in this village 
+> ensure that the elected authorities act in the interest of their people.'" "{bf: Nepotism}='Favouring friends, relatives or supporters over others in the course 
+> of ones duties as a leader is sometimes justified.'" "{bf: Inclusive}='A leader hast to serve all people including those who did not vote for him/her or are not 
+> friends.'" "{bf: Bribes}='Accepting a bribe in the course of ones duties is sometimes justified.'")) ciopts(lpattern(dash) lcolor(black))
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. ttest c1, by(extrinsic_leader)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+Intrinsi |      35    3.028571    .2336618    1.382362    2.553714    3.503429
+Extrinsi |      29    2.344828    .2819525    1.518361    1.767274    2.922381
+---------+--------------------------------------------------------------------
+combined |      64     2.71875    .1842896    1.474317    2.350477    3.087023
+---------+--------------------------------------------------------------------
+    diff |            .6837438      .36294               -.0417629    1.409251
+------------------------------------------------------------------------------
+    diff = mean(Intrinsi) - mean(Extrinsi)                        t =   1.8839
+Ho: diff = 0                                     degrees of freedom =       62
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9679         Pr(|T| > |t|) = 0.0643          Pr(T > t) = 0.0321
+
+. 
+end of do-file
+
+. tab rule_base2
+
+group_rule_ |
+base==Base: |
+     Pseudo |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        350       78.13       78.13
+          1 |         98       21.88      100.00
+------------+-----------------------------------
+      Total |        448      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. ttest c1, by(rule_base1)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |     161    2.962733    .1233236    1.564801    2.719181    3.206285
+       1 |     287    2.954704    .0905094    1.533326    2.776555    3.132853
+---------+--------------------------------------------------------------------
+combined |     448    2.957589    .0728983    1.542967    2.814323    3.100855
+---------+--------------------------------------------------------------------
+    diff |            .0080291    .1520991               -.2908909    .3069491
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =   0.0528
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.5210         Pr(|T| > |t|) = 0.9579          Pr(T > t) = 0.4790
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. ttest c1 if villager==0, by(rule_base1)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |      23    2.521739    .3071581    1.473079    1.884732    3.158746
+       1 |      41    2.829268    .2313862    1.481594    2.361619    3.296917
+---------+--------------------------------------------------------------------
+combined |      64     2.71875    .1842896    1.474317    2.350477    3.087023
+---------+--------------------------------------------------------------------
+    diff |           -.3075292    .3851931               -1.077519    .4624608
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  -0.7984
+Ho: diff = 0                                     degrees of freedom =       62
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.2138         Pr(|T| > |t|) = 0.4277          Pr(T > t) = 0.7862
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. ttest dem_norm, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+  Leader |      64   -1.331047    .3299075     2.63926   -1.990314   -.6717792
+Villager |     384    .2218411    .0570795    1.118526    .1096126    .3340696
+---------+--------------------------------------------------------------------
+combined |     448   -7.94e-09    .0724208    1.532858   -.1423274    .1423274
+---------+--------------------------------------------------------------------
+    diff |           -1.552888    .1937045               -1.933575   -1.172201
+------------------------------------------------------------------------------
+    diff = mean(Leader) - mean(Villager)                          t =  -8.0168
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. preserve
+
+. rename new_c1 norm1
+
+. rename new_c3 norm2
+
+. rename new_c6 norm3
+
+. rename new_c8 norm4
+
+. rename new_c9 norm5
+
+. 
+. 
+. reshape long norm ,i(id) j(pr_id)
+(note: j = 1 2 3 4 5)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                      448   ->    2240
+Number of variables                 458   ->     455
+j variable (5 values)                     ->   pr_id
+xij variables:
+                  norm1 norm2 ... norm5   ->   norm
+-----------------------------------------------------------------------------
+
+. label define pr1 1 "Group voting" 2 "Elections" 3 "Nepotism"  4 "Inclusive" 5 " Bribes"
+
+. label values pr_id pr1
+
+. 
+. cibar norm, over1(villager) over2(pr_id) bargap(0) gap(80) barlabel(on) blpos(11) blgap(0.01) blfmt(%9.1f) graphopts(legend() xsize(4) ysize(2) yla(1(1)5)  ytitl
+> e("Mean") note("{bf: Group voting}='For important decisions members of a group should be allowed to vote.'" "{bf: Elections}='Democratic elections in this villag
+> e ensure that the elected authorities act in the interest of their people.'" "{bf: Nepotism}='Favouring friends, relatives or supporters over others in the cours
+> e of ones duties as a leader is sometimes justified.'" "{bf: Inclusive}='A leader hast to serve all people including those who did not vote for him/her or are no
+> t friends.'" "{bf: Bribes}='Accepting a bribe in the course of ones duties is sometimes justified.'")) ciopts(lpattern(dash) lcolor(black))
+
+. gr save "$working_ANALYSIS/results/intermediate/figure6.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure6.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure6.tif", replace width(3465)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure6.tif written in TIFF format)
+
+. 
+. restore
+
+. 
+. 
+end of do-file
+
+.  do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. ttest new_c1, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+  Leader |      64     3.28125    .2464719    1.971775    2.788715    3.773785
+Villager |     384    4.117188    .0727191    1.424997    3.974209    4.260166
+---------+--------------------------------------------------------------------
+combined |     448    3.997768    .0727888    1.540648    3.854717    4.140819
+---------+--------------------------------------------------------------------
+    diff |           -.8359375    .2044478               -1.237738   -.4341368
+------------------------------------------------------------------------------
+    diff = mean(Leader) - mean(Villager)                          t =  -4.0888
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0001          Pr(T > t) = 1.0000
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. ttest new_c1, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+  Leader |      64     3.28125    .2464719    1.971775    2.788715    3.773785
+Villager |     384    4.117188    .0727191    1.424997    3.974209    4.260166
+---------+--------------------------------------------------------------------
+combined |     448    3.997768    .0727888    1.540648    3.854717    4.140819
+---------+--------------------------------------------------------------------
+    diff |           -.8359375    .2044478               -1.237738   -.4341368
+------------------------------------------------------------------------------
+    diff = mean(Leader) - mean(Villager)                          t =  -4.0888
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0001          Pr(T > t) = 1.0000
+
+. ttest new_c3, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+  Leader |      64    3.046875    .2382452    1.905961     2.57078     3.52297
+Villager |     384    4.309896    .0632367     1.23918    4.185561     4.43423
+---------+--------------------------------------------------------------------
+combined |     448    4.129464    .0672062    1.422487    3.997385    4.261544
+---------+--------------------------------------------------------------------
+    diff |           -1.263021    .1827352                -1.62215   -.9038919
+------------------------------------------------------------------------------
+    diff = mean(Leader) - mean(Villager)                          t =  -6.9118
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. *graphical presentation
+. preserve
+
+. rename new_c1 norm1
+
+. rename new_c3 norm2
+
+. rename new_c8 norm3
+
+. rename new_c6 norm4
+
+. rename new_c9 norm5
+
+. 
+. 
+. reshape long norm ,i(id) j(pr_id)
+(note: j = 1 2 3 4 5)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                      448   ->    2240
+Number of variables                 458   ->     455
+j variable (5 values)                     ->   pr_id
+xij variables:
+                  norm1 norm2 ... norm5   ->   norm
+-----------------------------------------------------------------------------
+
+. label define pr1 1 "Group voting" 2 "Elections" 3 "Inclusive" 4 "Nepotism"   5 " Bribes"
+
+. label values pr_id pr1
+
+. 
+. cibar norm, over1(villager) over2(pr_id) bargap(0) gap(80) barlabel(on) blpos(11) blgap(0.01) blfmt(%9.1f) graphopts(legend() xsize(4) ysize(2) yla(1(1)5)  ytitl
+> e("Mean") note("{bf: Group voting}='For important decisions members of a group should be allowed to vote.'" "{bf: Elections}='Democratic elections in this villag
+> e ensure that the elected authorities act in the interest of their people.'" "{bf: Inclusive}='A leader hast to serve all people including those who did not vote
+>  for him/her or are not friends.'" "{bf: Nepotism}='Favouring friends, relatives or supporters over others in the course of ones duties as a leader is sometimes 
+> justified.'"  "{bf: Bribes}='Accepting a bribe in the course of ones duties is sometimes justified.'")) ciopts(lpattern(dash) lcolor(black))
+
+. gr save "$working_ANALYSIS/results/intermediate/figure6.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/figure6.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/figure6.tif", replace width(3465)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/figure6.tif written in TIFF format)
+
+. 
+. restore
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. ttest new_c8, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+  Leader |      64      3.1875    .2508666    2.006932    2.686183    3.688817
+Villager |     384    4.572917    .0550658    1.079065    4.464647    4.681186
+---------+--------------------------------------------------------------------
+combined |     448       4.375    .0634023    1.341974    4.250396    4.499604
+---------+--------------------------------------------------------------------
+    diff |           -1.385417     .169112               -1.717772   -1.053061
+------------------------------------------------------------------------------
+    diff = mean(Leader) - mean(Villager)                          t =  -8.1923
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD43a4_000000.tmp"
+
+. ttest new_c6, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+  Leader |      64     2.65625    .2390652    1.912521    2.178516    3.133984
+Villager |     384    2.231771    .0813114    1.593371    2.071898    2.391643
+---------+--------------------------------------------------------------------
+combined |     448    2.292411    .0778185    1.647107    2.139475    2.445346
+---------+--------------------------------------------------------------------
+    diff |            .4244792    .2217249               -.0112762    .8602345
+------------------------------------------------------------------------------
+    diff = mean(Leader) - mean(Villager)                          t =   1.9144
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.9719         Pr(|T| > |t|) = 0.0562          Pr(T > t) = 0.0281
+
+. ttest new_c9, by(villager)
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+  Leader |      64    2.765625     .248749    1.989992     2.26854     3.26271
+Villager |     384    1.854167     .069668    1.365209    1.717187    1.991146
+---------+--------------------------------------------------------------------
+combined |     448    1.984375    .0709789     1.50234    1.844881    2.123869
+---------+--------------------------------------------------------------------
+    diff |            .9114583     .198427                .5214903    1.301426
+------------------------------------------------------------------------------
+    diff = mean(Leader) - mean(Villager)                          t =   4.5934
+Ho: diff = 0                                     degrees of freedom =      446
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 1.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 0.0000
+
+. 
+end of do-file
+
+. tab d1
+
+                 Income source |      Freq.     Percent        Cum.
+-------------------------------+-----------------------------------
+                             0 |          4        0.91        0.91
+        Public sector employee |         24        5.45        6.36
+       Private sector employee |         21        4.77       11.14
+                   Agriculture |        131       29.77       40.91
+             Livestock farming |          7        1.59       42.50
+Own business (self-employment) |         67       15.23       57.73
+                       Pension |         93       21.14       78.86
+                     Transfers |         80       18.18       97.05
+                         Other |         12        2.73       99.77
+                           100 |          1        0.23      100.00
+-------------------------------+-----------------------------------
+                         Total |        440      100.00
+
+. sum d3a
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         d3a |        442    8.873303    19.44391          0        300
+
+. tab d3a
+
+     Cattle |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        185       41.86       41.86
+          1 |          2        0.45       42.31
+          2 |          7        1.58       43.89
+          3 |         13        2.94       46.83
+          4 |         12        2.71       49.55
+          5 |         28        6.33       55.88
+          6 |         18        4.07       59.95
+          7 |         16        3.62       63.57
+          8 |         19        4.30       67.87
+          9 |          4        0.90       68.78
+         10 |         26        5.88       74.66
+         11 |          9        2.04       76.70
+         12 |         19        4.30       81.00
+         13 |          4        0.90       81.90
+         14 |          6        1.36       83.26
+         15 |          9        2.04       85.29
+         16 |          2        0.45       85.75
+         17 |          3        0.68       86.43
+         18 |          2        0.45       86.88
+         19 |          1        0.23       87.10
+         20 |         10        2.26       89.37
+         22 |          5        1.13       90.50
+         24 |          3        0.68       91.18
+         25 |          4        0.90       92.08
+         27 |          2        0.45       92.53
+         28 |          1        0.23       92.76
+         29 |          1        0.23       92.99
+         30 |          8        1.81       94.80
+         32 |          2        0.45       95.25
+         33 |          1        0.23       95.48
+         34 |          2        0.45       95.93
+         35 |          3        0.68       96.61
+         36 |          1        0.23       96.83
+         39 |          1        0.23       97.06
+         40 |          3        0.68       97.74
+         47 |          1        0.23       97.96
+         48 |          1        0.23       98.19
+         50 |          1        0.23       98.42
+         51 |          1        0.23       98.64
+         71 |          1        0.23       98.87
+         90 |          1        0.23       99.10
+        100 |          2        0.45       99.55
+        120 |          1        0.23       99.77
+        300 |          1        0.23      100.00
+------------+-----------------------------------
+      Total |        442      100.00
+
+. tab d3b
+
+      Sheep |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        426       96.38       96.38
+          1 |          2        0.45       96.83
+          2 |          2        0.45       97.29
+          3 |          3        0.68       97.96
+          5 |          1        0.23       98.19
+          6 |          1        0.23       98.42
+          8 |          1        0.23       98.64
+         10 |          1        0.23       98.87
+         12 |          1        0.23       99.10
+         25 |          1        0.23       99.32
+         26 |          1        0.23       99.55
+         28 |          1        0.23       99.77
+         30 |          1        0.23      100.00
+------------+-----------------------------------
+      Total |        442      100.00
+
+. tab d3c
+
+      Goats |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        141       31.90       31.90
+          1 |          1        0.23       32.13
+          2 |          5        1.13       33.26
+          3 |          8        1.81       35.07
+          4 |         12        2.71       37.78
+          5 |         13        2.94       40.72
+          6 |         10        2.26       42.99
+          7 |          4        0.90       43.89
+          8 |         10        2.26       46.15
+          9 |          7        1.58       47.74
+         10 |         25        5.66       53.39
+         11 |          8        1.81       55.20
+         12 |         21        4.75       59.95
+         13 |          6        1.36       61.31
+         14 |          8        1.81       63.12
+         15 |         15        3.39       66.52
+         16 |          9        2.04       68.55
+         17 |          5        1.13       69.68
+         18 |          8        1.81       71.49
+         19 |          3        0.68       72.17
+         20 |         20        4.52       76.70
+         21 |          3        0.68       77.38
+         22 |          2        0.45       77.83
+         23 |          5        1.13       78.96
+         24 |          5        1.13       80.09
+         25 |          8        1.81       81.90
+         26 |          3        0.68       82.58
+         27 |          5        1.13       83.71
+         28 |          3        0.68       84.39
+         29 |          1        0.23       84.62
+         30 |         22        4.98       89.59
+         32 |          2        0.45       90.05
+         33 |          2        0.45       90.50
+         34 |          3        0.68       91.18
+         35 |          2        0.45       91.63
+         36 |          1        0.23       91.86
+         37 |          5        1.13       92.99
+         39 |          1        0.23       93.21
+         40 |         11        2.49       95.70
+         42 |          1        0.23       95.93
+         43 |          1        0.23       96.15
+         45 |          4        0.90       97.06
+         48 |          3        0.68       97.74
+         49 |          1        0.23       97.96
+         50 |          2        0.45       98.42
+         52 |          2        0.45       98.87
+         60 |          1        0.23       99.10
+         65 |          1        0.23       99.32
+         70 |          1        0.23       99.55
+        100 |          1        0.23       99.77
+        200 |          1        0.23      100.00
+------------+-----------------------------------
+      Total |        442      100.00
+
+. exit, clear

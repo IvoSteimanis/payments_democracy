@@ -1,0 +1,698 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.07.18-15.52.49.log.txt
+  log type:  text
+ opened on:  18 Jul 2023, 15:52:49
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 18 Jul 2023 15:52:49
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. *equivalence testing response to first bonus1
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. drop if villager==1
+(384 observations deleted)
+
+. tab rule_bonus_first, gen(rule_bonus_first_)
+
+ rule_bonus_first |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         40       62.50       62.50
+Pseudo-democratic |         22       34.38       96.88
+       Autocratic |          2        3.13      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. tab rule_bonus_second, gen(rule_bonus_second_)
+
+rule_bonus_second |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         42       65.63       65.63
+Pseudo-democratic |         19       29.69       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. sum rule_base1 rule_bonus_first_1   rule_base2 rule_bonus_first_2  rule_base3 rule_bonus_first_3 
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  rule_base1 |         64     .640625    .4836103          0          1
+rule_bon~t_1 |         64        .625      .48795          0          1
+  rule_base2 |         64      .21875    .4166667          0          1
+rule_bon~t_2 |         64      .34375    .4787136          0          1
+  rule_base3 |         64     .140625    .3503824          0          1
+-------------+---------------------------------------------------------
+rule_bon~t_3 |         64      .03125    .1753681          0          1
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tab rule5, gen (small_)
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       64.06       64.06
+Pseudo-democratic |         20       31.25       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. tab rule6, gen (large_)
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       64.06       64.06
+Pseudo-democratic |         21       32.81       96.88
+       Autocratic |          2        3.13      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tostt small1 == large1,   eqvtype(delta) eqvlevel(0.15) relevance
+variable small1 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tostt small_1 == large_1,   eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ small_1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+ large_1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+---------+--------------------------------------------------------------------
+    diff |      64           0    .0589256    .4714045   -.1177533    .1177533
+------------------------------------------------------------------------------
+     mean(diff) = mean(small_1 - large_1)                         t =   0.0000
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.5000         Pr(|T| > |t|) = 1.0000          Pr(T > t) = 0.5000
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ small_1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+ large_1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+---------+--------------------------------------------------------------------
+     Δ-θ |                 .15    .0589256                .0322467    .2677533
+     θ+Δ |                 .15    .0589256                .0322467    .2677533
+------------------------------------------------------------------------------
+   mean(θ) = mean(small_1 - large_1)
+         Δ = 0.1500  Δ expressed in same units as small_1
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 2.546                   t2 = 2.546   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0067          Pr(T > t2) = 0.0067
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tostt small_2 == large_2,   eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ small_2 |      64       .3125    .0583971    .4671766    .1958028    .4291972
+ large_2 |      64     .328125    .0591553    .4732424    .2099126    .4463374
+---------+--------------------------------------------------------------------
+    diff |      64    -.015625     .060962    .4876958   -.1374478    .1061978
+------------------------------------------------------------------------------
+     mean(diff) = mean(small_2 - large_2)                         t =  -0.2563
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.3993         Pr(|T| > |t|) = 0.7985          Pr(T > t) = 0.6007
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ small_2 |      64       .3125    .0583971    .4671766    .1958028    .4291972
+ large_2 |      64     .328125    .0591553    .4732424    .2099126    .4463374
+---------+--------------------------------------------------------------------
+     Δ-θ |             .165625     .060962                .0438022    .2874478
+     θ+Δ |             .134375     .060962                .0125522    .2561978
+------------------------------------------------------------------------------
+   mean(θ) = mean(small_2 - large_2)
+         Δ = 0.1500  Δ expressed in same units as small_2
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 2.717                   t2 = 2.204   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0042          Pr(T > t2) = 0.0156
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tostt small_3 == large_3,   eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ small_3 |      64     .046875    .0266303     .213042   -.0063413    .1000913
+ large_3 |      64      .03125     .021921    .1753681   -.0125556    .0750556
+---------+--------------------------------------------------------------------
+    diff |      64     .015625    .0272061    .2176489   -.0387421    .0699921
+------------------------------------------------------------------------------
+     mean(diff) = mean(small_3 - large_3)                         t =   0.5743
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.7161         Pr(|T| > |t|) = 0.5678          Pr(T > t) = 0.2839
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ small_3 |      64     .046875    .0266303     .213042   -.0063413    .1000913
+ large_3 |      64      .03125     .021921    .1753681   -.0125556    .0750556
+---------+--------------------------------------------------------------------
+     Δ-θ |             .134375    .0272061                .0800079    .1887421
+     θ+Δ |             .165625    .0272061                .1112579    .2199921
+------------------------------------------------------------------------------
+   mean(θ) = mean(small_3 - large_3)
+         Δ = 0.1500  Δ expressed in same units as small_3
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 4.939                   t2 = 6.088   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0000          Pr(T > t2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tostpr small_1 == large_1,   eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions               small_1: Number of obs =       64
+                                             large_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_1 |    .640625   .0599772                      .5230719    .7581781
+     large_1 |    .640625   .0599772                      .5230719    .7581781
+-------------+----------------------------------------------------------------
+        diff |          0   .0848205                     -.1662451    .1662451
+             |  under Ho:   .0848205     0.00   1.000
+------------------------------------------------------------------------------
+        diff = prop(small_1) - prop(large_1)                      z =   0.0000
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5000         Pr(|Z| > |z|) = 1.0000          Pr(Z > z) = 0.5000
+
+
+
+Two-sample test of proportion equivalence    small_1: Number of obs =       64
+                                             large_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_1 |    .640625   .0599772                      .5230719    .7581781
+     large_1 |    .640625   .0599772                      .5230719    .7581781
+-------------+----------------------------------------------------------------
+         Δ-θ |        .15   .0848205                     -.0162451    .3162451
+         θ+Δ |        .15   .0848205                     -.0162451    .3162451
+------------------------------------------------------------------------------
+         θ = prop(small_1) - prop(large_1) = 0
+         Δ = 0.1500  Δ expressed in same units as prop(small_1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.768                   z2 = 1.768   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0385          Pr(Z > z2) = 0.0385
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. tostpr small_2 == large_2,   eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions               small_2: Number of obs =       64
+                                             large_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_2 |      .3125   .0579391                      .1989415    .4260585
+     large_2 |    .328125   .0586913                      .2130921    .4431579
+-------------+----------------------------------------------------------------
+        diff |   -.015625   .0824718                     -.1772668    .1460168
+             |  under Ho:   .0824834    -0.19   0.850
+------------------------------------------------------------------------------
+        diff = prop(small_2) - prop(large_2)                      z =  -0.1894
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.4249         Pr(|Z| > |z|) = 0.8498          Pr(Z > z) = 0.5751
+
+
+
+Two-sample test of proportion equivalence    small_2: Number of obs =       64
+                                             large_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_2 |      .3125   .0579391                      .1989415    .4260585
+     large_2 |    .328125   .0586913                      .2130921    .4431579
+-------------+----------------------------------------------------------------
+         Δ-θ |    .165625   .0824834                      .0039605    .3272895
+         θ+Δ |    .134375   .0824834                     -.0272895    .2960395
+------------------------------------------------------------------------------
+         θ = prop(small_2) - prop(large_2) = -.015625
+         Δ = 0.1500  Δ expressed in same units as prop(small_2)
+
+Ho: |θ| >= Δ:
+
+        z1 = 2.008                   z2 = 1.629   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0223          Pr(Z > z2) = 0.0516
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. tostpr small_3 == large_3,   eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions               small_3: Number of obs =       64
+                                             large_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_3 |    .046875   .0264214                       -.00491      .09866
+     large_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0342215                     -.0514479    .0826979
+             |  under Ho:   .0342494     0.46   0.648
+------------------------------------------------------------------------------
+        diff = prop(small_3) - prop(large_3)                      z =   0.4562
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.6759         Pr(|Z| > |z|) = 0.6482          Pr(Z > z) = 0.3241
+
+
+
+Two-sample test of proportion equivalence    small_3: Number of obs =       64
+                                             large_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_3 |    .046875   .0264214                       -.00491      .09866
+     large_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+         Δ-θ |    .134375   .0342494                      .0672475    .2015025
+         θ+Δ |    .165625   .0342494                      .0984975    .2327525
+------------------------------------------------------------------------------
+         θ = prop(small_3) - prop(large_3) = .015625
+         Δ = 0.1500  Δ expressed in same units as prop(small_3)
+
+Ho: |θ| >= Δ:
+
+        z1 = 3.923                   z2 = 4.836   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0000          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tostpr small_1 == large_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions               small_1: Number of obs =       64
+                                             large_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_1 |    .640625   .0599772                      .5230719    .7581781
+     large_1 |    .640625   .0599772                      .5230719    .7581781
+-------------+----------------------------------------------------------------
+        diff |          0   .0848205                     -.1662451    .1662451
+             |  under Ho:   .0848205     0.00   1.000
+------------------------------------------------------------------------------
+        diff = prop(small_1) - prop(large_1)                      z =   0.0000
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5000         Pr(|Z| > |z|) = 1.0000          Pr(Z > z) = 0.5000
+
+
+
+Two-sample test of proportion equivalence    small_1: Number of obs =       64
+                                             large_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_1 |    .640625   .0599772                      .5230719    .7581781
+     large_1 |    .640625   .0599772                      .5230719    .7581781
+-------------+----------------------------------------------------------------
+         Δ-θ |        .18   .0848205                      .0137549    .3462451
+         θ+Δ |        .18   .0848205                      .0137549    .3462451
+------------------------------------------------------------------------------
+         θ = prop(small_1) - prop(large_1) = 0
+         Δ = 0.1800  Δ expressed in same units as prop(small_1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 2.122                   z2 = 2.122   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0169          Pr(Z > z2) = 0.0169
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tostpr small_2 == large_2,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions               small_2: Number of obs =       64
+                                             large_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_2 |      .3125   .0579391                      .1989415    .4260585
+     large_2 |    .328125   .0586913                      .2130921    .4431579
+-------------+----------------------------------------------------------------
+        diff |   -.015625   .0824718                     -.1772668    .1460168
+             |  under Ho:   .0824834    -0.19   0.850
+------------------------------------------------------------------------------
+        diff = prop(small_2) - prop(large_2)                      z =  -0.1894
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.4249         Pr(|Z| > |z|) = 0.8498          Pr(Z > z) = 0.5751
+
+
+
+Two-sample test of proportion equivalence    small_2: Number of obs =       64
+                                             large_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_2 |      .3125   .0579391                      .1989415    .4260585
+     large_2 |    .328125   .0586913                      .2130921    .4431579
+-------------+----------------------------------------------------------------
+         Δ-θ |    .195625   .0824834                      .0339605    .3572895
+         θ+Δ |    .164375   .0824834                      .0027105    .3260395
+------------------------------------------------------------------------------
+         θ = prop(small_2) - prop(large_2) = -.015625
+         Δ = 0.1800  Δ expressed in same units as prop(small_2)
+
+Ho: |θ| >= Δ:
+
+        z1 = 2.372                   z2 = 1.993   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0089          Pr(Z > z2) = 0.0231
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. tostpr small_3 == large_3,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions               small_3: Number of obs =       64
+                                             large_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_3 |    .046875   .0264214                       -.00491      .09866
+     large_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0342215                     -.0514479    .0826979
+             |  under Ho:   .0342494     0.46   0.648
+------------------------------------------------------------------------------
+        diff = prop(small_3) - prop(large_3)                      z =   0.4562
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.6759         Pr(|Z| > |z|) = 0.6482          Pr(Z > z) = 0.3241
+
+
+
+Two-sample test of proportion equivalence    small_3: Number of obs =       64
+                                             large_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     small_3 |    .046875   .0264214                       -.00491      .09866
+     large_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0342494                      .0972475    .2315025
+         θ+Δ |    .195625   .0342494                      .1284975    .2627525
+------------------------------------------------------------------------------
+         θ = prop(small_3) - prop(large_3) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(small_3)
+
+Ho: |θ| >= Δ:
+
+        z1 = 4.799                   z2 = 5.712   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0000          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD1914_000000.tmp"
+
+. sum small_1 large_1   small_2 large_2  small_3 large_3 
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     small_1 |         64     .640625    .4836103          0          1
+     large_1 |         64     .640625    .4836103          0          1
+     small_2 |         64       .3125    .4671766          0          1
+     large_2 |         64     .328125    .4732424          0          1
+     small_3 |         64     .046875     .213042          0          1
+-------------+---------------------------------------------------------
+     large_3 |         64      .03125    .1753681          0          1
+
+. 
+end of do-file
+
+. pwcorr rule5 rule6
+
+             |    rule5    rule6
+-------------+------------------
+       rule5 |   1.0000 
+       rule6 |   0.5340   1.0000 
+
+. pwcorr small_1 large_1
+
+             |  small_1  large_1
+-------------+------------------
+     small_1 |   1.0000 
+     large_1 |   0.5249   1.0000 
+
+. exit, clear

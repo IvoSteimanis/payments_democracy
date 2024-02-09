@@ -1,0 +1,2844 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.07.18-11.12.48.log.txt
+  log type:  text
+ opened on:  18 Jul 2023, 11:12:48
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 18 Jul 2023 11:12:48
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *power analysis: MDES with 80% power
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05  .05259      64     .01     .64     .65     .39     .01 |
+  |     .05  .06045      64     .02     .64     .66     .39     .02 |
+  |     .05   .0738      64     .03     .64     .67     .39     .03 |
+  |     .05   .0929      64     .04     .64     .68     .39     .04 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .1494      64     .06     .64      .7     .39     .06 |
+  |     .05    .187      64     .07     .64     .71     .39     .07 |
+  |     .05    .231      64     .08     .64     .72     .39     .08 |
+  |     .05   .2808      64     .09     .64     .73     .39     .09 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .3953      64     .11     .64     .75     .39     .11 |
+  |     .05   .4578      64     .12     .64     .76     .39     .12 |
+  |     .05    .522      64     .13     .64     .77     .39     .13 |
+  |     .05   .5862      64     .14     .64     .78     .39     .14 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .7081      64     .16     .64      .8     .39     .16 |
+  |     .05   .7628      64     .17     .64     .81     .39     .17 |
+  |     .05   .8118      64     .18     .64     .82     .39     .18 |
+  |     .05   .8545      64     .19     .64     .83     .39     .19 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05       .      64       .     .64     .64     .39       0 |
+  |      .1   .1038      64     .01     .64     .65     .39     .01 |
+  |      .1   .1154      64     .02     .64     .66     .39     .02 |
+  |      .1   .1346      64     .03     .64     .67     .39     .03 |
+  |      .1   .1616      64     .04     .64     .68     .39     .04 |
+  |      .1    .196      64     .05     .64     .69     .39     .05 |
+  |      .1   .2376      64     .06     .64      .7     .39     .06 |
+  |      .1   .2857      64     .07     .64     .71     .39     .07 |
+  |      .1   .3395      64     .08     .64     .72     .39     .08 |
+  |      .1   .3979      64     .09     .64     .73     .39     .09 |
+  |      .1   .4595      64      .1     .64     .74     .39      .1 |
+  |      .1   .5229      64     .11     .64     .75     .39     .11 |
+  |      .1   .5864      64     .12     .64     .76     .39     .12 |
+  |      .1   .6484      64     .13     .64     .77     .39     .13 |
+  |      .1   .7072      64     .14     .64     .78     .39     .14 |
+  |      .1   .7615      64     .15     .64     .79     .39     .15 |
+  |      .1   .8104      64     .16     .64      .8     .39     .16 |
+  |      .1   .8529      64     .17     .64     .81     .39     .17 |
+  |      .1   .8889      64     .18     .64     .82     .39     .18 |
+  |      .1   .9184      64     .19     .64     .83     .39     .19 |
+  |      .1   .9419      64      .2     .64     .84     .39      .2 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. *MDES alpha 0.05 --> d=0.18, alpha 0.1 --> d=0.16
+. 
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) n(64) table(alpha power beta N delta:"Difference in proportion to select democratic rule") gr
+> aph(ytitle(Effect size) xline(0.8, lcolor(538b) lpattern(dash)) yline(0.178, lpattern(dash)) title("") legend(ring(1) rows(1) pos(6)) xdimension(power)
+>  xla(0(0.1)1, nogrid) yla(0(0.02)0.2, nogrid) ydimension(diff)) 
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +------------------------------------------------------------------------------------+
+  |   alpha   power    beta       N Difference in proportion to select democratic rule |
+  |------------------------------------------------------------------------------------|
+  |     .05       .       .       .                                                  . |
+  |     .05  .05259   .9474      64                                                .01 |
+  |     .05  .06045   .9396      64                                                .02 |
+  |     .05   .0738   .9262      64                                                .03 |
+  |     .05   .0929   .9071      64                                                .04 |
+  |     .05    .118    .882      64                                                .05 |
+  |     .05   .1494   .8506      64                                                .06 |
+  |     .05    .187    .813      64                                                .07 |
+  |     .05    .231    .769      64                                                .08 |
+  |     .05   .2808   .7192      64                                                .09 |
+  |     .05   .3359   .6641      64                                                 .1 |
+  |     .05   .3953   .6047      64                                                .11 |
+  |     .05   .4578   .5422      64                                                .12 |
+  |     .05    .522    .478      64                                                .13 |
+  |     .05   .5862   .4138      64                                                .14 |
+  |     .05   .6487   .3513      64                                                .15 |
+  |     .05   .7081   .2919      64                                                .16 |
+  |     .05   .7628   .2372      64                                                .17 |
+  |     .05   .8118   .1882      64                                                .18 |
+  |     .05   .8545   .1455      64                                                .19 |
+  |     .05   .8905   .1095      64                                                 .2 |
+  +------------------------------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+(note:  named style medthin not found in class linestyle, default attributes used)
+(note:  named style 538b not found in class color, default attributes used)
+
+. gr save  "$working_ANALYSIS/results/intermediate/mdes.gph", replace
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/intermediate/mdes.gph saved)
+
+. gr export "$working_ANALYSIS/results/figures/mdes.tif", replace width(4000)
+(file C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/results/figures/mdes.tif written in TIFF format)
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. *--------------------------------------------------
+. * (1) Analysis Long Format
+. *--------------------------------------------------
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. mprobit rule bonus bonus_order, cluster(id)
+
+Iteration 0:   log pseudolikelihood = -156.05588  
+Iteration 1:   log pseudolikelihood = -155.59802  
+Iteration 2:   log pseudolikelihood = -155.59245  
+Iteration 3:   log pseudolikelihood = -155.59245  
+
+Multinomial probit regression                   Number of obs     =        192
+                                                Wald chi2(4)      =       7.06
+Log pseudolikelihood = -155.59245               Prob > chi2       =     0.1327
+
+                                         (Std. Err. adjusted for 64 clusters in id)
+-----------------------------------------------------------------------------------
+                  |               Robust
+             rule |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+Democratic        |  (base outcome)
+------------------+----------------------------------------------------------------
+Pseudo_democratic |
+            bonus |   .2975364   .2353973     1.26   0.206    -.1638339    .7589067
+      bonus_order |   .3016971   .3706743     0.81   0.416    -.4248112    1.028205
+            _cons |  -1.059987   .3027227    -3.50   0.000    -1.653312   -.4666611
+------------------+----------------------------------------------------------------
+Autocratic        |
+            bonus |  -.7899665   .4054291    -1.95   0.051    -1.584593    .0046599
+      bonus_order |  -.2020001    .453668    -0.45   0.656    -1.091173    .6871729
+            _cons |  -1.091828    .356129    -3.07   0.002    -1.789828    -.393828
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. mprobit rule bonus bonus_order, cluster(id) level(90)
+
+Iteration 0:   log pseudolikelihood = -156.05588  
+Iteration 1:   log pseudolikelihood = -155.59802  
+Iteration 2:   log pseudolikelihood = -155.59245  
+Iteration 3:   log pseudolikelihood = -155.59245  
+
+Multinomial probit regression                   Number of obs     =        192
+                                                Wald chi2(4)      =       7.06
+Log pseudolikelihood = -155.59245               Prob > chi2       =     0.1327
+
+                                         (Std. Err. adjusted for 64 clusters in id)
+-----------------------------------------------------------------------------------
+                  |               Robust
+             rule |      Coef.   Std. Err.      z    P>|z|     [90% Conf. Interval]
+------------------+----------------------------------------------------------------
+Democratic        |  (base outcome)
+------------------+----------------------------------------------------------------
+Pseudo_democratic |
+            bonus |   .2975364   .2353973     1.26   0.206    -.0896577    .6847306
+      bonus_order |   .3016971   .3706743     0.81   0.416    -.3080079     .911402
+            _cons |  -1.059987   .3027227    -3.50   0.000    -1.557921   -.5620521
+------------------+----------------------------------------------------------------
+Autocratic        |
+            bonus |  -.7899665   .4054291    -1.95   0.051    -1.456838    -.123095
+      bonus_order |  -.2020001    .453668    -0.45   0.656    -.9482176    .5442174
+            _cons |  -1.091828    .356129    -3.07   0.002    -1.677608   -.5060479
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. help tost
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. 
+. * Create and define a local installation directory for the packages
+. cap mkdir "$working_ANALYSIS/scripts/libraries"
+
+. cap mkdir "$working_ANALYSIS/scripts/libraries/stata"
+
+. net set ado "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+end of do-file
+
+. findit tost
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. net install tost, from("https://alexisdinno.com/stata") replace
+checking tost consistency and verifying not already installed...
+installing into C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata\...
+installation complete.
+
+. 
+end of do-file
+
+. help tost
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. * Load cleaned dataset (long-format)
+. clear
+
+. use "$working_ANALYSIS/processed/analysis_long.dta"
+
+. 
+. *set panel
+. xtset id decision
+       panel variable:  id (strongly balanced)
+        time variable:  decision, 1 to 6, but with gaps
+                delta:  1 unit
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostregress dem bonus_2 bonus_3 , vce(robust)
+
+Regression tests for equivalence
+----------------------------------------------------------------------------------------------
+             |               Robust  
+         dem |      Coef.   Std. Err.     t1   P(T>t1)     t2   P(T>t2)    eqvtype    eqvlevel
+-------------+--------------------------------------------------------------------------------
+     bonus_2 |   9.54e-17    .085491    11.70   0.0000   11.70   0.0000       Δ             1
+     bonus_3 |   1.08e-16    .085491    11.70   0.0000   11.70   0.0000       Δ             1
+       _cons |    .640625   .0604513     5.94   0.0000   27.14   0.0000       Δ             1
+----------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostregress dem bonus, vce(robust)
+
+Regression tests for equivalence
+----------------------------------------------------------------------------------------------
+             |               Robust  
+         dem |      Coef.   Std. Err.     t1   P(T>t1)     t2   P(T>t2)    eqvtype    eqvlevel
+-------------+--------------------------------------------------------------------------------
+       bonus |   5.20e-17   .0738423    13.54   0.0000   13.54   0.0000       Δ             1
+       _cons |    .640625    .060292     5.96   0.0000   27.21   0.0000       Δ             1
+----------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. help tostti
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. tab bonus_order
+
+bonus_order |      Freq.     Percent        Cum.
+------------+-----------------------------------
+Large first |        410       91.52       91.52
+Small first |         38        8.48      100.00
+------------+-----------------------------------
+      Total |        448      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. drop if villager==1
+(384 observations deleted)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tab bonus_order
+
+bonus_order |      Freq.     Percent        Cum.
+------------+-----------------------------------
+Large first |         30       46.88       46.88
+Small first |         34       53.13      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. bys bonus_order: tab1 rule5 rule6
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus_order = Large first
+
+-> tabulation of rule5  
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         20       66.67       66.67
+Pseudo-democratic |          8       26.67       93.33
+       Autocratic |          2        6.67      100.00
+------------------+-----------------------------------
+            Total |         30      100.00
+
+-> tabulation of rule6  
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         19       63.33       63.33
+Pseudo-democratic |         10       33.33       96.67
+       Autocratic |          1        3.33      100.00
+------------------+-----------------------------------
+            Total |         30      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus_order = Small first
+
+-> tabulation of rule5  
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         21       61.76       61.76
+Pseudo-democratic |         12       35.29       97.06
+       Autocratic |          1        2.94      100.00
+------------------+-----------------------------------
+            Total |         34      100.00
+
+-> tabulation of rule6  
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         22       64.71       64.71
+Pseudo-democratic |         11       32.35       97.06
+       Autocratic |          1        2.94      100.00
+------------------+-----------------------------------
+            Total |         34      100.00
+
+. 
+. 
+end of do-file
+
+. tab rule_bonus_first
+
+ rule_bonus_first |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         40       62.50       62.50
+Pseudo-democratic |         22       34.38       96.88
+       Autocratic |          2        3.13      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. help tost
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base == rule_bonus_first
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_b~e |      64         1.5    .0918289    .7346309    1.316495    1.683505
+rule_b~t |      64     1.40625     .069432    .5554563    1.267501    1.544999
+---------+--------------------------------------------------------------------
+     Δ-θ |              .90625     .103794                .6988343    1.113666
+     θ+Δ |             1.09375     .103794                .8863343    1.301166
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base - rule_bonus_first)
+         Δ = 1.0000  Δ expressed in same units as rule_base
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 8.731                   t2 = 10.54   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0000          Pr(T > t2) = 0.0000
+
+. 
+end of do-file
+
+. tab rule_base1
+
+group_rule_ |
+base==Base: |
+ Democratic |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         23       35.94       35.94
+          1 |         41       64.06      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. tab rule_bonus_second
+
+rule_bonus_second |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         42       65.63       65.63
+Pseudo-democratic |         19       29.69       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. tab rule_bonus_first
+
+ rule_bonus_first |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         40       62.50       62.50
+Pseudo-democratic |         22       34.38       96.88
+       Autocratic |          2        3.13      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tab rule_bonus_first, gen(rule_bonus_first_)
+
+ rule_bonus_first |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         40       62.50       62.50
+Pseudo-democratic |         22       34.38       96.88
+       Autocratic |          2        3.13      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+     Δ-θ |             .984375     .068618                .8472529    1.121497
+     θ+Δ |            1.015625     .068618                .8785029    1.152747
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base1 - rule_bonus_first_1)
+         Δ = 1.0000  Δ expressed in same units as rule_base1
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 14.35                   t2 = 14.8    
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0000          Pr(T > t2) = 0.0000
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .084375   .0852131                     -.0826397    .2513897
+         θ+Δ |    .115625   .0852131                     -.0513897    .2826397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base1)
+
+Impossible to reject any Ho if Δ <= z-crit*s.e. ( .1402 ). See help tostpr.
+
+Ho: |θ| >= Δ:
+
+        z1 = .9902                   z2 = 1.357   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.1610          Pr(Z > z2) = 0.0874
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1, eqvlevel(0.18)
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0852131                     -.0026397    .3313897
+         θ+Δ |    .195625   .0852131                      .0286103    .3626397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.929                   z2 = 2.296   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0269          Pr(Z > z2) = 0.0108
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.18)
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0852131                     -.0026397    .3313897
+         θ+Δ |    .195625   .0852131                      .0286103    .3626397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.929                   z2 = 2.296   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0269          Pr(Z > z2) = 0.0108
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.1)
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .084375   .0852131                     -.0826397    .2513897
+         θ+Δ |    .115625   .0852131                     -.0513897    .2826397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base1)
+
+Impossible to reject any Ho if Δ <= z-crit*s.e. ( .1402 ). See help tostpr.
+
+Ho: |θ| >= Δ:
+
+        z1 = .9902                   z2 = 1.357   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.1610          Pr(Z > z2) = 0.0874
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.1) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .084375   .0852131                     -.0826397    .2513897
+         θ+Δ |    .115625   .0852131                     -.0513897    .2826397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base1)
+
+Impossible to reject any Ho if Δ <= z-crit*s.e. ( .1402 ). See help tostpr.
+
+Ho: |θ| >= Δ:
+
+        z1 = .9902                   z2 = 1.357   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.1610          Pr(Z > z2) = 0.0874
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.1:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0852131                     -.0026397    .3313897
+         θ+Δ |    .195625   .0852131                      .0286103    .3626397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.929                   z2 = 2.296   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0269          Pr(Z > z2) = 0.0108
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.1) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .084375   .0852131                     -.0826397    .2513897
+         θ+Δ |    .115625   .0852131                     -.0513897    .2826397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base1)
+
+Impossible to reject any Ho if Δ <= z-crit*s.e. ( .1402 ). See help tostpr.
+
+Ho: |θ| >= Δ:
+
+        z1 = .9902                   z2 = 1.357   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.1610          Pr(Z > z2) = 0.0874
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.1:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1,  eqvtype(delta) eqvlevel(0.1) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+    diff |      64     .015625     .068618    .5489438   -.1214971    .1527471
+------------------------------------------------------------------------------
+     mean(diff) = mean(rule_base1 - rule_bonus_fir~1)             t =   0.2277
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.5897         Pr(|T| > |t|) = 0.8206          Pr(T > t) = 0.4103
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+     Δ-θ |             .084375     .068618               -.0527471    .2214971
+     θ+Δ |             .115625     .068618               -.0214971    .2527471
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base1 - rule_bonus_first_1)
+         Δ = 0.1000  Δ expressed in same units as rule_base1
+
+Impossible to reject any Ho if Δ <= t-crit*s.e. ( .1146 ). See help tostt.
+
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 1.23                    t2 = 1.685   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.1117          Pr(T > t2) = 0.0485
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.1:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1,  eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+    diff |      64     .015625     .068618    .5489438   -.1214971    .1527471
+------------------------------------------------------------------------------
+     mean(diff) = mean(rule_base1 - rule_bonus_fir~1)             t =   0.2277
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.5897         Pr(|T| > |t|) = 0.8206          Pr(T > t) = 0.4103
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+     Δ-θ |             .164375     .068618                .0272529    .3014971
+     θ+Δ |             .195625     .068618                .0585029    .3327471
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base1 - rule_bonus_first_1)
+         Δ = 0.1800  Δ expressed in same units as rule_base1
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 2.396                   t2 = 2.851   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0098          Pr(T > t2) = 0.0029
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1,  eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+    diff |      64     .015625     .068618    .5489438   -.1214971    .1527471
+------------------------------------------------------------------------------
+     mean(diff) = mean(rule_base1 - rule_bonus_fir~1)             t =   0.2277
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.5897         Pr(|T| > |t|) = 0.8206          Pr(T > t) = 0.4103
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+     Δ-θ |             .134375     .068618               -.0027471    .2714971
+     θ+Δ |             .165625     .068618                .0285029    .3027471
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base1 - rule_bonus_first_1)
+         Δ = 0.1500  Δ expressed in same units as rule_base1
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 1.958                   t2 = 2.414   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0273          Pr(T > t2) = 0.0094
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.1) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .084375   .0852131                     -.0826397    .2513897
+         θ+Δ |    .115625   .0852131                     -.0513897    .2826397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base1)
+
+Impossible to reject any Ho if Δ <= z-crit*s.e. ( .1402 ). See help tostpr.
+
+Ho: |θ| >= Δ:
+
+        z1 = .9902                   z2 = 1.357   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.1610          Pr(Z > z2) = 0.0874
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.1:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1,  eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+    diff |      64     .015625     .068618    .5489438   -.1214971    .1527471
+------------------------------------------------------------------------------
+     mean(diff) = mean(rule_base1 - rule_bonus_fir~1)             t =   0.2277
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.5897         Pr(|T| > |t|) = 0.8206          Pr(T > t) = 0.4103
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+     Δ-θ |             .134375     .068618               -.0027471    .2714971
+     θ+Δ |             .165625     .068618                .0285029    .3027471
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base1 - rule_bonus_first_1)
+         Δ = 0.1500  Δ expressed in same units as rule_base1
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 1.958                   t2 = 2.414   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0273          Pr(T > t2) = 0.0094
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1,  eqvtype(delta) eqvlevel(0.12) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+    diff |      64     .015625     .068618    .5489438   -.1214971    .1527471
+------------------------------------------------------------------------------
+     mean(diff) = mean(rule_base1 - rule_bonus_fir~1)             t =   0.2277
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.5897         Pr(|T| > |t|) = 0.8206          Pr(T > t) = 0.4103
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+     Δ-θ |             .104375     .068618               -.0327471    .2414971
+     θ+Δ |             .135625     .068618               -.0014971    .2727471
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base1 - rule_bonus_first_1)
+         Δ = 0.1200  Δ expressed in same units as rule_base1
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 1.521                   t2 = 1.977   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0666          Pr(T > t2) = 0.0262
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.12:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1,  eqvtype(delta) eqvlevel(0(0.05)0.2) relevance
+option eqvlevel() incorrectly specified
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1,  eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+    diff |      64     .015625     .068618    .5489438   -.1214971    .1527471
+------------------------------------------------------------------------------
+     mean(diff) = mean(rule_base1 - rule_bonus_fir~1)             t =   0.2277
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.5897         Pr(|T| > |t|) = 0.8206          Pr(T > t) = 0.4103
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+     Δ-θ |             .134375     .068618               -.0027471    .2714971
+     θ+Δ |             .165625     .068618                .0285029    .3027471
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base1 - rule_bonus_first_1)
+         Δ = 0.1500  Δ expressed in same units as rule_base1
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 1.958                   t2 = 2.414   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0273          Pr(T > t2) = 0.0094
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostt rule_base1 == rule_bonus_first_1,  eqvtype(delta) eqvlevel(0.13) relevance
+Relevance test of sample means
+
+Paired t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+    diff |      64     .015625     .068618    .5489438   -.1214971    .1527471
+------------------------------------------------------------------------------
+     mean(diff) = mean(rule_base1 - rule_bonus_fir~1)             t =   0.2277
+ Ho: mean(diff) = 0                              degrees of freedom =       63
+
+ Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = 0.5897         Pr(|T| > |t|) = 0.8206          Pr(T > t) = 0.4103
+
+
+
+Paired t test for mean equivalence
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+rule_~e1 |      64     .640625    .0604513    .4836103    .5198227    .7614273
+rule_~_1 |      64        .625    .0609938      .48795    .5031137    .7468863
+---------+--------------------------------------------------------------------
+     Δ-θ |             .114375     .068618               -.0227471    .2514971
+     θ+Δ |             .145625     .068618                .0085029    .2827471
+------------------------------------------------------------------------------
+   mean(θ) = mean(rule_base1 - rule_bonus_first_1)
+         Δ = 0.1300  Δ expressed in same units as rule_base1
+        df = 63      
+
+Ho: |θ| >= Δ:
+
+        t1 = 1.667                   t2 = 2.122   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(T > t1) = 0.0503          Pr(T > t2) = 0.0189
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.13:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bonus~1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus~1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .134375   .0852131                     -.0326397    .3013897
+         θ+Δ |    .165625   .0852131                     -.0013897    .3326397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1500  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.577                   z2 = 1.944   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0574          Pr(Z > z2) = 0.0260
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tab rule_bonus_second, gen(rule_bonus_second)
+
+rule_bonus_second |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         42       65.63       65.63
+Pseudo-democratic |         19       29.69       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_second_1,   eqvtype(delta) eqvlevel(0.15) relevance
+rule_bonus_second_1 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tab rule_bonus_second, gen(rule_bonus_second_)
+
+rule_bonus_second |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         42       65.63       65.63
+Pseudo-democratic |         19       29.69       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_second_1,   eqvtype(delta) eqvlevel(0.15) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_s: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_s |     .65625   .0593699                      .5398872    .7726128
+-------------+----------------------------------------------------------------
+        diff |   -.015625   .0843922                     -.1810306    .1497806
+             |  under Ho:   .0844035    -0.19   0.853
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_s)              z =  -0.1851
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.4266         Pr(|Z| > |z|) = 0.8531          Pr(Z > z) = 0.5734
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~d_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~d_1 |     .65625   .0593699                      .5398872    .7726128
+-------------+----------------------------------------------------------------
+         Δ-θ |    .165625   .0844035                      .0001972    .3310528
+         θ+Δ |    .134375   .0844035                     -.0310528    .2998028
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_second_1) = -.015625
+         Δ = 0.1500  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.962                   z2 = 1.592   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0249          Pr(Z > z2) = 0.0557
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.15:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_second_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_s: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_s |     .65625   .0593699                      .5398872    .7726128
+-------------+----------------------------------------------------------------
+        diff |   -.015625   .0843922                     -.1810306    .1497806
+             |  under Ho:   .0844035    -0.19   0.853
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_s)              z =  -0.1851
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.4266         Pr(|Z| > |z|) = 0.8531          Pr(Z > z) = 0.5734
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~d_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~d_1 |     .65625   .0593699                      .5398872    .7726128
+-------------+----------------------------------------------------------------
+         Δ-θ |    .195625   .0844035                      .0301972    .3610528
+         θ+Δ |    .164375   .0844035                     -.0010528    .3298028
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_second_1) = -.015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 2.318                   z2 = 1.947   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0102          Pr(Z > z2) = 0.0257
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~t_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~t_1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0852131                     -.0026397    .3313897
+         θ+Δ |    .195625   .0852131                      .0286103    .3626397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.929                   z2 = 2.296   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0269          Pr(Z > z2) = 0.0108
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_second_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_s: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_s |     .65625   .0593699                      .5398872    .7726128
+-------------+----------------------------------------------------------------
+        diff |   -.015625   .0843922                     -.1810306    .1497806
+             |  under Ho:   .0844035    -0.19   0.853
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_s)              z =  -0.1851
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.4266         Pr(|Z| > |z|) = 0.8531          Pr(Z > z) = 0.5734
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~d_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~d_1 |     .65625   .0593699                      .5398872    .7726128
+-------------+----------------------------------------------------------------
+         Δ-θ |    .195625   .0844035                      .0301972    .3610528
+         θ+Δ |    .164375   .0844035                     -.0010528    .3298028
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_second_1) = -.015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 2.318                   z2 = 1.947   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0102          Pr(Z > z2) = 0.0257
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. tab rule_base2
+
+group_rule_ |
+base==Base: |
+     Pseudo |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         50       78.13       78.13
+          1 |         14       21.88      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base2 == rule_bonus_first_2,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base2: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bonus_f |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+        diff |      -.125   .0787088                     -.2792663    .0292663
+             |  under Ho:   .0794804    -1.57   0.116
+------------------------------------------------------------------------------
+        diff = prop(rule_base2) - prop(rule_bonus_f)              z =  -1.5727
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0579         Pr(|Z| > |z|) = 0.1158          Pr(Z > z) = 0.9421
+
+
+
+Two-sample test of proportion equivalence rule_base2: Number of obs =       64
+                                        rule_bon~t_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bon~t_2 |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+         Δ-θ |       .305   .0794804                      .1492212    .4607788
+         θ+Δ |       .055   .0794804                     -.1007788    .2107788
+------------------------------------------------------------------------------
+         θ = prop(rule_base2) - prop(rule_bonus_first_2) = -.125
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base2)
+
+Ho: |θ| >= Δ:
+
+        z1 = 3.837                   z2 = .692    
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0001          Pr(Z > z2) = 0.2445
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. tostpr rule_base2 == rule_bonus_second_2,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base2: Number of obs =       64
+                                        rule_bonus_s: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bonus_s |    .296875   .0571101                      .1849412    .4088088
+-------------+----------------------------------------------------------------
+        diff |   -.078125   .0770185                     -.2290785    .0728285
+             |  under Ho:   .0773275    -1.01   0.312
+------------------------------------------------------------------------------
+        diff = prop(rule_base2) - prop(rule_bonus_s)              z =  -1.0103
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.1562         Pr(|Z| > |z|) = 0.3123          Pr(Z > z) = 0.8438
+
+
+
+Two-sample test of proportion equivalence rule_base2: Number of obs =       64
+                                        rule_bon~d_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bon~d_2 |    .296875   .0571101                      .1849412    .4088088
+-------------+----------------------------------------------------------------
+         Δ-θ |    .258125   .0773275                      .1065659    .4096841
+         θ+Δ |    .101875   .0773275                     -.0496841    .2534341
+------------------------------------------------------------------------------
+         θ = prop(rule_base2) - prop(rule_bonus_second_2) = -.078125
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base2)
+
+Ho: |θ| >= Δ:
+
+        z1 = 3.338                   z2 = 1.317   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0004          Pr(Z > z2) = 0.0938
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~t_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~t_1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0852131                     -.0026397    .3313897
+         θ+Δ |    .195625   .0852131                      .0286103    .3626397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.929                   z2 = 2.296   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0269          Pr(Z > z2) = 0.0108
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. tostpr rule_base1 == rule_bonus_second_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_s: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_s |     .65625   .0593699                      .5398872    .7726128
+-------------+----------------------------------------------------------------
+        diff |   -.015625   .0843922                     -.1810306    .1497806
+             |  under Ho:   .0844035    -0.19   0.853
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_s)              z =  -0.1851
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.4266         Pr(|Z| > |z|) = 0.8531          Pr(Z > z) = 0.5734
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~d_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~d_1 |     .65625   .0593699                      .5398872    .7726128
+-------------+----------------------------------------------------------------
+         Δ-θ |    .195625   .0844035                      .0301972    .3610528
+         θ+Δ |    .164375   .0844035                     -.0010528    .3298028
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_second_1) = -.015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 2.318                   z2 = 1.947   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0102          Pr(Z > z2) = 0.0257
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~t_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~t_1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0852131                     -.0026397    .3313897
+         θ+Δ |    .195625   .0852131                      .0286103    .3626397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.929                   z2 = 2.296   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0269          Pr(Z > z2) = 0.0108
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base3 == rule_bonus_first_3,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base3: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bonus_f |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+        diff |    .109375   .0485932                      .0141341    .2046159
+             |  under Ho:   .0495455     2.21   0.027
+------------------------------------------------------------------------------
+        diff = prop(rule_base3) - prop(rule_bonus_f)              z =   2.2076
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9864         Pr(|Z| > |z|) = 0.0273          Pr(Z > z) = 0.0136
+
+
+
+Two-sample test of proportion equivalence rule_base3: Number of obs =       64
+                                        rule_bon~t_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bon~t_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+         Δ-θ |    .070625   .0495455                     -.0264824    .1677324
+         θ+Δ |    .289375   .0495455                      .1922676    .3864824
+------------------------------------------------------------------------------
+         θ = prop(rule_base3) - prop(rule_bonus_first_3) = .109375
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base3)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.425                   z2 = 5.841   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0770          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Relevant difference
+
+. tostpr rule_base3 == rule_bonus_second_3,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base3: Number of obs =       64
+                                        rule_bonus_s: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bonus_s |    .046875   .0264214                       -.00491      .09866
+-------------+----------------------------------------------------------------
+        diff |     .09375   .0508563                     -.0059265    .1934265
+             |  under Ho:    .051527     1.82   0.069
+------------------------------------------------------------------------------
+        diff = prop(rule_base3) - prop(rule_bonus_s)              z =   1.8194
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9656         Pr(|Z| > |z|) = 0.0688          Pr(Z > z) = 0.0344
+
+
+
+Two-sample test of proportion equivalence rule_base3: Number of obs =       64
+                                        rule_bon~d_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bon~d_3 |    .046875   .0264214                       -.00491      .09866
+-------------+----------------------------------------------------------------
+         Δ-θ |     .08625    .051527                      -.014741     .187241
+         θ+Δ |     .27375    .051527                       .172759     .374741
+------------------------------------------------------------------------------
+         θ = prop(rule_base3) - prop(rule_bonus_second_3) = .09375
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base3)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.674                   z2 = 5.313   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0471          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base3 == rule_bonus_first_3,   eqvtype(delta) eqvlevel(0.1) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base3: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bonus_f |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+        diff |    .109375   .0485932                      .0141341    .2046159
+             |  under Ho:   .0495455     2.21   0.027
+------------------------------------------------------------------------------
+        diff = prop(rule_base3) - prop(rule_bonus_f)              z =   2.2076
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9864         Pr(|Z| > |z|) = 0.0273          Pr(Z > z) = 0.0136
+
+
+
+Two-sample test of proportion equivalence rule_base3: Number of obs =       64
+                                        rule_bon~t_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bon~t_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+         Δ-θ |   -.009375   .0495455                     -.1064824    .0877324
+         θ+Δ |    .209375   .0495455                      .1122676    .3064824
+------------------------------------------------------------------------------
+         θ = prop(rule_base3) - prop(rule_bonus_first_3) = .109375
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base3)
+
+Ho: |θ| >= Δ:
+
+        z1 = -.1892                  z2 = 4.226   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.5750          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.1:
+  Ho test for difference:  Reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Relevant difference
+
+. tostpr rule_base3 == rule_bonus_second_3,   eqvtype(delta) eqvlevel(0.1) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base3: Number of obs =       64
+                                        rule_bonus_s: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bonus_s |    .046875   .0264214                       -.00491      .09866
+-------------+----------------------------------------------------------------
+        diff |     .09375   .0508563                     -.0059265    .1934265
+             |  under Ho:    .051527     1.82   0.069
+------------------------------------------------------------------------------
+        diff = prop(rule_base3) - prop(rule_bonus_s)              z =   1.8194
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9656         Pr(|Z| > |z|) = 0.0688          Pr(Z > z) = 0.0344
+
+
+
+Two-sample test of proportion equivalence rule_base3: Number of obs =       64
+                                        rule_bon~d_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bon~d_3 |    .046875   .0264214                       -.00491      .09866
+-------------+----------------------------------------------------------------
+         Δ-θ |     .00625    .051527                      -.094741     .107241
+         θ+Δ |     .19375    .051527                       .092759     .294741
+------------------------------------------------------------------------------
+         θ = prop(rule_base3) - prop(rule_bonus_second_3) = .09375
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base3)
+
+Ho: |θ| >= Δ:
+
+        z1 = .1213                   z2 = 3.76    
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.4517          Pr(Z > z2) = 0.0001
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.1:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base3 == rule_bonus_first_3,   eqvtype(delta) eqvlevel(0.1) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base3: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bonus_f |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+        diff |    .109375   .0485932                      .0141341    .2046159
+             |  under Ho:   .0495455     2.21   0.027
+------------------------------------------------------------------------------
+        diff = prop(rule_base3) - prop(rule_bonus_f)              z =   2.2076
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9864         Pr(|Z| > |z|) = 0.0273          Pr(Z > z) = 0.0136
+
+
+
+Two-sample test of proportion equivalence rule_base3: Number of obs =       64
+                                        rule_bon~t_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bon~t_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+         Δ-θ |   -.009375   .0495455                     -.1064824    .0877324
+         θ+Δ |    .209375   .0495455                      .1122676    .3064824
+------------------------------------------------------------------------------
+         θ = prop(rule_base3) - prop(rule_bonus_first_3) = .109375
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base3)
+
+Ho: |θ| >= Δ:
+
+        z1 = -.1892                  z2 = 4.226   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.5750          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.1:
+  Ho test for difference:  Reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Relevant difference
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. 
+. tostpr rule_base3 == rule_bonus_first_3,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base3: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bonus_f |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+        diff |    .109375   .0485932                      .0141341    .2046159
+             |  under Ho:   .0495455     2.21   0.027
+------------------------------------------------------------------------------
+        diff = prop(rule_base3) - prop(rule_bonus_f)              z =   2.2076
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9864         Pr(|Z| > |z|) = 0.0273          Pr(Z > z) = 0.0136
+
+
+
+Two-sample test of proportion equivalence rule_base3: Number of obs =       64
+                                        rule_bon~t_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bon~t_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+         Δ-θ |    .070625   .0495455                     -.0264824    .1677324
+         θ+Δ |    .289375   .0495455                      .1922676    .3864824
+------------------------------------------------------------------------------
+         θ = prop(rule_base3) - prop(rule_bonus_first_3) = .109375
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base3)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.425                   z2 = 5.841   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0770          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Relevant difference
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~t_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~t_1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0852131                     -.0026397    .3313897
+         θ+Δ |    .195625   .0852131                      .0286103    .3626397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.929                   z2 = 2.296   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0269          Pr(Z > z2) = 0.0108
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. tostpr rule_base2 == rule_bonus_first_3,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base2: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bonus_f |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+        diff |      .1875   .0560652                      .0776142    .2973858
+             |  under Ho:   .0584634     3.21   0.001
+------------------------------------------------------------------------------
+        diff = prop(rule_base2) - prop(rule_bonus_f)              z =   3.2071
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9993         Pr(|Z| > |z|) = 0.0013          Pr(Z > z) = 0.0007
+
+
+
+Two-sample test of proportion equivalence rule_base2: Number of obs =       64
+                                        rule_bon~t_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bon~t_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+         Δ-θ |     -.0075   .0584634                     -.1220862    .1070862
+         θ+Δ |      .3675   .0584634                      .2529138    .4820862
+------------------------------------------------------------------------------
+         θ = prop(rule_base2) - prop(rule_bonus_first_3) = .1875
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base2)
+
+Ho: |θ| >= Δ:
+
+        z1 = -.1283                  z2 = 6.286   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.5510          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Relevant difference
+
+. tostpr rule_base3 == rule_bonus_first_3,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base3: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bonus_f |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+        diff |    .109375   .0485932                      .0141341    .2046159
+             |  under Ho:   .0495455     2.21   0.027
+------------------------------------------------------------------------------
+        diff = prop(rule_base3) - prop(rule_bonus_f)              z =   2.2076
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.9864         Pr(|Z| > |z|) = 0.0273          Pr(Z > z) = 0.0136
+
+
+
+Two-sample test of proportion equivalence rule_base3: Number of obs =       64
+                                        rule_bon~t_3: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base3 |    .140625   .0434543                      .0554562    .2257938
+rule_bon~t_3 |     .03125   .0217491                     -.0113774    .0738774
+-------------+----------------------------------------------------------------
+         Δ-θ |    .070625   .0495455                     -.0264824    .1677324
+         θ+Δ |    .289375   .0495455                      .1922676    .3864824
+------------------------------------------------------------------------------
+         θ = prop(rule_base3) - prop(rule_bonus_first_3) = .109375
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base3)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.425                   z2 = 5.841   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0770          Pr(Z > z2) = 0.0000
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Relevant difference
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base2 == rule_bonus_first_2,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base2: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bonus_f |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+        diff |      -.125   .0787088                     -.2792663    .0292663
+             |  under Ho:   .0794804    -1.57   0.116
+------------------------------------------------------------------------------
+        diff = prop(rule_base2) - prop(rule_bonus_f)              z =  -1.5727
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0579         Pr(|Z| > |z|) = 0.1158          Pr(Z > z) = 0.9421
+
+
+
+Two-sample test of proportion equivalence rule_base2: Number of obs =       64
+                                        rule_bon~t_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bon~t_2 |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+         Δ-θ |       .305   .0794804                      .1492212    .4607788
+         θ+Δ |       .055   .0794804                     -.1007788    .2107788
+------------------------------------------------------------------------------
+         θ = prop(rule_base2) - prop(rule_bonus_first_2) = -.125
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base2)
+
+Ho: |θ| >= Δ:
+
+        z1 = 3.837                   z2 = .692    
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0001          Pr(Z > z2) = 0.2445
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base2 == rule_bonus_first_2,   eqvtype(delta) eqvlevel(0.1) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base2: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bonus_f |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+        diff |      -.125   .0787088                     -.2792663    .0292663
+             |  under Ho:   .0794804    -1.57   0.116
+------------------------------------------------------------------------------
+        diff = prop(rule_base2) - prop(rule_bonus_f)              z =  -1.5727
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0579         Pr(|Z| > |z|) = 0.1158          Pr(Z > z) = 0.9421
+
+
+
+Two-sample test of proportion equivalence rule_base2: Number of obs =       64
+                                        rule_bon~t_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bon~t_2 |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+         Δ-θ |       .225   .0794804                      .0692212    .3807788
+         θ+Δ |      -.025   .0794804                     -.1807788    .1307788
+------------------------------------------------------------------------------
+         θ = prop(rule_base2) - prop(rule_bonus_first_2) = -.125
+         Δ = 0.1000  Δ expressed in same units as prop(rule_base2)
+
+Impossible to reject any Ho if Δ <= z-crit*s.e. ( .1307 ). See help tostpr.
+
+Ho: |θ| >= Δ:
+
+        z1 = 2.831                   z2 = -.3145  
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0023          Pr(Z > z2) = 0.6234
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.1:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base2 == rule_bonus_first_2,   eqvtype(delta) eqvlevel(0.25) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base2: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bonus_f |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+        diff |      -.125   .0787088                     -.2792663    .0292663
+             |  under Ho:   .0794804    -1.57   0.116
+------------------------------------------------------------------------------
+        diff = prop(rule_base2) - prop(rule_bonus_f)              z =  -1.5727
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0579         Pr(|Z| > |z|) = 0.1158          Pr(Z > z) = 0.9421
+
+
+
+Two-sample test of proportion equivalence rule_base2: Number of obs =       64
+                                        rule_bon~t_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bon~t_2 |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+         Δ-θ |       .375   .0794804                      .2192212    .5307788
+         θ+Δ |       .125   .0794804                     -.0307788    .2807788
+------------------------------------------------------------------------------
+         θ = prop(rule_base2) - prop(rule_bonus_first_2) = -.125
+         Δ = 0.2500  Δ expressed in same units as prop(rule_base2)
+
+Ho: |θ| >= Δ:
+
+        z1 = 4.718                   z2 = 1.573   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0000          Pr(Z > z2) = 0.0579
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.25:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base2 == rule_bonus_first_2,   eqvtype(delta) eqvlevel(0.3) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base2: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bonus_f |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+        diff |      -.125   .0787088                     -.2792663    .0292663
+             |  under Ho:   .0794804    -1.57   0.116
+------------------------------------------------------------------------------
+        diff = prop(rule_base2) - prop(rule_bonus_f)              z =  -1.5727
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0579         Pr(|Z| > |z|) = 0.1158          Pr(Z > z) = 0.9421
+
+
+
+Two-sample test of proportion equivalence rule_base2: Number of obs =       64
+                                        rule_bon~t_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bon~t_2 |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+         Δ-θ |       .425   .0794804                      .2692212    .5807788
+         θ+Δ |       .175   .0794804                      .0192212    .3307788
+------------------------------------------------------------------------------
+         θ = prop(rule_base2) - prop(rule_bonus_first_2) = -.125
+         Δ = 0.3000  Δ expressed in same units as prop(rule_base2)
+
+Ho: |θ| >= Δ:
+
+        z1 = 5.347                   z2 = 2.202   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0000          Pr(Z > z2) = 0.0138
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.3:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base2 == rule_bonus_first_2,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base2: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bonus_f |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+        diff |      -.125   .0787088                     -.2792663    .0292663
+             |  under Ho:   .0794804    -1.57   0.116
+------------------------------------------------------------------------------
+        diff = prop(rule_base2) - prop(rule_bonus_f)              z =  -1.5727
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.0579         Pr(|Z| > |z|) = 0.1158          Pr(Z > z) = 0.9421
+
+
+
+Two-sample test of proportion equivalence rule_base2: Number of obs =       64
+                                        rule_bon~t_2: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base2 |     .21875   .0516748                      .1174692    .3200308
+rule_bon~t_2 |     .34375   .0593699                      .2273872    .4601128
+-------------+----------------------------------------------------------------
+         Δ-θ |       .305   .0794804                      .1492212    .4607788
+         θ+Δ |       .055   .0794804                     -.1007788    .2107788
+------------------------------------------------------------------------------
+         θ = prop(rule_base2) - prop(rule_bonus_first_2) = -.125
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base2)
+
+Ho: |θ| >= Δ:
+
+        z1 = 3.837                   z2 = .692    
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0001          Pr(Z > z2) = 0.2445
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Fail to reject
+
+Conclusion from combined tests: Indeterminate (underpowered test)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. pwcorr rule_base1 rule_bonus_first_1
+
+             | rule_~e1 rule~t_1
+-------------+------------------
+  rule_base1 |   1.0000 
+rule_bon~t_1 |   0.3615   1.0000 
+
+. pwcorr rule_base2 rule_bonus_first_2
+
+             | rule_~e2 rule~t_2
+-------------+------------------
+  rule_base2 |   1.0000 
+rule_bon~t_2 |   0.4128   1.0000 
+
+. pwcorr rule_base3 rule_bonus_first_3
+
+             | rule_~e3 rule~t_3
+-------------+------------------
+  rule_base3 |   1.0000 
+rule_bon~t_3 |  -0.0727   1.0000 
+
+. 
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. pwcorr rule_base rule_bonus_first
+
+             | rule_b~e rule_b~t
+-------------+------------------
+   rule_base |   1.0000 
+rule_bonus~t |   0.1945   1.0000 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. tostpr rule_base1 == rule_bonus_first_1,   eqvtype(delta) eqvlevel(0.18) relevance
+Relevance test of sample proportions
+
+Two-sample test of proportions            rule_base1: Number of obs =       64
+                                        rule_bonus_f: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bonus_f |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+        diff |    .015625   .0852019                     -.1513677    .1826177
+             |  under Ho:   .0852131     0.18   0.855
+------------------------------------------------------------------------------
+        diff = prop(rule_base1) - prop(rule_bonus_f)              z =   0.1834
+    Ho: diff = 0
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(Z < z) = 0.5727         Pr(|Z| > |z|) = 0.8545          Pr(Z > z) = 0.4273
+
+
+
+Two-sample test of proportion equivalence rule_base1: Number of obs =       64
+                                        rule_bon~t_1: Number of obs =       64
+------------------------------------------------------------------------------
+    Variable |       Mean   Std. Err.                     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  rule_base1 |    .640625   .0599772                      .5230719    .7581781
+rule_bon~t_1 |       .625   .0605154                      .5063921    .7436079
+-------------+----------------------------------------------------------------
+         Δ-θ |    .164375   .0852131                     -.0026397    .3313897
+         θ+Δ |    .195625   .0852131                      .0286103    .3626397
+------------------------------------------------------------------------------
+         θ = prop(rule_base1) - prop(rule_bonus_first_1) = .015625
+         Δ = 0.1800  Δ expressed in same units as prop(rule_base1)
+
+Ho: |θ| >= Δ:
+
+        z1 = 1.929                   z2 = 2.296   
+
+   Ho1: Δ-θ <= 0                Ho2: θ+Δ <= 0
+   Ha1: Δ-θ > 0                 Ha2: θ+Δ > 0
+   Pr(Z > z1) = 0.0269          Pr(Z > z2) = 0.0108
+
+
+Relevance test conclusion for α = 0.05, and Δ = 0.18:
+  Ho test for difference:  Fail to reject
+  Ho test for equivalence: Reject
+
+Conclusion from combined tests: Equivalence
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. sum rule_base1 rule_bonus_first_1
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  rule_base1 |         64     .640625    .4836103          0          1
+rule_bon~t_1 |         64        .625      .48795          0          1
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD478c_000000.tmp"
+
+. pwcorr rule_base rule_bonus_first
+
+             | rule_b~e rule_b~t
+-------------+------------------
+   rule_base |   1.0000 
+rule_bonus~t |   0.1945   1.0000 
+
+. 
+end of do-file
+

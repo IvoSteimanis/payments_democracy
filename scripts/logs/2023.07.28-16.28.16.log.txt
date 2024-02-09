@@ -1,0 +1,791 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/logs/2023.07.28-16.28.16.log.txt
+  log type:  text
+ opened on:  28 Jul 2023, 16:28:16
+
+. 
+. di "Begin date and time: $S_DATE $S_TIME"
+Begin date and time: 28 Jul 2023 16:28:16
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 16.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 19 Nov 2020
+
+. di "Variant:       `=cond( c(MP),"MP",cond(c(SE),"SE",c(flavor)) )'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    2
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. 
+. *   Analyses were run on Windows using Stata version 16
+. version 16              // Set Version number for backward compatibility
+
+. 
+. * All required Stata packages are available in the /libraries/stata folder
+. tokenize `"$S_ADO"', parse(";")
+
+. while `"`1'"' != "" {
+  2.   if `"`1'"'!="BASE" cap adopath - `"`1'"'
+  3.   macro shift
+  4. }
+
+. adopath ++ "$working_ANALYSIS/scripts/libraries/stata"
+  [1]              "C:\Users\istei\HESSENBOX\2-Projekte (Björn Vollan)\Paper SustUse\Paying for democracy\analysis/scripts/libraries/stata"
+  [2]  (BASE)      "C:\Program Files\Stata16\ado\base/"
+
+. mata: mata mlib index
+.mlib libraries to be searched are now
+    lmatabase;lmataado;lmataerm;lmatafc;lmatagsem;lmatalasso;lmatamcmc;lmatameta;lmatami;lmatamixlog;lmatanumlib;lmataopt;lmatapath;lmatapostest;lmatapss
+> ;lmatasem;lmatasp;lmatasvy;lmatatab;lcolrspace
+
+. sysdir set PERSONAL "$working_ANALYSIS/scripts/libraries/stata"
+
+. 
+. * Create directories for output files
+. cap mkdir "$working_ANALYSIS/processed"
+
+. cap mkdir "$working_ANALYSIS/results"
+
+. cap mkdir "$working_ANALYSIS/results/intermediate"
+
+. cap mkdir "$working_ANALYSIS/results/tables"
+
+. cap mkdir "$working_ANALYSIS/results/figures"
+
+. 
+. * Set general graph style
+. set scheme swift_red //select one scheme as reference scheme to work with
+
+. grstyle init 
+
+. {
+. *Background color
+. grstyle set color white: background plotregion graphregion legend box textbox //
+. 
+. *Main colors (note: swift_red only defines 8 colors. Multiplying the color, that is "xx yy zz*0.5" reduces/increases intensity and "xx yy zz%50" reduce
+> s transparency)
+. grstyle set color       "100 143 255" "120 94 240" "220 38 127" "254 97 0" "255 176 0" /// 5 main colors
+>                                         "100 143 255*0.4" "120 94 240*0.4" "220 38 127*0.4" "254 97 0*0.4" "255 176 0*0.4" ///
+>                                         "100 143 255*1.7" "120 94 240*1.7" "220 38 127*1.7" "254 97 0*1.7" "255 176 0*1.7" ///
+>                                         : p# p#line p#lineplot p#bar p#area p#arealine p#pie histogram 
+. 
+. *Font size
+. grstyle set size 10pt: heading //titles
+. grstyle set size 8pt: subheading axis_title //axis titles
+. grstyle set size 8pt: p#label p#boxlabel body small_body text_option axis_label tick_label minortick_label key_label //all other text
+. }
+
+. * -------------------------------------------------
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. *--------------------------------------------------------------------
+. * SCRIPT: 03_analysis.do
+. * PURPOSE: replicates the tables and figures and saves the results
+. *--------------------------------------------------------------------
+. 
+. *--------------------------------------------------
+. * STRUCTURE OF THE DO-FILE
+. /*
+> 
+>         1) Analysis Long Format:
+>                 - Main Manuscript
+>                 - SOM
+>         2) Analysis Wide Format:
+>                 - Main Manuscript
+>                 - SOM
+> */
+. *--------------------------------------------------
+. 
+. 
+. *--------------------------------------------------
+. * Revisions
+. *--------------------------------------------------
+. *power analysis: MDES with 80% power
+. power pairedproportions 0.64, corr(0.39) diff(0(0.01)0.2) alpha(0.05 0.1) n(64)
+
+Estimated power for a two-sample paired-proportions test
+Large-sample McNemar's test
+Ho: p+1 = p1+  versus  Ha: p+1 != p1+
+
+  +-----------------------------------------------------------------+
+  |   alpha   power       N   delta  pmarg1  pmarg2    corr    diff |
+  |-----------------------------------------------------------------|
+  |     .05       .       .       .     .64     .64     .39       0 |
+  |     .05  .05259      64     .01     .64     .65     .39     .01 |
+  |     .05  .06045      64     .02     .64     .66     .39     .02 |
+  |     .05   .0738      64     .03     .64     .67     .39     .03 |
+  |     .05   .0929      64     .04     .64     .68     .39     .04 |
+  |     .05    .118      64     .05     .64     .69     .39     .05 |
+  |     .05   .1494      64     .06     .64      .7     .39     .06 |
+  |     .05    .187      64     .07     .64     .71     .39     .07 |
+  |     .05    .231      64     .08     .64     .72     .39     .08 |
+  |     .05   .2808      64     .09     .64     .73     .39     .09 |
+  |     .05   .3359      64      .1     .64     .74     .39      .1 |
+  |     .05   .3953      64     .11     .64     .75     .39     .11 |
+  |     .05   .4578      64     .12     .64     .76     .39     .12 |
+  |     .05    .522      64     .13     .64     .77     .39     .13 |
+  |     .05   .5862      64     .14     .64     .78     .39     .14 |
+  |     .05   .6487      64     .15     .64     .79     .39     .15 |
+  |     .05   .7081      64     .16     .64      .8     .39     .16 |
+  |     .05   .7628      64     .17     .64     .81     .39     .17 |
+  |     .05   .8118      64     .18     .64     .82     .39     .18 |
+  |     .05   .8545      64     .19     .64     .83     .39     .19 |
+  |     .05   .8905      64      .2     .64     .84     .39      .2 |
+  |     .05       .      64       .     .64     .64     .39       0 |
+  |      .1   .1038      64     .01     .64     .65     .39     .01 |
+  |      .1   .1154      64     .02     .64     .66     .39     .02 |
+  |      .1   .1346      64     .03     .64     .67     .39     .03 |
+  |      .1   .1616      64     .04     .64     .68     .39     .04 |
+  |      .1    .196      64     .05     .64     .69     .39     .05 |
+  |      .1   .2376      64     .06     .64      .7     .39     .06 |
+  |      .1   .2857      64     .07     .64     .71     .39     .07 |
+  |      .1   .3395      64     .08     .64     .72     .39     .08 |
+  |      .1   .3979      64     .09     .64     .73     .39     .09 |
+  |      .1   .4595      64      .1     .64     .74     .39      .1 |
+  |      .1   .5229      64     .11     .64     .75     .39     .11 |
+  |      .1   .5864      64     .12     .64     .76     .39     .12 |
+  |      .1   .6484      64     .13     .64     .77     .39     .13 |
+  |      .1   .7072      64     .14     .64     .78     .39     .14 |
+  |      .1   .7615      64     .15     .64     .79     .39     .15 |
+  |      .1   .8104      64     .16     .64      .8     .39     .16 |
+  |      .1   .8529      64     .17     .64     .81     .39     .17 |
+  |      .1   .8889      64     .18     .64     .82     .39     .18 |
+  |      .1   .9184      64     .19     .64     .83     .39     .19 |
+  |      .1   .9419      64      .2     .64     .84     .39      .2 |
+  +-----------------------------------------------------------------+
+   Warning: some of the computations failed; execute each computation separately to see the specific error
+
+. *MDES alpha 0.05 --> d=0.18, alpha 0.1 --> d=0.16
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. drop if villager==1
+(384 observations deleted)
+
+. 
+end of do-file
+
+. tab rule_bonus_first
+
+ rule_bonus_first |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         40       62.50       62.50
+Pseudo-democratic |         22       34.38       96.88
+       Autocratic |          2        3.13      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. tab rule_bonus_second
+
+rule_bonus_second |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         42       65.63       65.63
+Pseudo-democratic |         19       29.69       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. tab rule5
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       64.06       64.06
+Pseudo-democratic |         20       31.25       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. tab rule6
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       64.06       64.06
+Pseudo-democratic |         21       32.81       96.88
+       Autocratic |          2        3.13      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. tab bonus_order
+
+bonus_order |      Freq.     Percent        Cum.
+------------+-----------------------------------
+Large first |         30       46.88       46.88
+Small first |         34       53.13      100.00
+------------+-----------------------------------
+      Total |         64      100.00
+
+. tab rul5 bonus_order
+variable rul5 not found
+r(111);
+
+. tab rule5 bonus_order
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |      bonus_order
+             rule | Large fir  Small fir |     Total
+------------------+----------------------+----------
+       Democratic |        20         21 |        41 
+Pseudo-democratic |         8         12 |        20 
+       Autocratic |         2          1 |         3 
+------------------+----------------------+----------
+            Total |        30         34 |        64 
+
+. bys bonus_order: tab1 rule5 rule6
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus_order = Large first
+
+-> tabulation of rule5  
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         20       66.67       66.67
+Pseudo-democratic |          8       26.67       93.33
+       Autocratic |          2        6.67      100.00
+------------------+-----------------------------------
+            Total |         30      100.00
+
+-> tabulation of rule6  
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         19       63.33       63.33
+Pseudo-democratic |         10       33.33       96.67
+       Autocratic |          1        3.33      100.00
+------------------+-----------------------------------
+            Total |         30      100.00
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-> bonus_order = Small first
+
+-> tabulation of rule5  
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         21       61.76       61.76
+Pseudo-democratic |         12       35.29       97.06
+       Autocratic |          1        2.94      100.00
+------------------+-----------------------------------
+            Total |         34      100.00
+
+-> tabulation of rule6  
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         22       64.71       64.71
+Pseudo-democratic |         11       32.35       97.06
+       Autocratic |          1        2.94      100.00
+------------------+-----------------------------------
+            Total |         34      100.00
+
+. tab rule5
+
+      1=majority, |
+      2=dictator, |
+  3=Fake majority |
+             rule |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         41       64.06       64.06
+Pseudo-democratic |         20       31.25       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. sum rule_base1 rule_bonus_first_1   rule_base2 rule_bonus_first_2  rule_base3 rule_bonus_first_3 
+variable rule_bonus_first_1 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. drop if villager==1
+(384 observations deleted)
+
+. tab rule_bonus_first, gen(rule_bonus_first_)
+
+ rule_bonus_first |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         40       62.50       62.50
+Pseudo-democratic |         22       34.38       96.88
+       Autocratic |          2        3.13      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. tab rule_bonus_second, gen(rule_bonus_second_)
+
+rule_bonus_second |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+       Democratic |         42       65.63       65.63
+Pseudo-democratic |         19       29.69       95.31
+       Autocratic |          3        4.69      100.00
+------------------+-----------------------------------
+            Total |         64      100.00
+
+. sum rule_base1 rule_bonus_first_1   rule_base2 rule_bonus_first_2  rule_base3 rule_bonus_first_3 
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  rule_base1 |         64     .640625    .4836103          0          1
+rule_bon~t_1 |         64        .625      .48795          0          1
+  rule_base2 |         64      .21875    .4166667          0          1
+rule_bon~t_2 |         64      .34375    .4787136          0          1
+  rule_base3 |         64     .140625    .3503824          0          1
+-------------+---------------------------------------------------------
+rule_bon~t_3 |         64      .03125    .1753681          0          1
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule_bonus_first if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |   rule_bonus_first
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     83.33      16.67 |    100.00 
+-----------------+----------------------+----------
+    Base: Pseudo |         1          3 |         4 
+                 |     25.00      75.00 |    100.00 
+-----------------+----------------------+----------
+Base: Autocratic |         6          1 |         7 
+                 |     85.71      14.29 |    100.00 
+-----------------+----------------------+----------
+           Total |        22          7 |        29 
+                 |     75.86      24.14 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule_bonus_first if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |         rule_bonus_first
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        16          6          1 |        23 
+                 |     69.57      26.09       4.35 |    100.00 
+-----------------+---------------------------------+----------
+    Base: Pseudo |         2          7          1 |        10 
+                 |     20.00      70.00      10.00 |    100.00 
+-----------------+---------------------------------+----------
+Base: Autocratic |         0          2          0 |         2 
+                 |      0.00     100.00       0.00 |    100.00 
+-----------------+---------------------------------+----------
+           Total |        18         15          2 |        35 
+                 |     51.43      42.86       5.71 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab base_no_vote rule_bonus_first if extrinsic_leader==0, row
+variable base_no_vote not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule bonus_order if decision > 1, chi2 exact
+rule ambiguous abbreviation
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. * (2) Analysis WIDE format
+. *--------------------------------------------------
+. clear all
+
+. use "$working_ANALYSIS/processed/analysis_wide.dta"
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. gen base_no_vote = 0
+
+. replace base_no_vote =1 if rule_base==2 | rule_base==3
+(23 real changes made)
+
+. replace base_no_vote = . if rule_base==.
+(384 real changes made, 384 to missing)
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule5 if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |      1=majority,
+                 |  2=dictator, 3=Fake
+                 |     majority rule
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     83.33      16.67 |    100.00 
+-----------------+----------------------+----------
+    Base: Pseudo |         1          3 |         4 
+                 |     25.00      75.00 |    100.00 
+-----------------+----------------------+----------
+Base: Autocratic |         5          2 |         7 
+                 |     71.43      28.57 |    100.00 
+-----------------+----------------------+----------
+           Total |        21          8 |        29 
+                 |     72.41      27.59 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule6 if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |  1=majority, 2=dictator, 3=Fake
+                 |          majority rule
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        17          5          1 |        23 
+                 |     73.91      21.74       4.35 |    100.00 
+-----------------+---------------------------------+----------
+    Base: Pseudo |         4          5          1 |        10 
+                 |     40.00      50.00      10.00 |    100.00 
+-----------------+---------------------------------+----------
+Base: Autocratic |         0          2          0 |         2 
+                 |      0.00     100.00       0.00 |    100.00 
+-----------------+---------------------------------+----------
+           Total |        21         12          2 |        35 
+                 |     60.00      34.29       5.71 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule5 if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |  1=majority, 2=dictator, 3=Fake
+                 |          majority rule
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        17          5          1 |        23 
+                 |     73.91      21.74       4.35 |    100.00 
+-----------------+---------------------------------+----------
+    Base: Pseudo |         3          6          1 |        10 
+                 |     30.00      60.00      10.00 |    100.00 
+-----------------+---------------------------------+----------
+Base: Autocratic |         0          1          1 |         2 
+                 |      0.00      50.00      50.00 |    100.00 
+-----------------+---------------------------------+----------
+           Total |        20         12          3 |        35 
+                 |     57.14      34.29       8.57 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule5 if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |      1=majority,
+                 |  2=dictator, 3=Fake
+                 |     majority rule
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     83.33      16.67 |    100.00 
+-----------------+----------------------+----------
+    Base: Pseudo |         1          3 |         4 
+                 |     25.00      75.00 |    100.00 
+-----------------+----------------------+----------
+Base: Autocratic |         5          2 |         7 
+                 |     71.43      28.57 |    100.00 
+-----------------+----------------------+----------
+           Total |        21          8 |        29 
+                 |     72.41      27.59 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule6 if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |  1=majority, 2=dictator, 3=Fake
+                 |          majority rule
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        17          5          1 |        23 
+                 |     73.91      21.74       4.35 |    100.00 
+-----------------+---------------------------------+----------
+    Base: Pseudo |         4          5          1 |        10 
+                 |     40.00      50.00      10.00 |    100.00 
+-----------------+---------------------------------+----------
+Base: Autocratic |         0          2          0 |         2 
+                 |      0.00     100.00       0.00 |    100.00 
+-----------------+---------------------------------+----------
+           Total |        21         12          2 |        35 
+                 |     60.00      34.29       5.71 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule5 if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |  1=majority, 2=dictator, 3=Fake
+                 |          majority rule
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        17          5          1 |        23 
+                 |     73.91      21.74       4.35 |    100.00 
+-----------------+---------------------------------+----------
+    Base: Pseudo |         3          6          1 |        10 
+                 |     30.00      60.00      10.00 |    100.00 
+-----------------+---------------------------------+----------
+Base: Autocratic |         0          1          1 |         2 
+                 |      0.00      50.00      50.00 |    100.00 
+-----------------+---------------------------------+----------
+           Total |        20         12          3 |        35 
+                 |     57.14      34.29       8.57 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule5 if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |      1=majority,
+                 |  2=dictator, 3=Fake
+                 |     majority rule
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     83.33      16.67 |    100.00 
+-----------------+----------------------+----------
+    Base: Pseudo |         1          3 |         4 
+                 |     25.00      75.00 |    100.00 
+-----------------+----------------------+----------
+Base: Autocratic |         5          2 |         7 
+                 |     71.43      28.57 |    100.00 
+-----------------+----------------------+----------
+           Total |        21          8 |        29 
+                 |     72.41      27.59 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule6 if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |      1=majority,
+                 |  2=dictator, 3=Fake
+                 |     majority rule
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     83.33      16.67 |    100.00 
+-----------------+----------------------+----------
+    Base: Pseudo |         0          4 |         4 
+                 |      0.00     100.00 |    100.00 
+-----------------+----------------------+----------
+Base: Autocratic |         5          2 |         7 
+                 |     71.43      28.57 |    100.00 
+-----------------+----------------------+----------
+           Total |        20          9 |        29 
+                 |     68.97      31.03 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule5 if extrinsic_leader==1, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |      1=majority,
+                 |  2=dictator, 3=Fake
+                 |     majority rule
+       rule_base | Democrati  Pseudo-de |     Total
+-----------------+----------------------+----------
+Base: Democratic |        15          3 |        18 
+                 |     83.33      16.67 |    100.00 
+-----------------+----------------------+----------
+    Base: Pseudo |         1          3 |         4 
+                 |     25.00      75.00 |    100.00 
+-----------------+----------------------+----------
+Base: Autocratic |         5          2 |         7 
+                 |     71.43      28.57 |    100.00 
+-----------------+----------------------+----------
+           Total |        21          8 |        29 
+                 |     72.41      27.59 |    100.00 
+
+. 
+end of do-file
+
+. do "C:\Users\istei\AppData\Local\Temp\STD2bcc_000000.tmp"
+
+. tab rule_base rule5 if extrinsic_leader==0, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                 |  1=majority, 2=dictator, 3=Fake
+                 |          majority rule
+       rule_base | Democrati  Pseudo-de  Autocrati |     Total
+-----------------+---------------------------------+----------
+Base: Democratic |        17          5          1 |        23 
+                 |     73.91      21.74       4.35 |    100.00 
+-----------------+---------------------------------+----------
+    Base: Pseudo |         3          6          1 |        10 
+                 |     30.00      60.00      10.00 |    100.00 
+-----------------+---------------------------------+----------
+Base: Autocratic |         0          1          1 |         2 
+                 |      0.00      50.00      50.00 |    100.00 
+-----------------+---------------------------------+----------
+           Total |        20         12          3 |        35 
+                 |     57.14      34.29       8.57 |    100.00 
+
+. 
+end of do-file
+
+. exit, clear
