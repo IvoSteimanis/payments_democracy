@@ -4,7 +4,7 @@ This repository contains the data and code that replicates tables and figures fo
 
 Title: Conditional Payments for Democracy to Local Leaders Managing Natural Resources in Rural Namibia
 
-Authors: IVO STEIMANIS<sup> 1</sup> , ESTHER BLANCO<sup> 2,3,*</sup> & BJÖRN VOLLAN<sup>1</sup>
+Authors: IVO STEIMANIS<sup> 1</sup> , ESTHER BLANCO<sup> 2,3,*</sup> & BJÖRN VOLLAN<sup>1</sup> <br>
 Affiliations: <sup>1</sup> Sustainable Use of Natural Resources, Universität Marburg, Am Plan 2, 35032 Marburg, Germany.
 <sup>2</sup> University of Innsbruck, Department of Public Finance, Universitätsstrasse 15, Innsbruck 6020, Austria.
 <sup>3</sup> The Ostrom Workshop, Indiana University, Bloomington, IN 47408, USA.
