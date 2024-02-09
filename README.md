@@ -44,15 +44,15 @@ villagers.
 ```
 # Descriptions of scripts
 
-scripts/ 01 _cleaning.do
+scripts/01_cleaning.do
 
 This script processes the raw experimental and survey data from all participants and prepares it for analysis.
 
-scripts/0 2 _generate.do
+scripts/02_generate.do
 
 This script creates additional variables used in the analysis.
 
-scripts/ 03 _generate.do
+scripts/03_generate.do
 
 This script creates figures and tables shown in the paper and saves them to results/Figures and results/Tables
 
