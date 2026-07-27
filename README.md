@@ -278,9 +278,12 @@ These decisions are implemented and commented in `02_generate.do`.
 
 If you use these data or code, please cite the paper and the archived release of this repository.
 
+Repository: <https://github.com/IvoSteimanis/payments-democracy>
+
 <!-- TODO before release: insert the Zenodo DOI and the full journal citation once the
      article is assigned volume and pages. The manuscript's data availability statement
-     currently reads "available on GitHub (link)" and must be updated to point here. -->
+     currently reads "available on GitHub (link)" and must be updated to point to the
+     repository URL above plus the Zenodo DOI. -->
 
 ---
 
