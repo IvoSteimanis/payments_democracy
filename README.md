@@ -1,6 +1,6 @@
 # Replication Package
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21628024.svg)](https://doi.org/10.5281/zenodo.21628024)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21628023.svg)](https://doi.org/10.5281/zenodo.21628023)
 
 ## The Appearance of Democracy: How Conditional Payments Reshape Behavior Among Local Leaders
 
@@ -282,9 +282,9 @@ If you use these data or code, please cite the paper and the archived release of
 
 Repository: <https://github.com/IvoSteimanis/payments_democracy>
 
-Archived release: <https://doi.org/10.5281/zenodo.21628024>
+Archived release: <https://doi.org/10.5281/zenodo.21628023>
 
-Steimanis, I., Blanco, E., & Vollan, B. (2026). *Replication package for "The Appearance of Democracy: How Conditional Payments Reshape Behavior Among Local Leaders"* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21628024
+Steimanis, I., Blanco, E., & Vollan, B. (2026). *Replication package for "The Appearance of Democracy: How Conditional Payments Reshape Behavior Among Local Leaders"* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21628023
 
 <!-- TODO before release: insert the full journal citation once the article is assigned
      volume and pages. The manuscript's data availability statement currently reads
