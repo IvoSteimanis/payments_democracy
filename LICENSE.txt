@@ -1,11 +1,4 @@
 Creative Commons Attribution 4.0 International Public License
-(https://creativecommons.org/licenses/by/4.0/)
-- applies to all code, scripts, data, images, tables, text, and any other objects
-
-COPYRIGHT 2026 Ivo Steimani, Esther Blanco, Björn Vollan
-
-=================================================================
-Creative Commons Attribution 4.0 International Public License
 =================================================================
 
 By exercising the Licensed Rights (defined below), You accept and agree
@@ -299,3 +292,12 @@ Licensor.
 a limitation upon, or waiver of, any privileges and immunities that
 apply to the Licensor or You, including from the legal processes of any
 jurisdiction or authority.
+
+
+-----------------------------------------------------------------
+Applied to this repository as follows:
+
+Creative Commons Attribution 4.0 International Public License
+(https://creativecommons.org/licenses/by/4.0/)
+- applies to all code, scripts, data, images, tables, text, and any other objects
+COPYRIGHT 2026 Ivo Steimanis, Esther Blanco, Björn Vollan

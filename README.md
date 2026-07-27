@@ -2,7 +2,7 @@
 
 ## The Appearance of Democracy: How Conditional Payments Reshape Behavior Among Local Leaders
 
-**Authors**: Ivo Steimanis<sup>1,+</sup>, Esther Blanco<sup>2,3</sup>, Bjorn Vollan<sup>1</sup>
+**Authors**: Ivo Steimanis<sup>1,+</sup>, Esther Blanco<sup>2,3</sup>, Björn Vollan<sup>1</sup>
 
 <sup>1</sup> Department of Economics, Philipps University Marburg, Germany
 <sup>2</sup> Department of Public Finance, University of Innsbruck, Austria

@@ -1,0 +1,67 @@
+cff-version: 1.2.0
+title: >-
+  Replication package: The Appearance of Democracy - How Conditional
+  Payments Reshape Behavior Among Local Leaders
+message: >-
+  If you use these data or code, please cite both this archive and the
+  journal article listed under preferred-citation.
+type: dataset
+authors:
+  - given-names: Ivo
+    family-names: Steimanis
+    email: ivo.steimanis@staff.uni-marburg.de
+    affiliation: Philipps University Marburg, Department of Economics
+    # orcid: 'https://orcid.org/0000-0000-0000-0000'   # TODO: add if you want it shown
+  - given-names: Esther
+    family-names: Blanco
+    affiliation: University of Innsbruck, Department of Public Finance
+    # orcid: 'https://orcid.org/0000-0000-0000-0000'   # TODO
+  - given-names: Björn
+    family-names: Vollan
+    affiliation: Philipps University Marburg, Department of Economics
+    # orcid: 'https://orcid.org/0000-0000-0000-0000'   # TODO
+repository-code: 'https://github.com/IvoSteimanis/payments_democracy'
+abstract: >-
+  Data, code, and materials to reproduce every figure and table in the
+  paper and its supplementary online material. The study is a
+  lab-in-the-field experiment with 64 local leaders and 384 villagers
+  across 32 villages in the Ohangwena region of northern Namibia,
+  testing whether conditional payments for democratic governance crowd
+  in or crowd out democratic behaviour among leaders who manage
+  communal natural resources. Data are de-identified; see the README
+  section "Data anonymization" for what was removed and why.
+keywords:
+  - conditional payments
+  - democratic governance
+  - lab-in-the-field experiment
+  - local leaders
+  - environmental governance
+  - crowding out
+  - Namibia
+  - replication package
+license: CC-BY-4.0
+version: 1.0.0
+# TODO: replace with the Zenodo CONCEPT DOI (the all-versions one), not the
+# version-specific DOI, so this always resolves to the newest release.
+doi: 10.5281/zenodo.XXXXXXX
+date-released: '2026-07-27'
+
+preferred-citation:
+  type: article
+  title: >-
+    The Appearance of Democracy: How Conditional Payments Reshape
+    Behavior Among Local Leaders
+  authors:
+    - given-names: Ivo
+      family-names: Steimanis
+    - given-names: Esther
+      family-names: Blanco
+    - given-names: Björn
+      family-names: Vollan
+  journal: Ecological Economics
+  year: 2026
+  # TODO: add once the article is assigned these at proof stage
+  # doi: 10.1016/j.ecolecon.XXXX.XXXXXX
+  # volume: ''
+  # start: ''
+  # end: ''

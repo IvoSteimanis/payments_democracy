@@ -3,7 +3,7 @@
 *-------------------------------------------------------------------------------------------------------
 *   This script generates tables and figures reported in the manuscript and SOM of the paper:
 *   "The Appearance of Democracy: How Conditional Payments Reshape Behavior Among Local Leaders"
-*   Authors: Ivo Steimanis, Esther Blanco, Bjorn Vollan
+*   Authors: Ivo Steimanis, Esther Blanco, Björn Vollan
 *   All raw datafiles are stored in /data
 *   All figures reported in the main manuscript and SOM are outputted to /results/figures
 *   All tables reported in the main manuscript and SOM are outputted to /results/tables
