@@ -1,0 +1,39 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Heterogeneous treatment effects by motivation type, chiefs subsample (N=32)}
+\begin{tabular}{l*{4}{c}}
+\toprule
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+            &\multicolumn{1}{c}{Box I}&\multicolumn{1}{c}{Box III}&\multicolumn{1}{c}{Box II}&\multicolumn{1}{c}{Box IV}\\
+\midrule
+dem100      &                     &                     &                     &                     \\
+0.bonus     &       0.000         &       0.000         &       0.000         &       0.000         \\
+            &         (.)         &         (.)         &         (.)         &         (.)         \\
+\addlinespace
+1.bonus     &      40.000\sym{*}  &      62.500\sym{***}&     -38.889\sym{**} &     -17.857\sym{*}  \\
+            &    (22.111)         &    (22.658)         &    (15.422)         &     (9.696)         \\
+\addlinespace
+bonus\_order &     -11.111         &     -33.333         &     -13.333         &       4.762         \\
+            &    (28.689)         &    (38.490)         &    (19.272)         &    (11.664)         \\
+\addlinespace
+\_cons      &       6.667         &      25.000         &     105.926\sym{***}&      97.619\sym{***}\\
+            &    (26.667)         &    (36.596)         &    (16.456)         &    (10.479)         \\
+\midrule
+lns1\_1\_1    &                     &                     &                     &                     \\
+\_cons      &       3.048\sym{***}&       3.242\sym{***}&       2.929\sym{***}&       2.607\sym{***}\\
+            &     (0.952)         &     (0.869)         &     (0.673)         &     (0.572)         \\
+\midrule
+lnsig\_e     &                     &                     &                     &                     \\
+\_cons      &       3.698\sym{***}&       3.611\sym{***}&       3.632\sym{***}&       3.388\sym{***}\\
+            &     (0.236)         &     (0.267)         &     (0.171)         &     (0.136)         \\
+\midrule
+Observations&          15         &          12         &          27         &          42         \\
+Leaders     &           5         &           4         &           9         &          14         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Multilevel panel regressions (random intercept at individual level).}\\
+\multicolumn{5}{l}{\footnotesize Chiefs subsample only. Standard errors in parentheses.}\\
+\multicolumn{5}{l}{\footnotesize * p<0.10, ** p<0.05, *** p<0.01.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}

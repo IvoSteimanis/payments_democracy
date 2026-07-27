@@ -1,0 +1,26 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{c}}
+\toprule
+                    &Baseline: Democratic rule         &                     &                     &Baseline: Pseudo-democratic or autocratic rule         &                     &                     \\
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}\\
+                    &\multicolumn{1}{c}{Democratic}&\multicolumn{1}{c}{Pseudo-democratic}&\multicolumn{1}{c}{Autocratic}&\multicolumn{1}{c}{Democratic}&\multicolumn{1}{c}{Pseudo-democratic}&\multicolumn{1}{c}{Autocratic}\\
+\midrule
+main                &                     &                     &                     &                     &                     &                     \\
+Pooled Bonus (n=128)&     -26.087\sym{***}&      21.739\sym{***}&       4.348         &      29.167\sym{***}&     -25.000         &      -4.167         \\
+                    &     (8.158)         &     (7.513)         &     (2.974)         &    (11.204)         &    (17.566)         &    (12.722)         \\
+\addlinespace
+Extrinsic           &       0.488         &      -0.224         &      -0.264         &       0.351         &     -47.764\sym{***}&      47.413\sym{***}\\
+                    &     (1.155)         &     (0.711)         &     (0.573)         &     (1.479)         &    (17.683)         &    (17.792)         \\
+\addlinespace
+Pooled Bonus (n=128) $\times$ Extrinsic&       9.420         &      -5.072         &      -4.348         &      20.833         &      38.636\sym{*}  &     -59.470\sym{***}\\
+                    &    (10.677)         &    (10.193)         &     (2.974)         &    (17.273)         &    (21.026)         &    (19.539)         \\
+\midrule
+N                   &         123         &         123         &         123         &          69         &          69         &          69         \\
+Individuals         &          41         &          41         &          41         &          23         &          23         &          23         \\
+Wald Chi2           &       16.28         &       14.40         &           .         &       21.73         &        8.63         &       22.45         \\
+p                   &        0.00         &        0.01         &           .         &        0.00         &        0.07         &        0.00         \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Notes: Estimates are from multilevel panel regressions that account for the grouping structure of the data at the individual level (random intercept). Standard errors with stars indicating the following significant levels: * p < 0.10, ** p < 0.05, *** p < 0.01}\\
+\end{tabular}
+}

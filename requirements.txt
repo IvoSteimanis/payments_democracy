@@ -1,0 +1,8 @@
+# Python dependencies for scripts/fig4a_panel.py (manuscript Figure 4).
+# Versions below are the ones the published figure was generated with.
+# Install with:  pip install -r requirements.txt
+#
+# Tested on Python 3.13.0 (Windows).
+
+pandas==2.2.3
+matplotlib==3.10.3

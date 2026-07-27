@@ -1,0 +1,36 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{c}}
+\toprule
+            &\multicolumn{1}{c}{(1)}        &\multicolumn{1}{c}{(2)}        &\multicolumn{1}{c}{(3)}        &\multicolumn{1}{c}{(4)}        &\multicolumn{1}{c}{(5)}        &\multicolumn{1}{c}{(6)}        \\
+            &\multicolumn{1}{c}{Democratic} &\multicolumn{1}{c}{Pseudo-democratic}&\multicolumn{1}{c}{Dictator}   &\multicolumn{1}{c}{Democratic} &\multicolumn{1}{c}{Pseudo-democratic}&\multicolumn{1}{c}{Dictator}   \\
+\midrule
+bonus\_2     &                  0.00         &                  0.46         &                 -0.77\sym{**} &                               &                               &                               \\
+            &          [-0.58,0.59]         &          [-0.15,1.08]         &         [-1.48,-0.05]         &                               &                               &                               \\
+\addlinespace
+bonus\_3     &                  0.00         &                  0.53\sym{*}  &                 -0.98\sym{**} &                               &                               &                               \\
+            &          [-0.58,0.58]         &          [-0.09,1.16]         &         [-1.91,-0.05]         &                               &                               &                               \\
+\addlinespace
+bonus\_order &                 -0.19         &                  0.34         &                 -0.31         &                 -0.19         &                  0.34         &                 -0.32         \\
+            &          [-1.01,0.64]         &          [-0.48,1.15]         &          [-1.07,0.44]         &          [-1.01,0.64]         &          [-0.48,1.15]         &          [-1.07,0.44]         \\
+\addlinespace
+bonus       &                               &                               &                               &                  0.00         &                  0.50\sym{*}  &                 -0.87\sym{**} \\
+            &                               &                               &                               &          [-0.52,0.52]         &          [-0.06,1.05]         &         [-1.57,-0.16]         \\
+\addlinespace
+\_cons      &                  0.69\sym{**} &                 -1.43\sym{***}&                 -1.16\sym{***}&                  0.69\sym{**} &                 -1.43\sym{***}&                 -1.16\sym{***}\\
+            &           [0.03,1.36]         &         [-2.18,-0.68]         &         [-1.91,-0.42]         &           [0.03,1.36]         &         [-2.18,-0.68]         &         [-1.91,-0.42]         \\
+\addlinespace
+lnsig2u     &                  0.57         &                  0.46         &                 -0.66         &                  0.57         &                  0.46         &                 -0.67         \\
+            &          [-0.32,1.45]         &          [-0.48,1.40]         &          [-2.26,0.94]         &          [-0.32,1.45]         &          [-0.48,1.40]         &          [-2.24,0.90]         \\
+\midrule
+N           &                   192         &                   192         &                   192         &                   192         &                   192         &                   192         \\
+Individuals &                    64         &                    64         &                    64         &                    64         &                    64         &                    64         \\
+sigma\_u     &                  1.33         &                  1.26         &                  0.72         &                  1.33         &                  1.26         &                  0.71         \\
+rho         &                  0.64         &                  0.61         &                  0.34         &                  0.64         &                  0.61         &                  0.34         \\
+Wald Chi2   &                  0.20         &                  3.97         &                  5.89         &                  0.20         &                  3.88         &                  6.02         \\
+p           &                  0.98         &                  0.27         &                  0.12         &                  0.91         &                  0.14         &                  0.05         \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize 95\% confidence intervals in brackets}\\
+\multicolumn{7}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+}

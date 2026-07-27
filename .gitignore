@@ -1,0 +1,30 @@
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# Python
+__pycache__/
+*.pyc
+
+# Stata logs and swap files
+scripts/logs/
+*.log
+~*.stswp
+
+# IDE
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large intermediate files
+results/intermediate/*.gph
+*.tif
+
+# Claude project file (not part of replication)
+CLAUDE.md
+
+# Stata batch-mode auto-log written at the package root
+/run.log

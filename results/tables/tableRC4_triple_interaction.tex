@@ -1,0 +1,42 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Triple interaction: Bonus x Extrinsic motivation x Leader type}
+\begin{tabular}{l*{3}{c}}
+\toprule
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
+            &\multicolumn{1}{c}{Democratic}&\multicolumn{1}{c}{Pseudo-democratic}&\multicolumn{1}{c}{Autocratic}\\
+\midrule
+main        &                     &                     &                     \\
+1.extrinsic\_leader&     -31.022\sym{*}  &       0.112         &       1.374         \\
+            &    (17.945)         &     (0.819)         &     (0.864)         \\
+\addlinespace
+1.TL        &      -2.820         &       0.539         &      -6.051         \\
+            &    (16.617)         &     (0.707)         &   (870.962)         \\
+\addlinespace
+1.extrinsic\_leader#1.TL&      44.856\sym{*}  &      -2.023         &       5.207         \\
+            &    (24.850)         &     (1.233)         &   (870.962)         \\
+\midrule
+\_           &                     &                     &                     \\
+1.bonus     &                     &                     &                     \\
+            &                     &                     &                     \\
+\addlinespace
+1.bonus#1.extrinsic\_leader&                     &                     &                     \\
+            &                     &                     &                     \\
+\addlinespace
+1.bonus#1.TL&                     &                     &                     \\
+            &                     &                     &                     \\
+\addlinespace
+1.bonus#1.extrinsic\_leader#1.TL&                     &                     &                     \\
+            &                     &                     &                     \\
+\midrule
+Observations&         192         &         192         &         134         \\
+Leaders     &          64         &                     &                     \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{4}{l}{\footnotesize Multilevel panel regressions (random intercept at individual level).}\\
+\multicolumn{4}{l}{\footnotesize Full sample (N=64). Triple interaction tests whether the motivation}\\
+\multicolumn{4}{l}{\footnotesize heterogeneity differs between DELs and chiefs.}\\
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses. * p<0.10, ** p<0.05, *** p<0.01.}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}

@@ -1,0 +1,39 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Heterogeneous treatment effects by motivation type, DEL subsample (N=32)}
+\begin{tabular}{l*{4}{c}}
+\toprule
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+            &\multicolumn{1}{c}{Box I}&\multicolumn{1}{c}{Box III}&\multicolumn{1}{c}{Box II}&\multicolumn{1}{c}{Box IV}\\
+\midrule
+dem100      &                     &                     &                     &                     \\
+0.bonus     &       0.000         &       0.000         &       0.000         &       0.000         \\
+            &         (.)         &         (.)         &         (.)         &         (.)         \\
+\addlinespace
+1.bonus     &      21.429         &      42.857\sym{**} &     -17.857\sym{**} &     -12.500         \\
+            &    (13.582)         &    (17.271)         &     (8.219)         &    (18.298)         \\
+\addlinespace
+bonus\_order &       5.556         &      -8.333         &      18.056         &      11.111         \\
+            &    (21.802)         &    (24.814)         &    (12.948)         &    (22.222)         \\
+\addlinespace
+\_cons      &      -3.175         &       4.762         &      89.683\sym{***}&      97.222\sym{***}\\
+            &    (18.804)         &    (22.009)         &    (11.217)         &    (16.500)         \\
+\midrule
+lns1\_1\_1    &                     &                     &                     &                     \\
+\_cons      &       3.134\sym{***}&       3.191\sym{***}&       2.950\sym{***}&       2.144         \\
+            &     (0.500)         &     (0.585)         &     (0.331)         &     (2.770)         \\
+\midrule
+lnsig\_e     &                     &                     &                     &                     \\
+\_cons      &       3.379\sym{***}&       3.619\sym{***}&       3.223\sym{***}&       3.397\sym{***}\\
+            &     (0.196)         &     (0.196)         &     (0.136)         &     (0.267)         \\
+\midrule
+Observations&          21         &          21         &          42         &          12         \\
+Leaders     &           7         &           7         &          14         &           4         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Multilevel panel regressions (random intercept at individual level).}\\
+\multicolumn{5}{l}{\footnotesize DEL subsample only. Standard errors in parentheses.}\\
+\multicolumn{5}{l}{\footnotesize * p<0.10, ** p<0.05, *** p<0.01.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}

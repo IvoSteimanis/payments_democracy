@@ -1,0 +1,33 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{c}}
+\toprule
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{} &\multicolumn{1}{c}{} \\
+\midrule
+main        &                     &                     \\
+1.\_predict  &      -0.013         &      -0.011         \\
+            &     (0.067)         &     (0.060)         \\
+\addlinespace
+2.\_predict  &       0.092         &       0.101\sym{*}  \\
+            &     (0.063)         &     (0.056)         \\
+\addlinespace
+3.\_predict  &      -0.079\sym{**} &      -0.090\sym{**} \\
+            &     (0.039)         &     (0.039)         \\
+\midrule
+bonus\_3     &                     &                     \\
+1.\_predict  &      -0.007         &                     \\
+            &     (0.066)         &                     \\
+\addlinespace
+2.\_predict  &       0.110\sym{*}  &                     \\
+            &     (0.064)         &                     \\
+\addlinespace
+3.\_predict  &      -0.102\sym{**} &                     \\
+            &     (0.049)         &                     \\
+\midrule
+Observations&         192         &         192         \\
+\bottomrule
+\multicolumn{3}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+}
